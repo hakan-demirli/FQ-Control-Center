@@ -16,11 +16,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    camera_loop.cpp \
+    fps.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    webcam.cpp
 
 HEADERS += \
-    mainwindow.h
+    camera_loop.h \
+    fps.h \
+    json.hpp \
+    mainwindow.h \
+    webcam.h
 
 FORMS += \
     mainwindow.ui
@@ -30,12 +37,12 @@ FORMS += \
 linux-arm-gnueabihf-g++: {
     message( "found arm g++" )
     INCLUDEPATH += /home/emre/cross_compile/OpenCV/install/include/opencv4
-    LIBS += -L/home/emre/cross_compile/OpenCV/install/lib -ltbb -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_objdetect -lopencv_imgcodecs -lopencv_videoio -lopencv_tracking
+    LIBS += -L/home/emre/cross_compile/OpenCV/install/lib -ltbb -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_objdetect -lopencv_imgcodecs -lopencv_videoio -lopencv_tracking -lopencv_dnn
 }
 linux-g++: {
     message( "found x86 g++" )
     INCLUDEPATH += /usr/include/opencv4
-    LIBS += -L/usr/lib -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_objdetect -lopencv_imgcodecs -lopencv_videoio -lopencv_tracking
+    LIBS += -L/usr/lib -ltbb -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_objdetect -lopencv_imgcodecs -lopencv_videoio -lopencv_tracking -lopencv_dnn
 }
 
 
