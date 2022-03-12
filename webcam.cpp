@@ -1,5 +1,6 @@
 #include "webcam.h"
 
+
 Webcam::Webcam(const int webcam_source, const int width, const int height)
     : src{webcam_source}, width{width}, height{height}
 {

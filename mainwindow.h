@@ -2,7 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+
 #include "camera_loop.h"
+#include "settings.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -17,14 +19,19 @@ public:
     ~MainWindow();
 
 private slots:
-    void receiveEmitted(int em);
     void receiveFrame(cv::Mat frame, long inference_time);
 
     void on_camera_run_button_clicked();
 
+    void on_apply_camera_settings_button_clicked();
+
 private:
-    Ui::MainWindow *ui;
     void increase_tab_width();
+    void update_ui_settings();
+
+    Ui::MainWindow *ui;
+    Settings* settings;
     CameraLoop* camera;
+
 };
 #endif // MAINWINDOW_H

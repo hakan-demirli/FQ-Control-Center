@@ -1,11 +1,15 @@
 #include "camera_loop.h"
 
-// for convenience
-using json = nlohmann::json;
 
-CameraLoop::CameraLoop(QObject *parent) :
+CameraLoop::CameraLoop(QObject *parent, json cfg) :
     QObject(parent),
-    toggle_stream(true)
+    toggle_stream(true),
+    cfg(cfg),
+    all_models_path(cfg["all_models_path"]),
+    model_folder(cfg["model_folder"]),
+    model_file(all_models_path + "/" + model_folder + "/" + cfg["model_file"].get<std::string>()),
+    model_config_file(all_models_path + "/" + model_folder + "/" + cfg["model_config_file"].get<std::string>()),
+    usb_webcam(Webcam::getInstance(cfg["source"],cfg["width"],cfg["height"]))
 {
     moveToThread(&m_thread);
     m_thread.start();
@@ -26,51 +30,10 @@ void CameraLoop::run(){
     QMetaObject::invokeMethod( this, "main_loop");
 }
 
-void CameraLoop::read_json(const std::string json_file, json& j){
-    std::ifstream i(json_file);
-    i >> j;
-}
-
-void CameraLoop::read_model_labels(const std::string label_list_file,std::vector<std::string>& labels){
-    std::ifstream i(std::string(label_list_file).c_str());
-    std::string line;
-
-    while (getline(i, line))
-        labels.push_back(line);
-}
-
-void CameraLoop::receiveValue(int new_value){
-    if (value != new_value) {
-        value = new_value;
-        emit sendValue(value);
-    }
-}
-
 void CameraLoop::main_loop(void) {
 
-    json cfg_data;
-    json info;
-    read_json(CFG_FILE,cfg_data);
-    read_json(INFO_FILE,info);
-
-    const std::string all_models_path = cfg_data["all_models_path"];
-    const std::string model_folder = cfg_data["model_folder"];
-    const std::string model_file = all_models_path + "/" + model_folder + "/" + cfg_data["model_file"].get<std::string>();
-    const std::string label_list_file = all_models_path + "/" + model_folder + "/" + cfg_data["label_list_file"].get<std::string>();
-    const std::string model_config_file = all_models_path + "/" + model_folder + "/" + cfg_data["model_config_file"].get<std::string>();
-
-    std::vector<std::string> labels;
-    read_model_labels(label_list_file,labels);
-    
-    Webcam& usb_webcam = Webcam::getInstance(cfg_data["source"],cfg_data["width"],cfg_data["height"]);
-
-    auto net = cv::dnn::readNet(model_file, model_config_file, "TensorFlow");
-
     fps cro;
-
-    cv::Mat image;
-    cv::Scalar mean_blob = cv::Scalar(127.5, 127.5, 127.5);
-
+    auto net = cv::dnn::readNet(model_file, model_config_file, "TensorFlow");
     usb_webcam.run();
 
     while (toggle_stream) {
@@ -78,8 +41,8 @@ void CameraLoop::main_loop(void) {
 
         image = usb_webcam.read();
 
-        cv::Mat blob = cv::dnn::blobFromImage(image, 1.0, cv::Size(cfg_data["width"],cfg_data["height"]), mean_blob, true, false);
-
+        cv::Mat blob = cv::dnn::blobFromImage(image, 1.0, cv::Size(cfg["width"],cfg["height"]), mean_blob, true, false);
+        net = cv::dnn::readNetFromTensorflow(model_file, model_config_file);
         net.setInput(blob);
 
         cv::Mat output = net.forward();
@@ -93,13 +56,13 @@ void CameraLoop::main_loop(void) {
             float confidence = results.at<float>(i, 2);
 
             // Check if the detection is over the min threshold and then draw bbox
-            if (confidence > cfg_data["min_confidence_score"] &&  class_id == 1){
+            if (confidence > cfg["min_confidence_score"] &&  class_id == 1){
                 int bboxX = int(results.at<float>(i, 3) * image.cols);
                 int bboxY = int(results.at<float>(i, 4) * image.rows);
                 int bboxWidth = int(results.at<float>(i, 5) * image.cols - bboxX);
                 int bboxHeight = int(results.at<float>(i, 6) * image.rows - bboxY);
                 cv::rectangle(image, cv::Point(bboxX, bboxY), cv::Point(bboxX + bboxWidth, bboxY + bboxHeight), cv::Scalar(0,0,255), 2);
-                std::string class_name = labels[class_id-1];
+                //std::string class_name = labels[class_id-1];
             }
         }
 
@@ -108,4 +71,5 @@ void CameraLoop::main_loop(void) {
 
         emit sendFrame(image,cro.toc());
     }
+    usb_webcam.stop();
 }

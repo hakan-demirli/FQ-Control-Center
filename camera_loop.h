@@ -12,35 +12,36 @@
 #include <QPixmap>
 #include <QThread>
 
-#include "json.hpp"
 #include "fps.h"
 #include "webcam.h"
+#include "json.hpp"
 
 using json = nlohmann::json;
 
 class CameraLoop: public QObject {
     Q_OBJECT
 public:
-    explicit CameraLoop(QObject *parent = nullptr);
+    explicit CameraLoop(QObject *parent = nullptr, json cfg = NULL);
     ~CameraLoop();
     void run(void);
 
-    const std::string INFO_FILE = "./config/info.json";
-    const std::string CFG_FILE = "./config/cfg.json";
-    const std::string BENCH_FILE = "./config/bench_records.txt";
-
     bool toggle_stream;
+    json cfg;
 
 private:
-    void read_json(const std::string json_file, json& j);
-    void read_model_labels(const std::string label_list_file,std::vector<std::string>& labels);
-
-
     QThread m_thread;
     int value;
+    const std::string all_models_path;
+    const std::string model_folder;
+    const std::string model_file;
+    const std::string model_config_file;
+    Webcam& usb_webcam;
+
+    fps cro;
+    cv::Scalar mean_blob = cv::Scalar(127.5, 127.5, 127.5);
+    cv::Mat image;
 
 public slots:
-    void receiveValue(int value);
     void main_loop(void);
 
 signals:
