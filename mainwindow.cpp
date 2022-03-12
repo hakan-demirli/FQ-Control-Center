@@ -7,15 +7,15 @@
 MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    settings(new Settings),
-    camera(new CameraLoop(nullptr, settings->camera_cfg))
+    settings(new Settings)
 {
     ui->setupUi(this);
     increase_tab_width();
-    update_ui_settings();
+    //update_ui_settings();
     ui->video_output_label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
-    connect(camera, SIGNAL(sendFrame(cv::Mat, long)), this, SLOT(receiveFrame(cv::Mat, long)));
+    camera = new CameraLoop(settings->camera_cfg, nullptr);
+    connect(camera, SIGNAL(sendFrame(cv::Mat,long)), this, SLOT(receiveFrame(cv::Mat,long)));
 
     camera->run();
 }
@@ -61,7 +61,8 @@ void MainWindow::receiveFrame(cv::Mat image, long inference_time)
 void MainWindow::on_apply_camera_settings_button_clicked()
 {
     camera->toggle_stream = false;
-    camera = new CameraLoop(nullptr, settings->camera_cfg);
+    camera = new CameraLoop(settings->camera_cfg, nullptr);
     camera->run();
 }
+
 

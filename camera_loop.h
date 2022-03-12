@@ -21,7 +21,7 @@ using json = nlohmann::json;
 class CameraLoop: public QObject {
     Q_OBJECT
 public:
-    explicit CameraLoop(QObject *parent = nullptr, json cfg = NULL);
+    explicit CameraLoop(json cfg, QObject *parent = nullptr);
     ~CameraLoop();
     void run(void);
 

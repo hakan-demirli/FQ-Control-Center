@@ -1,7 +1,7 @@
 #include "camera_loop.h"
 
 
-CameraLoop::CameraLoop(QObject *parent, json cfg) :
+CameraLoop::CameraLoop(json cfg, QObject *parent) :
     QObject(parent),
     toggle_stream(true),
     cfg(cfg),
@@ -31,7 +31,7 @@ void CameraLoop::run(){
 }
 
 void CameraLoop::main_loop(void) {
-
+    QThread::currentThread()->setPriority(QThread::HighPriority);
     fps cro;
     auto net = cv::dnn::readNet(model_file, model_config_file, "TensorFlow");
     usb_webcam.run();
