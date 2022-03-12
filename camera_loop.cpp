@@ -29,11 +29,16 @@ CameraLoop::~CameraLoop(){
 void CameraLoop::run(){
     QMetaObject::invokeMethod( this, "main_loop");
 }
-
+void read_json(const std::string json_file, json& j){
+    std::ifstream i(json_file);
+    i >> j;
+}
 void CameraLoop::main_loop(void) {
-    QThread::currentThread()->setPriority(QThread::HighPriority);
-    fps cro;
+
     auto net = cv::dnn::readNet(model_file, model_config_file, "TensorFlow");
+
+    fps cro;
+
     usb_webcam.run();
 
     while (toggle_stream) {
@@ -42,7 +47,7 @@ void CameraLoop::main_loop(void) {
         image = usb_webcam.read();
 
         cv::Mat blob = cv::dnn::blobFromImage(image, 1.0, cv::Size(cfg["width"],cfg["height"]), mean_blob, true, false);
-        net = cv::dnn::readNetFromTensorflow(model_file, model_config_file);
+
         net.setInput(blob);
 
         cv::Mat output = net.forward();
@@ -62,7 +67,7 @@ void CameraLoop::main_loop(void) {
                 int bboxWidth = int(results.at<float>(i, 5) * image.cols - bboxX);
                 int bboxHeight = int(results.at<float>(i, 6) * image.rows - bboxY);
                 cv::rectangle(image, cv::Point(bboxX, bboxY), cv::Point(bboxX + bboxWidth, bboxY + bboxHeight), cv::Scalar(0,0,255), 2);
-                //std::string class_name = labels[class_id-1];
+
             }
         }
 
@@ -71,5 +76,4 @@ void CameraLoop::main_loop(void) {
 
         emit sendFrame(image,cro.toc());
     }
-    usb_webcam.stop();
 }
