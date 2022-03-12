@@ -4,9 +4,26 @@
 using json = nlohmann::json;
 
 CameraLoop::CameraLoop(QObject *parent) :
-    QObject(parent)
+    QObject(parent),
+    toggle_stream(true)
 {
+    moveToThread(&m_thread);
+    m_thread.start();
+}
 
+CameraLoop::~CameraLoop(){
+
+    toggle_stream = false;
+
+    if( m_thread.isRunning() )
+    {
+        m_thread.quit();
+        m_thread.wait();
+    }
+}
+
+void CameraLoop::run(){
+    QMetaObject::invokeMethod( this, "main_loop");
 }
 
 void CameraLoop::read_json(const std::string json_file, json& j){
@@ -56,7 +73,7 @@ void CameraLoop::main_loop(void) {
 
     usb_webcam.run();
 
-    while (true) {
+    while (toggle_stream) {
         cro.tic();
 
         image = usb_webcam.read();
@@ -86,13 +103,9 @@ void CameraLoop::main_loop(void) {
             }
         }
 
-        cv::putText(image, "us: " + std::to_string(cro.toc()), cv::Point(50, 50), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(0, 255, 0), 2, false);
+        //cv::putText(image, "us: " + std::to_string(cro.toc()), cv::Point(50, 50), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(0, 255, 0), 2, false);
+        //cv::imshow("image", image);
 
-        cv::imshow("image", image);
-
-        int k =cv::waitKey(1);
-        if (k == 113){
-            break;
-        }
+        emit sendFrame(image,cro.toc());
     }
 }

@@ -18,12 +18,13 @@ public:
 
 private slots:
     void receiveEmitted(int em);
+    void receiveFrame(cv::Mat frame, long inference_time);
 
     void on_camera_run_button_clicked();
 
 private:
     Ui::MainWindow *ui;
     void increase_tab_width();
-    CameraLoop camera;
+    CameraLoop* camera;
 };
 #endif // MAINWINDOW_H

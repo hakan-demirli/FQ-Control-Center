@@ -2,3 +2,4 @@
 *.log
 *.debug
 *.pizza
+opencv_dnn_model/

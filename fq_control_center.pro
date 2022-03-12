@@ -20,6 +20,7 @@ SOURCES += \
     fps.cpp \
     main.cpp \
     mainwindow.cpp \
+    settings.cpp \
     webcam.cpp
 
 HEADERS += \
@@ -27,6 +28,7 @@ HEADERS += \
     fps.h \
     json.hpp \
     mainwindow.h \
+    settings.h \
     webcam.h
 
 FORMS += \
@@ -53,3 +55,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 
 QMAKE_CXXFLAGS+= -std=gnu++14
+QMAKE_CXXFLAGS_RELEASE += -Ofast
+
