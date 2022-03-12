@@ -3,6 +3,9 @@
 
 #include <QMainWindow>
 
+#include <QTabBar>
+#include <QThread>
+
 #include "camera_loop.h"
 #include "settings.h"
 

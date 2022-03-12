@@ -3,9 +3,13 @@
 
 #include <iostream>
 #include <fstream>
-#include <opencv2/opencv.hpp>
+
+#include <opencv2/core/utility.hpp>
 #include <opencv2/dnn.hpp>
 #include <opencv2/dnn/all_layers.hpp>
+#include <opencv2/tracking.hpp>
+#include <opencv2/videoio.hpp>
+#include <opencv2/highgui.hpp>
 
 #include <QObject>
 #include <QImage>

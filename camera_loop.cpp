@@ -41,6 +41,9 @@ void CameraLoop::main_loop(void) {
 
     auto net = cv::dnn::readNet(model_file, model_config_file, "TensorFlow");
 
+    cv::Ptr<cv::Tracker> tracker = cv::TrackerKCF::create();
+
+
     fps cro;
 
     usb_webcam.run();
@@ -60,20 +63,24 @@ void CameraLoop::main_loop(void) {
             // Matrix with all the detections
             cv::Mat results(output.size[2], output.size[3], CV_32F, output.ptr<float>());
 
-            if(toggle_bounding_boxes){
-                // Run through all the predictions
-                for (int i = 0; i < results.rows; i++){
-                    int class_id = int(results.at<float>(i, 1));
-                    float confidence = results.at<float>(i, 2);
+            // Run through all the predictions
+            for (int i = 0; i < results.rows; i++){
+                int class_id = int(results.at<float>(i, 1));
+                float confidence = results.at<float>(i, 2);
 
-                    // Check if the detection is over the min threshold and then draw bbox
-                    if (confidence > cfg["min_confidence_score"] &&  class_id == 1){
-                        int bboxX = int(results.at<float>(i, 3) * image.cols);
-                        int bboxY = int(results.at<float>(i, 4) * image.rows);
-                        int bboxWidth = int(results.at<float>(i, 5) * image.cols - bboxX);
-                        int bboxHeight = int(results.at<float>(i, 6) * image.rows - bboxY);
-                        cv::rectangle(image, cv::Point(bboxX, bboxY), cv::Point(bboxX + bboxWidth, bboxY + bboxHeight), cv::Scalar(0,0,255), 2);
-
+                // Check if the detection is over the min threshold and then draw bbox
+                if (confidence > cfg["min_confidence_score"] &&  class_id == 1){
+                    int bboxX = int(results.at<float>(i, 3) * image.cols);
+                    int bboxY = int(results.at<float>(i, 4) * image.rows);
+                    int bboxWidth = int(results.at<float>(i, 5) * image.cols - bboxX);
+                    int bboxHeight = int(results.at<float>(i, 6) * image.rows - bboxY);
+                    cv::Rect2d roi = cv::Rect2d(bboxX,bboxY,bboxWidth,bboxHeight);
+                    if(toggle_bounding_boxes){
+                        cv::rectangle(image, roi, cv::Scalar(0,0,255), 2);
+                    }
+                    if(toggle_tracking){
+                        tracker->init(image,roi);
+                        //tracker->update(image,roi);
                     }
                 }
             }

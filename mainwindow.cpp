@@ -1,10 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QTabBar>
-
-#include <QThread>
-#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent),
@@ -44,7 +40,6 @@ void MainWindow::increase_tab_width()
     ui->camera_tabs->tabBar()->setDocumentMode(true);
     ui->camera_tabs->tabBar()->setExpanding(true);
 }
-
 
 void MainWindow::receiveFrame(cv::Mat image)
 {
@@ -96,7 +91,6 @@ void MainWindow::on_object_detection_run_button_clicked()
     }
 }
 
-
 void MainWindow::on_tracking_run_button_clicked()
 {
     if (ui->tracking_run_button->text() == "||" && ui->object_detection_run_button->text() == "||"){
@@ -108,7 +102,6 @@ void MainWindow::on_tracking_run_button_clicked()
     }
 }
 
-
 void MainWindow::on_bounding_boxes_run_button_clicked()
 {
     if (ui->bounding_boxes_run_button->text() == "||" && ui->object_detection_run_button->text() == "||"){
@@ -119,7 +112,6 @@ void MainWindow::on_bounding_boxes_run_button_clicked()
         camera->toggle_bounding_boxes = true;
     }
 }
-
 
 void MainWindow::on_camera_stats_run_button_clicked()
 {
