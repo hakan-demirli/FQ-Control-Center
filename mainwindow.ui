@@ -17,12 +17,23 @@
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
+      <property name="minimumSize">
+       <size>
+        <width>64</width>
+        <height>64</height>
+       </size>
+      </property>
       <property name="tabPosition">
        <enum>QTabWidget::West</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>About</string>
+       </attribute>
+      </widget>
       <widget class="QWidget" name="tab_camera">
        <attribute name="title">
         <string>Camera</string>
@@ -147,7 +158,7 @@
                  <item>
                   <widget class="QLabel" name="camera_info_label">
                    <property name="text">
-                    <string>Toggle camera</string>
+                    <string>Camera</string>
                    </property>
                   </widget>
                  </item>
@@ -190,7 +201,7 @@
                  <item>
                   <widget class="QLabel" name="object_detection_info_label">
                    <property name="text">
-                    <string>Toggle object detection</string>
+                    <string>Object Detection</string>
                    </property>
                   </widget>
                  </item>
@@ -245,7 +256,7 @@
                    <item>
                     <widget class="QLabel" name="tracking_info_label">
                      <property name="text">
-                      <string>Toggle object tracking</string>
+                      <string>Object Tracking</string>
                      </property>
                     </widget>
                    </item>
@@ -318,7 +329,7 @@
                    <item>
                     <widget class="QLabel" name="bounding_boxes_info_label">
                      <property name="text">
-                      <string>Toggle bounding boxes</string>
+                      <string>Bounding Boxes</string>
                      </property>
                     </widget>
                    </item>
@@ -373,7 +384,7 @@
                  <item>
                   <widget class="QLabel" name="camera_stats_info_label">
                    <property name="text">
-                    <string>Toggle camera stats</string>
+                    <string>Camera Stats</string>
                    </property>
                   </widget>
                  </item>
