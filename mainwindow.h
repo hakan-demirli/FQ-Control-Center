@@ -19,11 +19,20 @@ public:
     ~MainWindow();
 
 private slots:
-    void receiveFrame(cv::Mat frame, long inference_time);
+    void receiveFrame(cv::Mat frame);
+    void receiveCameraStats(long compute_time);
 
     void on_camera_run_button_clicked();
 
     void on_apply_camera_settings_button_clicked();
+
+    void on_object_detection_run_button_clicked();
+
+    void on_tracking_run_button_clicked();
+
+    void on_bounding_boxes_run_button_clicked();
+
+    void on_camera_stats_run_button_clicked();
 
 private:
     void increase_tab_width();

@@ -26,6 +26,12 @@ public:
     void run(void);
 
     bool toggle_stream;
+    bool toggle_video;
+    bool toggle_stats;
+    bool toggle_object_detection;
+    bool toggle_tracking;
+    bool toggle_bounding_boxes;
+
     json cfg;
 
 private:
@@ -46,7 +52,8 @@ public slots:
 
 signals:
     void sendValue(int newValue);
-    void sendFrame(cv::Mat frame, long inference_time);
+    void sendFrame(cv::Mat frame);
+    void sendStats(long compute_time);
 };
 
 

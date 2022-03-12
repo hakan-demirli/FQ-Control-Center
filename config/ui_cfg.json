@@ -1,6 +1,7 @@
 {
-  "run": ">",
-  "tracking": ">",
-  "source": ">",
-  "object detection": ">"
+  "run": "||",
+  "object detection": "||",
+  "tracking": "||",
+  "bounding boxes": "||",
+  "stats": "||"
 }

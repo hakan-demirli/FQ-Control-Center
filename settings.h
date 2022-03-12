@@ -29,7 +29,6 @@ private:
 
 public slots:
     void save_cfg_files();
-
 };
 
 #endif // SETTINGS_H

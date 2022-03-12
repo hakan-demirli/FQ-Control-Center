@@ -4,6 +4,11 @@
 CameraLoop::CameraLoop(json cfg, QObject *parent) :
     QObject(parent),
     toggle_stream(true),
+    toggle_video(true),
+    toggle_stats(true),
+    toggle_object_detection(true),
+    toggle_tracking(true),
+    toggle_bounding_boxes(true),
     cfg(cfg),
     all_models_path(cfg["all_models_path"]),
     model_folder(cfg["model_folder"]),
@@ -29,11 +34,10 @@ CameraLoop::~CameraLoop(){
 void CameraLoop::run(){
     QMetaObject::invokeMethod( this, "main_loop");
 }
-void read_json(const std::string json_file, json& j){
-    std::ifstream i(json_file);
-    i >> j;
-}
+
 void CameraLoop::main_loop(void) {
+
+    QThread::currentThread()->setPriority(QThread::HighPriority);
 
     auto net = cv::dnn::readNet(model_file, model_config_file, "TensorFlow");
 
@@ -46,34 +50,44 @@ void CameraLoop::main_loop(void) {
 
         image = usb_webcam.read();
 
-        cv::Mat blob = cv::dnn::blobFromImage(image, 1.0, cv::Size(cfg["width"],cfg["height"]), mean_blob, true, false);
+        if (toggle_object_detection){
+            cv::Mat blob = cv::dnn::blobFromImage(image, 1.0, cv::Size(cfg["width"],cfg["height"]), mean_blob, true, false);
 
-        net.setInput(blob);
+            net.setInput(blob);
 
-        cv::Mat output = net.forward();
+            cv::Mat output = net.forward();
 
-        // Matrix with all the detections
-        cv::Mat results(output.size[2], output.size[3], CV_32F, output.ptr<float>());
+            // Matrix with all the detections
+            cv::Mat results(output.size[2], output.size[3], CV_32F, output.ptr<float>());
 
-        // Run through all the predictions
-        for (int i = 0; i < results.rows; i++){
-            int class_id = int(results.at<float>(i, 1));
-            float confidence = results.at<float>(i, 2);
+            if(toggle_bounding_boxes){
+                // Run through all the predictions
+                for (int i = 0; i < results.rows; i++){
+                    int class_id = int(results.at<float>(i, 1));
+                    float confidence = results.at<float>(i, 2);
 
-            // Check if the detection is over the min threshold and then draw bbox
-            if (confidence > cfg["min_confidence_score"] &&  class_id == 1){
-                int bboxX = int(results.at<float>(i, 3) * image.cols);
-                int bboxY = int(results.at<float>(i, 4) * image.rows);
-                int bboxWidth = int(results.at<float>(i, 5) * image.cols - bboxX);
-                int bboxHeight = int(results.at<float>(i, 6) * image.rows - bboxY);
-                cv::rectangle(image, cv::Point(bboxX, bboxY), cv::Point(bboxX + bboxWidth, bboxY + bboxHeight), cv::Scalar(0,0,255), 2);
+                    // Check if the detection is over the min threshold and then draw bbox
+                    if (confidence > cfg["min_confidence_score"] &&  class_id == 1){
+                        int bboxX = int(results.at<float>(i, 3) * image.cols);
+                        int bboxY = int(results.at<float>(i, 4) * image.rows);
+                        int bboxWidth = int(results.at<float>(i, 5) * image.cols - bboxX);
+                        int bboxHeight = int(results.at<float>(i, 6) * image.rows - bboxY);
+                        cv::rectangle(image, cv::Point(bboxX, bboxY), cv::Point(bboxX + bboxWidth, bboxY + bboxHeight), cv::Scalar(0,0,255), 2);
 
+                    }
+                }
             }
+        }else{
+            //Emmitting frames non-stop suffocates the GUI. Hence, the delay.
+            QThread::msleep(10);
         }
 
         //cv::putText(image, "us: " + std::to_string(cro.toc()), cv::Point(50, 50), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(0, 255, 0), 2, false);
         //cv::imshow("image", image);
 
-        emit sendFrame(image,cro.toc());
+        if (toggle_video)
+            emit sendFrame(image);
+        if (toggle_stats)
+            emit sendStats(cro.toc());
     }
 }

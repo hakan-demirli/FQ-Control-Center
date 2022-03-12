@@ -7,7 +7,7 @@
 class Webcam{
     public:
         /* 
-        * webcam is a singleton class to read frames from a webcam asynchronously.
+        * webcam is a singleton class that reads frames from a webcam asynchronously.
         */
         static Webcam& getInstance(const int,const int, const int);
         cv::Mat read();

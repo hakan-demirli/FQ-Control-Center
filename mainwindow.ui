@@ -143,11 +143,11 @@
               </attribute>
               <layout class="QGridLayout" name="gridLayout_5">
                <item row="0" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                <layout class="QHBoxLayout" name="horizontalLayout_7">
                  <item>
-                  <widget class="QLabel" name="info_run">
+                  <widget class="QLabel" name="camera_info_label">
                    <property name="text">
-                    <string>Toggle camera and all related tasks.</string>
+                    <string>Toggle camera</string>
                    </property>
                   </widget>
                  </item>
@@ -158,7 +158,7 @@
                    </property>
                    <property name="sizeHint" stdset="0">
                     <size>
-                     <width>281</width>
+                     <width>294</width>
                      <height>20</height>
                     </size>
                    </property>
@@ -166,8 +166,20 @@
                  </item>
                  <item>
                   <widget class="QPushButton" name="camera_run_button">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>64</height>
+                    </size>
+                   </property>
                    <property name="text">
                     <string>&gt;</string>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>16</width>
+                     <height>16</height>
+                    </size>
                    </property>
                   </widget>
                  </item>
@@ -176,7 +188,7 @@
                <item row="1" column="0">
                 <layout class="QHBoxLayout" name="horizontalLayout_6">
                  <item>
-                  <widget class="QLabel" name="info_ai">
+                  <widget class="QLabel" name="object_detection_info_label">
                    <property name="text">
                     <string>Toggle object detection</string>
                    </property>
@@ -196,7 +208,13 @@
                   </spacer>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="ai_run_button">
+                  <widget class="QPushButton" name="object_detection_run_button">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>64</height>
+                    </size>
+                   </property>
                    <property name="text">
                     <string>&gt;</string>
                    </property>
@@ -205,18 +223,14 @@
                 </layout>
                </item>
                <item row="2" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <layout class="QHBoxLayout" name="horizontalLayout_2">
                  <item>
-                  <widget class="QLabel" name="info_track">
-                   <property name="text">
-                    <string>Toggle object tracking</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_3">
+                  <spacer name="horizontalSpacer_7">
                    <property name="orientation">
                     <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Minimum</enum>
                    </property>
                    <property name="sizeHint" stdset="0">
                     <size>
@@ -227,18 +241,137 @@
                   </spacer>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="tracker_button">
-                   <property name="text">
-                    <string>&gt;</string>
+                  <layout class="QHBoxLayout" name="horizontalLayout_3">
+                   <item>
+                    <widget class="QLabel" name="tracking_info_label">
+                     <property name="text">
+                      <string>Toggle object tracking</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_3">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="tracking_run_button">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>64</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>&gt;</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_8">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
                    </property>
-                  </widget>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Minimum</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
                  </item>
                 </layout>
                </item>
                <item row="3" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_8">
+                 <item>
+                  <spacer name="horizontalSpacer_9">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Minimum</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_9">
+                   <item>
+                    <widget class="QLabel" name="bounding_boxes_info_label">
+                     <property name="text">
+                      <string>Toggle bounding boxes</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_10">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="bounding_boxes_run_button">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>64</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>&gt;</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_11">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Minimum</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+               <item row="4" column="0">
                 <layout class="QHBoxLayout" name="horizontalLayout_5">
                  <item>
-                  <widget class="QLabel" name="info_run_2">
+                  <widget class="QLabel" name="camera_stats_info_label">
                    <property name="text">
                     <string>Toggle camera stats</string>
                    </property>
@@ -258,7 +391,13 @@
                   </spacer>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="camera_run_button_2">
+                  <widget class="QPushButton" name="camera_stats_run_button">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>64</height>
+                    </size>
+                   </property>
                    <property name="text">
                     <string>&gt;</string>
                    </property>
@@ -266,7 +405,7 @@
                  </item>
                 </layout>
                </item>
-               <item row="4" column="0">
+               <item row="5" column="0">
                 <spacer name="verticalSpacer">
                  <property name="orientation">
                   <enum>Qt::Vertical</enum>
@@ -274,12 +413,12 @@
                  <property name="sizeHint" stdset="0">
                   <size>
                    <width>20</width>
-                   <height>40</height>
+                   <height>262</height>
                   </size>
                  </property>
                 </spacer>
                </item>
-               <item row="5" column="0">
+               <item row="6" column="0">
                 <layout class="QHBoxLayout" name="horizontalLayout">
                  <item>
                   <spacer name="horizontalSpacer_6">
@@ -296,6 +435,12 @@
                  </item>
                  <item>
                   <widget class="QPushButton" name="apply_camera_settings_button">
+                   <property name="sizeIncrement">
+                    <size>
+                     <width>0</width>
+                     <height>64</height>
+                    </size>
+                   </property>
                    <property name="text">
                     <string>Apply</string>
                    </property>
