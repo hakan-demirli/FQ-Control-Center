@@ -12,3 +12,12 @@ In 5.5, they were still a commercial add-on. So you need to get in touch with Qt
     - ```sudo ./run.sh```
 - Run the app.
     - ```./fq_control_center```
+
+TrackerMIL -> slow and inaccurate. A lot of false positives
+TrackerMOSSE -> really fast. But it takes time to lock on to a box
+TrackerKCF -> kinda slow but accurate
+TrackerBoosting -> buggy and slow
+TrackerTLD -> like KCF but a bit buggy?
+TrackerGOTURN -> Deep learning based tracker. Buggy as hell.
+TrackerMedianFlow -> Fast but there are some false positives
+TrackerCSRT -> Accurate but slow

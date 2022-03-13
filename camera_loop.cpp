@@ -102,6 +102,7 @@ void CameraLoop::main_loop(void) {
                     cv::rectangle(image, rois[i], cv::Scalar(0,0,255), 2);
                 else{
                     bunch_of_trackers.erase(bunch_of_trackers.begin() + i);
+                    rois.erase(rois.begin() + i);
                     i--;
                 }
             }
