@@ -99,7 +99,7 @@ enum CornerRefineMethod{
  * - maxMarkerPerimeterRate:  determine maximum perimeter for marker contour to be detected. This
  *   is defined as a rate respect to the maximum dimension of the input image (default 4.0).
  * - polygonalApproxAccuracyRate: minimum accuracy during the polygonal approximation process to
- *   determine which contours are squares. (default 0.03)
+ *   determine which contours are squares.
  * - minCornerDistanceRate: minimum distance between corners for detected markers relative to its
  *   perimeter (default 0.05)
  * - minDistanceToBorder: minimum distance of any corner to the image border for detected markers
@@ -109,7 +109,7 @@ enum CornerRefineMethod{
  *   of the two markers (default 0.05).
  * - cornerRefinementMethod: corner refinement method. (CORNER_REFINE_NONE, no refinement.
  *   CORNER_REFINE_SUBPIX, do subpixel refinement. CORNER_REFINE_CONTOUR use contour-Points,
- *   CORNER_REFINE_APRILTAG  use the AprilTag2 approach). (default CORNER_REFINE_NONE)
+ *   CORNER_REFINE_APRILTAG  use the AprilTag2 approach)
  * - cornerRefinementWinSize: window size for the corner refinement process (in pixels) (default 5).
  * - cornerRefinementMaxIterations: maximum number of iterations for stop criteria of the corner
  *   refinement process (default 30).
@@ -117,7 +117,7 @@ enum CornerRefineMethod{
  *   process (default: 0.1)
  * - markerBorderBits: number of bits of the marker border, i.e. marker border width (default 1).
  * - perspectiveRemovePixelPerCell: number of bits (per dimension) for each cell of the marker
- *   when removing the perspective (default 4).
+ *   when removing the perspective (default 8).
  * - perspectiveRemoveIgnoredMarginPerCell: width of the margin of pixels on each cell not
  *   considered for the determination of the cell bit. Represents the rate respect to the total
  *   size of the cell, i.e. perspectiveRemovePixelPerCell (default 0.13)
@@ -129,29 +129,29 @@ enum CornerRefineMethod{
  *   than 128 or not) (default 5.0)
  * - errorCorrectionRate error correction rate respect to the maximun error correction capability
  *   for each dictionary. (default 0.6).
- * - aprilTagMinClusterPixels: reject quads containing too few pixels. (default 5)
- * - aprilTagMaxNmaxima: how many corner candidates to consider when segmenting a group of pixels into a quad. (default 10)
+ * - aprilTagMinClusterPixels: reject quads containing too few pixels.
+ * - aprilTagMaxNmaxima: how many corner candidates to consider when segmenting a group of pixels into a quad.
  * - aprilTagCriticalRad: Reject quads where pairs of edges have angles that are close to straight or close to
- *   180 degrees. Zero means that no quads are rejected. (In radians) (default 10*PI/180)
+ *   180 degrees. Zero means that no quads are rejected. (In radians).
  * - aprilTagMaxLineFitMse:  When fitting lines to the contours, what is the maximum mean squared error
  *   allowed?  This is useful in rejecting contours that are far from being quad shaped; rejecting
- *   these quads "early" saves expensive decoding processing. (default 10.0)
+ *   these quads "early" saves expensive decoding processing.
  * - aprilTagMinWhiteBlackDiff: When we build our model of black & white pixels, we add an extra check that
- *   the white model must be (overall) brighter than the black model.  How much brighter? (in pixel values, [0,255]). (default 5)
- * - aprilTagDeglitch:  should the thresholded image be deglitched? Only useful for very noisy images. (default 0)
+ *   the white model must be (overall) brighter than the black model.  How much brighter? (in pixel values, [0,255]).
+ * - aprilTagDeglitch:  should the thresholded image be deglitched? Only useful for very noisy images
  * - aprilTagQuadDecimate: Detection of quads can be done on a lower-resolution image, improving speed at a
  *   cost of pose accuracy and a slight decrease in detection rate. Decoding the binary payload is still
- *   done at full resolution. (default 0.0)
+ *   done at full resolution.
  * - aprilTagQuadSigma: What Gaussian blur should be applied to the segmented image (used for quad detection?)
- *   Parameter is the standard deviation in pixels.  Very noisy images benefit from non-zero values (e.g. 0.8). (default 0.0)
+ *   Parameter is the standard deviation in pixels.  Very noisy images benefit from non-zero values (e.g. 0.8).
  * - detectInvertedMarker: to check if there is a white marker. In order to generate a "white" marker just
  *   invert a normal marker by using a tilde, ~markerImage. (default false)
  */
 struct CV_EXPORTS_W DetectorParameters {
 
     DetectorParameters();
+
     CV_WRAP static Ptr<DetectorParameters> create();
-    CV_WRAP static bool readDetectorParameters(const FileNode& fn, Ptr<DetectorParameters>& params);
 
     CV_PROP_RW int adaptiveThreshWinSizeMin;
     CV_PROP_RW int adaptiveThreshWinSizeMax;
@@ -281,18 +281,6 @@ class CV_EXPORTS_W Board {
     *
     */
     CV_WRAP static Ptr<Board> create(InputArrayOfArrays objPoints, const Ptr<Dictionary> &dictionary, InputArray ids);
-
-    /**
-    * @brief Set ids vector
-    *
-    * @param ids vector of the identifiers of the markers in the board (should be the same size
-    * as objPoints)
-    *
-    * Recommended way to set ids vector, which will fail if the size of ids does not match size
-     * of objPoints.
-    */
-    CV_WRAP void setIds(InputArray ids);
-
     /// array of object points of all the marker corners in the board
     /// each marker include its 4 corners in CCW order. For M markers, the size is Mx4.
     CV_PROP std::vector< std::vector< Point3f > > objPoints;
@@ -302,7 +290,7 @@ class CV_EXPORTS_W Board {
 
     /// vector of the identifiers of the markers in the board (same size than objPoints)
     /// The identifiers refers to the board dictionary
-    CV_PROP_RW std::vector< int > ids;
+    CV_PROP std::vector< int > ids;
 };
 
 

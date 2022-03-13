@@ -25,16 +25,13 @@ namespace detail
     template<typename T> struct ProtoToParam;
     template<> struct ProtoToParam<cv::GMat>    { using type = cv::Mat; };
     template<> struct ProtoToParam<cv::GScalar> { using type = cv::Scalar; };
-    template<typename U> struct ProtoToParam<cv::GArray<U> >  { using type = std::vector<U>; };
-    template<> struct ProtoToParam<cv::GArray<cv::GMat>>      { using type = std::vector<cv::Mat>; };
-    template<typename U> struct ProtoToParam<cv::GOpaque<U> > { using type = U; };
+    template<typename U> struct ProtoToParam<cv::GArray<U> > { using type = std::vector<U>; };
     template<typename T> using ProtoToParamT = typename ProtoToParam<T>::type;
 
     template<typename T> struct ProtoToMeta;
     template<> struct ProtoToMeta<cv::GMat>     { using type = cv::GMatDesc; };
     template<> struct ProtoToMeta<cv::GScalar>  { using type = cv::GScalarDesc; };
-    template<typename U> struct ProtoToMeta<cv::GArray<U> >  { using type = cv::GArrayDesc; };
-    template<typename U> struct ProtoToMeta<cv::GOpaque<U> > { using type = cv::GOpaqueDesc; };
+    template<typename U> struct ProtoToMeta<cv::GArray<U> > { using type = cv::GArrayDesc; };
     template<typename T> using ProtoToMetaT = typename ProtoToMeta<T>::type;
 
     //workaround for MSVC 19.0 bug
@@ -57,7 +54,7 @@ namespace detail
  *
  *  Refer to the following example. Regular (untyped) code is written this way:
  *
- *  @snippet samples/cpp/tutorial_code/gapi/doc_snippets/api_ref_snippets.cpp Untyped_Example
+ *  @snippet modules/gapi/samples/api_ref_snippets.cpp Untyped_Example
  *
  *  Here:
  *
@@ -71,7 +68,7 @@ namespace detail
  *
  *  Now the same code written with typed API:
  *
- *  @snippet samples/cpp/tutorial_code/gapi/doc_snippets/api_ref_snippets.cpp Typed_Example
+ *  @snippet modules/gapi/samples/api_ref_snippets.cpp Typed_Example
  *
  *  The key difference is:
  *
@@ -134,18 +131,10 @@ public:
     }
 
     void apply(detail::ProtoToParamT<Args>... inArgs,
-               detail::ProtoToParamT<R> &outArg,
-               GCompileArgs &&args)
-    {
-        m_comp.apply(cv::gin(inArgs...), cv::gout(outArg), std::move(args));
-    }
-
-    void apply(detail::ProtoToParamT<Args>... inArgs,
                detail::ProtoToParamT<R> &outArg)
     {
-        apply(inArgs..., outArg, GCompileArgs());
+        m_comp.apply(cv::gin(inArgs...), cv::gout(outArg));
     }
-
 
     GCompiledT compile(detail::ProtoToMetaT<Args>... inDescs)
     {
@@ -215,18 +204,10 @@ public:
     }
 
     void apply(detail::ProtoToParamT<Args>... inArgs,
-               detail::ProtoToParamT<R>&... outArgs,
-               GCompileArgs &&args)
-    {
-        m_comp.apply(cv::gin(inArgs...), cv::gout(outArgs...), std::move(args));
-    }
-
-    void apply(detail::ProtoToParamT<Args>... inArgs,
                detail::ProtoToParamT<R>&... outArgs)
     {
-        apply(inArgs..., outArgs..., GCompileArgs());
+        m_comp.apply(cv::gin(inArgs...), cv::gout(outArgs...));
     }
-
 
     GCompiledT compile(detail::ProtoToMetaT<Args>... inDescs)
     {

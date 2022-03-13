@@ -44,14 +44,11 @@
 
 #include "opencv2/core.hpp"
 
-namespace cv {
-namespace detail {
-inline namespace tracking {
+namespace cv
+{
 
-//! @addtogroup tracking_detail
+//! @addtogroup tracking
 //! @{
-
-inline namespace online_boosting {
 
 //TODO based on the original implementation
 //http://vision.ucsd.edu/~bbabenko/project_miltrack.shtml
@@ -284,10 +281,8 @@ class ClassifierThreshold
   int m_parity;
 };
 
-}  // namespace
-
 //! @}
 
-}}}  // namespace
+} /* namespace cv */
 
 #endif

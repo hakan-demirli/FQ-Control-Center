@@ -37,7 +37,7 @@ The following four models are implemented:
 - lapsrn
  */
 
-class CV_EXPORTS_W DnnSuperResImpl
+class CV_EXPORTS DnnSuperResImpl
 {
 private:
 
@@ -49,18 +49,18 @@ private:
 
     int sc; //scale factor
 
+    void preprocess(InputArray inpImg, OutputArray outpImg);
+
     void reconstruct_YCrCb(InputArray inpImg, InputArray origImg, OutputArray outpImg, int scale);
+
+    void reconstruct_YCrCb(InputArray inpImg, InputArray origImg, OutputArray outpImg);
 
     void preprocess_YCrCb(InputArray inpImg, OutputArray outpImg);
 
 public:
 
-    /** @brief Empty constructor for python
+    /** @brief Empty constructor
      */
-    CV_WRAP static Ptr<DnnSuperResImpl> create();
-
-    // /** @brief Empty constructor
-    //  */
     DnnSuperResImpl();
 
     /** @brief Constructor which immediately sets the desired model
@@ -71,18 +71,18 @@ public:
         - __lapsrn__
     @param scale Integer specifying the upscale factor
      */
-    DnnSuperResImpl(const String& algo, int scale);
+    DnnSuperResImpl(const std::string& algo, int scale);
 
     /** @brief Read the model from the given path
     @param path Path to the model file.
     */
-    CV_WRAP void readModel(const String& path);
+    void readModel(const std::string& path);
 
     /** @brief Read the model from the given path
     @param weights Path to the model weights file.
     @param definition Path to the model definition file.
     */
-    void readModel(const String& weights, const String& definition);
+    void readModel(const std::string& weights, const std::string& definition);
 
     /** @brief Set desired model
     @param algo String containing one of the desired models:
@@ -92,21 +92,13 @@ public:
         - __lapsrn__
     @param scale Integer specifying the upscale factor
      */
-    CV_WRAP void setModel(const String& algo, int scale);
-
-    /** @brief Set computation backend
-    */
-    CV_WRAP void setPreferableBackend(int backendId);
-
-    /** @brief Set computation target
-    */
-    CV_WRAP void setPreferableTarget(int targetId);
+    void setModel(const std::string& algo, int scale);
 
     /** @brief Upsample via neural network
     @param img Image to upscale
     @param result Destination upscaled image
      */
-    CV_WRAP void upsample(InputArray img, OutputArray result);
+    void upsample(InputArray img, OutputArray result);
 
     /** @brief Upsample via neural network of multiple outputs
     @param img Image to upscale
@@ -114,17 +106,17 @@ public:
     @param scale_factors Scaling factors of the output nodes
     @param node_names Names of the output nodes in the neural network
     */
-    CV_WRAP void upsampleMultioutput(InputArray img, std::vector<Mat> &imgs_new, const std::vector<int>& scale_factors, const std::vector<String>& node_names);
+    void upsampleMultioutput(InputArray img, std::vector<Mat> &imgs_new, const std::vector<int>& scale_factors, const std::vector<String>& node_names);
 
     /** @brief Returns the scale factor of the model:
     @return Current scale factor.
     */
-    CV_WRAP int getScale();
+    int getScale();
 
     /** @brief Returns the scale factor of the model:
     @return Current algorithm.
     */
-    CV_WRAP String getAlgorithm();
+    std::string getAlgorithm();
 };
 
 //! @} dnn_superres

@@ -45,14 +45,10 @@
 #include "opencv2/core.hpp"
 #include <limits>
 
-namespace cv {
-namespace detail {
-inline namespace tracking {
-
-//! @addtogroup tracking_detail
-//! @{
-
-inline namespace kalman_filters {
+namespace cv
+{
+namespace tracking
+{
 
 /** @brief The interface for Unscented Kalman filter and Augmented Unscented Kalman filter.
 */
@@ -226,10 +222,7 @@ CV_EXPORTS Ptr<UnscentedKalmanFilter> createUnscentedKalmanFilter( const Unscent
 */
 CV_EXPORTS Ptr<UnscentedKalmanFilter> createAugmentedUnscentedKalmanFilter( const AugmentedUnscentedKalmanFilterParams &params );
 
-}  // namespace
-
-//! @}
-
-}}}  // namespace
+} // tracking
+} // cv
 
 #endif

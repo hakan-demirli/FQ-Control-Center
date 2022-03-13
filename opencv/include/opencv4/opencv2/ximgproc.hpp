@@ -42,8 +42,6 @@
 #include "ximgproc/sparse_match_interpolator.hpp"
 #include "ximgproc/structured_edge_detection.hpp"
 #include "ximgproc/edgeboxes.hpp"
-#include "ximgproc/edge_drawing.hpp"
-#include "ximgproc/scansegment.hpp"
 #include "ximgproc/seeds.hpp"
 #include "ximgproc/segmentation.hpp"
 #include "ximgproc/fast_hough_transform.hpp"
@@ -61,7 +59,6 @@
 #include "ximgproc/run_length_morphology.hpp"
 #include "ximgproc/edgepreserving_filter.hpp"
 #include "ximgproc/color_match.hpp"
-#include "ximgproc/radon_transform.hpp"
 
 
 /** @defgroup ximgproc Extended Image Processing
@@ -80,19 +77,6 @@ i.e. algorithms which somehow takes into account pixel affinities in natural ima
     @defgroup ximgproc_segmentation Image segmentation
 
     @defgroup ximgproc_fast_line_detector Fast line detector
-
-    @defgroup ximgproc_edge_drawing EdgeDrawing
-
-EDGE DRAWING LIBRARY FOR GEOMETRIC FEATURE EXTRACTION AND VALIDATION
-
-Edge Drawing (ED) algorithm is an proactive approach on edge detection problem. In contrast to many other existing edge detection algorithms which follow a subtractive
-approach (i.e. after applying gradient filters onto an image eliminating pixels w.r.t. several rules, e.g. non-maximal suppression and hysteresis in Canny), ED algorithm
-works via an additive strategy, i.e. it picks edge pixels one by one, hence the name Edge Drawing. Then we process those random shaped edge segments to extract higher level
-edge features, i.e. lines, circles, ellipses, etc. The popular method of extraction edge pixels from the thresholded gradient magnitudes is non-maximal supression that tests
-every pixel whether it has the maximum gradient response along its gradient direction and eliminates if it does not. However, this method does not check status of the
-neighboring pixels, and therefore might result low quality (in terms of edge continuity, smoothness, thinness, localization) edge segments. Instead of non-maximal supression,
-ED points a set of edge pixels and join them by maximizing the total gradient response of edge segments. Therefore it can extract high quality edge segments without need for
-an additional hysteresis step.
 
     @defgroup ximgproc_fourier Fourier descriptors
 
@@ -169,14 +153,12 @@ normally a value between 0 and 1 that is multiplied with the standard deviation 
 the mean.
 @param binarizationMethod Binarization method to use. By default, Niblack's technique is used.
 Other techniques can be specified, see cv::ximgproc::LocalBinarizationMethods.
-@param r The user-adjustable parameter used by Sauvola's technique. This is the dynamic range
-of standard deviation.
+
 @sa  threshold, adaptiveThreshold
  */
 CV_EXPORTS_W void niBlackThreshold( InputArray _src, OutputArray _dst,
                                     double maxValue, int type,
-                                    int blockSize, double k, int binarizationMethod = BINARIZATION_NIBLACK,
-                                    double r = 128 );
+                                    int blockSize, double k, int binarizationMethod = BINARIZATION_NIBLACK );
 
 /** @brief Applies a binary blob thinning operation, to achieve a skeletization of the input image.
 
@@ -188,7 +170,7 @@ The function transforms a binary blob image into a skeletized form using the tec
  */
 CV_EXPORTS_W void thinning( InputArray src, OutputArray dst, int thinningType = THINNING_ZHANGSUEN);
 
-/** @brief Performs anisotropic diffusion on an image.
+/** @brief Performs anisotropic diffusian on an image.
 
  The function applies Perona-Malik anisotropic diffusion to an image. This is the solution to the partial differential equation:
 

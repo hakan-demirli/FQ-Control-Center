@@ -160,7 +160,7 @@ and MPI-Sintel formats. Note that the resulting disparity map is scaled by 16.
 
 @result returns zero if successfully read the ground truth
  */
-CV_EXPORTS_W
+CV_EXPORTS
 int readGT(String src_path,OutputArray dst);
 
 /** @brief Function for computing mean square error for disparity maps
@@ -173,7 +173,7 @@ int readGT(String src_path,OutputArray dst);
 
 @result returns mean square error between GT and src
  */
-CV_EXPORTS_W
+CV_EXPORTS
 double computeMSE(InputArray GT, InputArray src, Rect ROI);
 
 /** @brief Function for computing the percent of "bad" pixels in the disparity map
@@ -189,7 +189,7 @@ double computeMSE(InputArray GT, InputArray src, Rect ROI);
 
 @result returns mean square error between GT and src
  */
-CV_EXPORTS_W
+CV_EXPORTS
 double computeBadPixelPercent(InputArray GT, InputArray src, Rect ROI, int thresh=24/*1.5 pixels*/);
 
 /** @brief Function for creating a disparity map visualization (clamped CV_8U image)
@@ -200,7 +200,7 @@ double computeBadPixelPercent(InputArray GT, InputArray src, Rect ROI, int thres
 
 @param scale disparity map will be multiplied by this value for visualization
  */
-CV_EXPORTS_W
+CV_EXPORTS
 void getDisparityVis(InputArray src,OutputArray dst,double scale=1.0);
 
 //! @}

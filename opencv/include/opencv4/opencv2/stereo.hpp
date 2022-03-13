@@ -45,7 +45,10 @@
 #define __OPENCV_STEREO_HPP__
 
 #include "opencv2/core.hpp"
+#include "opencv2/features2d.hpp"
+#include "opencv2/core/affine.hpp"
 #include "opencv2/stereo/descriptor.hpp"
+#include "opencv2/stereo/matching.hpp"
 #include <opencv2/stereo/quasi_dense_stereo.hpp>
 
 /**
@@ -59,6 +62,8 @@ namespace cv
     {
         //! @addtogroup stereo
         //! @{
+        //		 void correctMatches( InputArray F, InputArray points1, InputArray points2,
+        //	OutputArray newPoints1, OutputArray newPoints2 );
         /** @brief Filters off small noise blobs (speckles) in the disparity map
         @param img The input 16-bit signed disparity image
         @param newVal The disparity value used to paint-off the speckles

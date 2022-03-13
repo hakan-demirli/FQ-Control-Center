@@ -474,34 +474,40 @@ public:
 
     @param beam_size Size of the beam in Beam Search algorithm.
      */
-    static CV_WRAP
-    Ptr<OCRBeamSearchDecoder> create(const Ptr<OCRBeamSearchDecoder::ClassifierCallback> classifier,// The character classifier with built in feature extractor
+    static Ptr<OCRBeamSearchDecoder> create(const Ptr<OCRBeamSearchDecoder::ClassifierCallback> classifier,// The character classifier with built in feature extractor
                                      const std::string& vocabulary,                    // The language vocabulary (chars when ASCII English text)
                                                                                        //     size() must be equal to the number of classes
                                      InputArray transition_probabilities_table,        // Table with transition probabilities between character pairs
                                                                                        //     cols == rows == vocabulary.size()
                                      InputArray emission_probabilities_table,          // Table with observation emission probabilities
                                                                                        //     cols == rows == vocabulary.size()
-                                     text::decoder_mode mode = OCR_DECODER_VITERBI,    // HMM Decoding algorithm (only Viterbi for the moment)
-                                     int beam_size = 500                               // Size of the beam in Beam Search algorithm
-    );
+                                     decoder_mode mode = OCR_DECODER_VITERBI,          // HMM Decoding algorithm (only Viterbi for the moment)
+                                     int beam_size = 500);                              // Size of the beam in Beam Search algorithm
+
+    CV_WRAP static Ptr<OCRBeamSearchDecoder> create(const Ptr<OCRBeamSearchDecoder::ClassifierCallback> classifier, // The character classifier with built in feature extractor
+                                     const String& vocabulary,                    // The language vocabulary (chars when ASCII English text)
+                                                                                       //     size() must be equal to the number of classes
+                                     InputArray transition_probabilities_table,        // Table with transition probabilities between character pairs
+                                                                                       //     cols == rows == vocabulary.size()
+                                     InputArray emission_probabilities_table,          // Table with observation emission probabilities
+                                                                                       //     cols == rows == vocabulary.size()
+                                     int mode = OCR_DECODER_VITERBI,          // HMM Decoding algorithm (only Viterbi for the moment)
+                                     int beam_size = 500);                              // Size of the beam in Beam Search algorithm
 
     /** @brief Creates an instance of the OCRBeamSearchDecoder class. Initializes HMMDecoder from the specified path.
 
     @overload
 
      */
-    static //CV_WRAP FIXIT bug in handling of Java overloads
-    Ptr<OCRBeamSearchDecoder> create(const String& filename,                           // The character classifier file
-                                     const String& vocabulary,                         // The language vocabulary (chars when ASCII English text)
+    CV_WRAP static Ptr<OCRBeamSearchDecoder> create(const String& filename, // The character classifier file
+                                     const String& vocabulary,                    // The language vocabulary (chars when ASCII English text)
                                                                                        //     size() must be equal to the number of classes
                                      InputArray transition_probabilities_table,        // Table with transition probabilities between character pairs
                                                                                        //     cols == rows == vocabulary.size()
                                      InputArray emission_probabilities_table,          // Table with observation emission probabilities
                                                                                        //     cols == rows == vocabulary.size()
-                                     text::decoder_mode mode = OCR_DECODER_VITERBI,    // HMM Decoding algorithm (only Viterbi for the moment)
-                                     int beam_size = 500                               // Size of the beam in Beam Search algorithm
-    );
+                                     int mode = OCR_DECODER_VITERBI,          // HMM Decoding algorithm (only Viterbi for the moment)
+                                     int beam_size = 500);
 protected:
 
     Ptr<OCRBeamSearchDecoder::ClassifierCallback> classifier;

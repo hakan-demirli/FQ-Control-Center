@@ -53,7 +53,6 @@ linux-arm-gnueabihf-g++: {
 
     INCLUDEPATH += $$PWD/opencv/include/opencv4
     LIBS += -L$$PWD/opencv/lib \
-    -ltbb\
     -lopencv_stitching\
     -lopencv_superres\
     -lopencv_videostab\

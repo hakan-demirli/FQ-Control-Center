@@ -11,9 +11,7 @@
 #include <opencv2/gapi/garg.hpp>      // GArg
 #include <opencv2/gapi/gmat.hpp>      // GMat
 #include <opencv2/gapi/gscalar.hpp>   // GScalar
-#include <opencv2/gapi/gframe.hpp>    // GFrame
 #include <opencv2/gapi/garray.hpp>    // GArray<T>
-#include <opencv2/gapi/gopaque.hpp>   // GOpaque<T>
 
 namespace cv {
 
@@ -42,35 +40,23 @@ public:
     GMat    yield      (int output = 0);
     GMatP   yieldP     (int output = 0);
     GScalar yieldScalar(int output = 0);
-    GFrame  yieldFrame (int output = 0);
 
     template<class T> GArray<T> yieldArray(int output = 0)
     {
         return GArray<T>(yieldArray(output));
     }
 
-    template<class T> GOpaque<T> yieldOpaque(int output = 0)
-    {
-        return GOpaque<T>(yieldOpaque(output));
-    }
-
     // Internal use only
     Priv& priv();
     const Priv& priv() const;
 
-    // GKernel and params can be modified, it's needed for infer<Generic>,
-    // because information about output shapes doesn't exist in compile time
-    GKernel& kernel();
-    cv::util::any& params();
-
-    void setArgs(std::vector<GArg> &&args);
-
 protected:
     std::shared_ptr<Priv> m_priv;
 
-    // Public versions return a typed array or opaque, those are implementation details
+    void setArgs(std::vector<GArg> &&args);
+
+    // Public version returns a typed array, this one is implementation detail
     detail::GArrayU yieldArray(int output = 0);
-    detail::GOpaqueU yieldOpaque(int output = 0);
 };
 
 } // namespace cv

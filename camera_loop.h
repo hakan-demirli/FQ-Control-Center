@@ -1,6 +1,8 @@
 #ifndef CAMERA_LOOP_H
 #define CAMERA_LOOP_H
 
+#define X86_LINUX
+
 #include <iostream>
 #include <fstream>
 
@@ -10,6 +12,11 @@
 #include <opencv2/tracking.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
+
+#ifndef X86_LINUX
+            #include <opencv2/tracking/tracking_legacy.hpp>
+#endif
+//
 
 #include <QObject>
 #include <QImage>

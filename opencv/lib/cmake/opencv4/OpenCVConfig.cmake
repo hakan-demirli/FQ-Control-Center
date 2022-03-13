@@ -25,10 +25,10 @@
 #      - OpenCV_INCLUDE_DIRS             : The OpenCV include directories.
 #      - OpenCV_COMPUTE_CAPABILITIES     : The version of compute capability.
 #      - OpenCV_ANDROID_NATIVE_API_LEVEL : Minimum required level of Android API.
-#      - OpenCV_VERSION                  : The version of this OpenCV build: "4.5.5"
+#      - OpenCV_VERSION                  : The version of this OpenCV build: "4.2.0"
 #      - OpenCV_VERSION_MAJOR            : Major version part of OpenCV_VERSION: "4"
-#      - OpenCV_VERSION_MINOR            : Minor version part of OpenCV_VERSION: "5"
-#      - OpenCV_VERSION_PATCH            : Patch version part of OpenCV_VERSION: "5"
+#      - OpenCV_VERSION_MINOR            : Minor version part of OpenCV_VERSION: "2"
+#      - OpenCV_VERSION_PATCH            : Patch version part of OpenCV_VERSION: "0"
 #      - OpenCV_VERSION_STATUS           : Development status of this build: ""
 #
 #    Advanced variables:
@@ -45,10 +45,10 @@
 # ======================================================
 #  Version variables:
 # ======================================================
-SET(OpenCV_VERSION 4.5.5)
+SET(OpenCV_VERSION 4.2.0)
 SET(OpenCV_VERSION_MAJOR  4)
-SET(OpenCV_VERSION_MINOR  5)
-SET(OpenCV_VERSION_PATCH  5)
+SET(OpenCV_VERSION_MINOR  2)
+SET(OpenCV_VERSION_PATCH  0)
 SET(OpenCV_VERSION_TWEAK  0)
 SET(OpenCV_VERSION_STATUS "")
 
@@ -105,7 +105,7 @@ set(OpenCV_SHARED ON)
 # Enables mangled install paths, that help with side by side installs
 set(OpenCV_USE_MANGLED_PATHS FALSE)
 
-set(OpenCV_LIB_COMPONENTS opencv_calib3d;opencv_core;opencv_dnn;opencv_features2d;opencv_flann;opencv_gapi;opencv_highgui;opencv_imgcodecs;opencv_imgproc;opencv_ml;opencv_objdetect;opencv_photo;opencv_stitching;opencv_video;opencv_videoio;opencv_aruco;opencv_barcode;opencv_bgsegm;opencv_bioinspired;opencv_ccalib;opencv_datasets;opencv_dnn_objdetect;opencv_dnn_superres;opencv_dpm;opencv_face;opencv_fuzzy;opencv_hfs;opencv_img_hash;opencv_intensity_transform;opencv_line_descriptor;opencv_mcc;opencv_optflow;opencv_phase_unwrapping;opencv_plot;opencv_quality;opencv_rapid;opencv_reg;opencv_rgbd;opencv_saliency;opencv_shape;opencv_stereo;opencv_structured_light;opencv_superres;opencv_surface_matching;opencv_text;opencv_tracking;opencv_videostab;opencv_wechat_qrcode;opencv_xfeatures2d;opencv_ximgproc;opencv_xobjdetect;opencv_xphoto)
+set(OpenCV_LIB_COMPONENTS opencv_calib3d;opencv_core;opencv_dnn;opencv_features2d;opencv_flann;opencv_gapi;opencv_highgui;opencv_imgcodecs;opencv_imgproc;opencv_ml;opencv_objdetect;opencv_photo;opencv_stitching;opencv_video;opencv_videoio;opencv_aruco;opencv_bgsegm;opencv_bioinspired;opencv_ccalib;opencv_datasets;opencv_dnn_objdetect;opencv_dnn_superres;opencv_dpm;opencv_face;opencv_fuzzy;opencv_hfs;opencv_img_hash;opencv_line_descriptor;opencv_optflow;opencv_phase_unwrapping;opencv_plot;opencv_quality;opencv_reg;opencv_rgbd;opencv_saliency;opencv_shape;opencv_stereo;opencv_structured_light;opencv_superres;opencv_surface_matching;opencv_text;opencv_tracking;opencv_videostab;opencv_xfeatures2d;opencv_ximgproc;opencv_xobjdetect;opencv_xphoto)
 set(__OpenCV_INCLUDE_DIRS "${OpenCV_INSTALL_PATH}/include/opencv4")
 
 set(OpenCV_INCLUDE_DIRS "")
@@ -272,32 +272,6 @@ endif()
 # Compatibility stuff
 # ==============================================================
 set(OpenCV_LIBRARIES ${OpenCV_LIBS})
-
-# Require C++11 features for OpenCV modules
-if(CMAKE_VERSION VERSION_LESS "3.1")
-  if(NOT OpenCV_FIND_QUIETLY AND NOT OPENCV_HIDE_WARNING_COMPILE_FEATURES)
-    message(STATUS "OpenCV: CMake version is low (${CMAKE_VERSION}, required 3.1+). Can't enable C++11 features: https://github.com/opencv/opencv/issues/13000")
-  endif()
-else()
-  set(__target opencv_core)
-  if(TARGET opencv_world)
-    set(__target opencv_world)
-  endif()
-  set(__compile_features cxx_std_11)  # CMake 3.8+
-  if(DEFINED OPENCV_COMPILE_FEATURES)
-    set(__compile_features ${OPENCV_COMPILE_FEATURES})  # custom override
-  elseif(CMAKE_VERSION VERSION_LESS "3.8")
-    set(__compile_features cxx_auto_type cxx_rvalue_references cxx_lambdas)
-  endif()
-  if(__compile_features)
-    # Simulate exported result of target_compile_features(opencv_core PUBLIC ...)
-    set_target_properties(${__target} PROPERTIES
-        INTERFACE_COMPILE_FEATURES "${__compile_features}"
-    )
-  endif()
-  unset(__target)
-  unset(__compile_features)
-endif()
 
 #
 # Some macros for samples

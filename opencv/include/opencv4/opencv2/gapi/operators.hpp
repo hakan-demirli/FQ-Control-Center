@@ -11,8 +11,6 @@
 #include <opencv2/gapi/gmat.hpp>
 #include <opencv2/gapi/gscalar.hpp>
 
-namespace cv
-{
 GAPI_EXPORTS cv::GMat operator+(const cv::GMat&    lhs, const cv::GMat&    rhs);
 
 GAPI_EXPORTS cv::GMat operator+(const cv::GMat&    lhs, const cv::GScalar& rhs);
@@ -65,6 +63,7 @@ GAPI_EXPORTS cv::GMat operator<(const cv::GScalar&    lhs, const cv::GMat& rhs);
 GAPI_EXPORTS cv::GMat operator<=(const cv::GScalar&   lhs, const cv::GMat& rhs);
 GAPI_EXPORTS cv::GMat operator==(const cv::GScalar&   lhs, const cv::GMat& rhs);
 GAPI_EXPORTS cv::GMat operator!=(const cv::GScalar&   lhs, const cv::GMat& rhs);
-} // cv
+
+
 
 #endif // OPENCV_GAPI_OPERATORS_HPP

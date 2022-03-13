@@ -53,14 +53,11 @@
  * TODO Changed CvHaarEvaluator based on ADABOOSTING implementation (Grabner et al.)
  */
 
-namespace cv {
-namespace detail {
-inline namespace tracking {
+namespace cv
+{
 
-//! @addtogroup tracking_detail
+//! @addtogroup tracking
 //! @{
-
-inline namespace contrib_feature {
 
 #define FEATURES "features"
 
@@ -412,10 +409,8 @@ inline uchar CvLBPEvaluator::Feature::calc( const Mat &_sum, size_t y ) const
       ( psum[p[4]] - psum[p[5]] - psum[p[8]] + psum[p[9]] >= cval ? 1 : 0 ) );     // 3
 }
 
-}  // namespace
-
 //! @}
 
-}}}  // namespace cv
+} /* namespace cv */
 
 #endif

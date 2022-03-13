@@ -16,7 +16,7 @@ namespace gapi {
 namespace core {
 namespace cpu {
 
-GAPI_EXPORTS_W cv::gapi::GKernelPackage kernels();
+GAPI_EXPORTS GKernelPackage kernels();
 
 } // namespace cpu
 } // namespace core

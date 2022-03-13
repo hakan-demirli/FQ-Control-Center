@@ -3,7 +3,7 @@ Charts were added in Qt 5.7 to open source version, and QtCharts from 5.12 defin
 In 5.5, they were still a commercial add-on. So you need to get in touch with Qt Company to get the 5.5 source code for QtCharts.
 [SOURCE](https://forum.qt.io/topic/104170/qtconfig-is-not-a-recognized-test-function/5)
 
-# How to Deplot
+# How to Deploy
 - Copy OpenCV shared libraries into a folder. In this case its the plugins folder. And export it.
     - ```export LD_LIBRARY_PATH=/root/nn/plugins``` 
 - Select display.
@@ -21,3 +21,6 @@ TrackerTLD -> like KCF but a bit buggy?
 TrackerGOTURN -> Deep learning based tracker. Buggy as hell.
 TrackerMedianFlow -> Fast but there are some false positives
 TrackerCSRT -> Accurate but slow
+
+OpenCV 4.5+ removed tracker algorithms.
+downgrading to 4.2 for the arm

@@ -15,11 +15,6 @@ namespace cv
 {
 namespace gapi
 {
-
-/**
- * @brief This namespace contains G-API PlaidML backend functions,
- * structures, and symbols.
- */
 namespace plaidml
 {
 

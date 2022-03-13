@@ -58,7 +58,11 @@ inline void CameraLoop::create_bounding_boxes_confidences_and_trackers(){
             int bboxHeight = int(results.at<float>(i, 6) * image.rows - bboxY);
             rois.push_back(cv::Rect2d(bboxX,bboxY,bboxWidth,bboxHeight));
             confidences.push_back(confidence);
+#ifdef X86_LINUX
             bunch_of_trackers.push_back(cv::TrackerMOSSE::create());
+#else
+            bunch_of_trackers.push_back(cv::legacy::TrackerMOSSE::create());
+#endif
             bunch_of_trackers.back()->init(image,rois.back());
             tracker_total_missed_frames.push_back(0);
         }
@@ -104,8 +108,15 @@ void CameraLoop::main_loop(void) {
             }
         }else if(toggle_tracking && !rois.empty()){
             for(int i = rois.size()-1; i >= 0; --i) {
-                if(bunch_of_trackers[i]->update(image,rois[i]))
-                    cv::rectangle(image, rois[i], cv::Scalar(0,0,255), 2);
+#ifdef X86_LINUX
+            cv::Rect2d t_roi = rois[i];
+#else
+            cv::Rect t_roi = rois[i];
+#endif
+
+                bool alive = bunch_of_trackers[i]->update(image,t_roi);
+                if(alive)
+                    cv::rectangle(image, t_roi, cv::Scalar(0,0,255), 2);
                 else if(tracker_total_missed_frames[i] > cfg["tracker_max_missed_frames"]){
                     bunch_of_trackers.erase(bunch_of_trackers.begin() + i);
                     confidences.erase(confidences.begin() + i);
