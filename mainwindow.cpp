@@ -12,11 +12,42 @@ MainWindow::MainWindow(QWidget *parent):
     update_ui_settings();
     ui->video_output_label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
-    camera = new CameraLoop(settings->camera_cfg, nullptr);
-    connect(camera, SIGNAL(sendFrame(cv::Mat)), this, SLOT(receiveFrame(cv::Mat)));
-    connect(camera, SIGNAL(sendStats(long)), this, SLOT(receiveCameraStats(long)));
+    initialize_camera();
 
-    camera->run();
+    x=(double*)calloc(N1, sizeof(double));
+    y1=(double*)calloc(N1, sizeof(double));
+    y2=(double*)calloc(N1, sizeof(double));
+    y3=(double*)calloc(N1, sizeof(double));
+
+    //auto image=(double*)calloc(IMAGE_N*IMAGE_N, sizeof(double));
+
+    xx.clear();
+    yy.clear();
+    for (int i=0; i<N1; i++) {
+        x[i]=(i+1)*XMAX/(double)N1;
+        xx.push_back(x[i]);
+        yy.push_back(sin(0.5*M_PI*x[i])+2.0);
+        std::cout<<xx[i]<<", "<<yy[i]<<std::endl;
+        y1[i]=i*XMAX/(double)N1;
+        y2[i]=log(x[i]);
+        y3[i]=log10(x[i]);
+    }
+
+    JKQTFPVBarPlot* p1=new JKQTFPVBarPlot(ui->gas_sensor_1_plotter, N1, x, y1);
+    JKQTFPLinePlot* p2=new JKQTFPLinePlot(ui->gas_sensor_1_plotter, N1, x, y2, QColor("blue"));
+    JKQTFPLinePlot* p3=new JKQTFPLinePlot(ui->gas_sensor_1_plotter, N1, x, y3, QColor("darkgreen"));
+    JKQTFPLinePlot* pv=new JKQTFPLinePlot(ui->gas_sensor_1_plotter, &xx, &yy, QColor("black"), Qt::SolidLine, 3);
+
+    //JKQTFPimagePlot* p5=new JKQTFPimagePlot(ui->gas_sensor_1_plotter, image, JKQTFP_double, IMAGE_N, IMAGE_N, 0, 10, 0, 10, JKQTFP_GRAY);
+
+    ///JKQTFPXRangePlot* p6 = new JKQTFPXRangePlot(ui->gas_sensor_1_plotter, 2.25, 7.75);
+    //p6->setFillStyle(Qt::SolidPattern);
+
+    ui->gas_sensor_1_plotter->addPlot(p1);
+    ui->gas_sensor_1_plotter->addPlot(p2);
+    ui->gas_sensor_1_plotter->addPlot(p3);
+    //ui->gas_sensor_1_plotter->addPlot(p5);
+    ui->gas_sensor_1_plotter->addPlot(pv);
 }
 
 MainWindow::~MainWindow()
@@ -24,6 +55,12 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::initialize_camera(){
+    camera = new CameraLoop(settings->camera_cfg, nullptr);
+    connect(camera, SIGNAL(sendFrame(cv::Mat)), this, SLOT(receiveFrame(cv::Mat)));
+    connect(camera, SIGNAL(sendStats(long)), this, SLOT(receiveCameraStats(long)));
+    camera->run();
+}
 void MainWindow::update_ui_settings()
 {
     ui->camera_run_button->setText(QString::fromStdString(settings->ui_cfg["run"]));
