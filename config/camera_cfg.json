@@ -2,10 +2,13 @@
   "height": 240,
   "width": 320,
   "source": 0,
-  "min_confidence_score": 0.65,
+  "min_confidence_score": 0.60,
   "all_models_path": "./opencv_dnn_model",
   "model_folder": "ssd_mobilenet_v1_0.75_depth_300x300_coco14_sync_2018_07_03",
   "label_list_file": "label_list_coco.txt",
   "model_file": "frozen_inference_graph.pb",
-  "model_config_file": "graph.pbtxt"
+  "model_config_file": "graph.pbtxt",
+  "nmsThreshold": 0.2,
+  "object_detection_wait_frames": 20,
+  "tracker_max_missed_frames": 3
 }

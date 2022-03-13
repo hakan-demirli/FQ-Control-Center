@@ -31,6 +31,7 @@ public:
     ~CameraLoop();
     void run(void);
 
+    json cfg;
     bool toggle_stream;
     bool toggle_video;
     bool toggle_stats;
@@ -38,20 +39,30 @@ public:
     bool toggle_tracking;
     bool toggle_bounding_boxes;
 
-    json cfg;
-
 private:
+    void detect_objects(void);
+    void create_bounding_boxes_confidences_and_trackers(void);
+    void remove_duplicate_bounding_boxes_confidences_and_trackers(void);
+
     QThread m_thread;
-    const int t_delta_detection = 500000; //micro seconds
     const std::string all_models_path;
     const std::string model_folder;
     const std::string model_file;
     const std::string model_config_file;
     Webcam& usb_webcam;
 
-    fps cro;
     cv::Scalar mean_blob = cv::Scalar(127.5, 127.5, 127.5);
     cv::Mat image;
+    cv::Mat results;
+
+    QVector<cv::Ptr<cv::Tracker>> bunch_of_trackers;
+    std::vector<unsigned int> tracker_total_missed_frames;
+    std::vector<cv::Rect2d> rois;
+    std::vector<float> confidences;
+    unsigned int total_frames;
+    unsigned int tracker_last_index;
+    std::vector<int> indices;
+    fps cro_all;
 
 public slots:
     void main_loop(void);
