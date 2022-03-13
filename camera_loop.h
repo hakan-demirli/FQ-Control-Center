@@ -20,6 +20,8 @@
 #include "webcam.h"
 #include "json.hpp"
 
+# include <QDebug>
+
 using json = nlohmann::json;
 
 class CameraLoop: public QObject {
@@ -40,7 +42,7 @@ public:
 
 private:
     QThread m_thread;
-    int value;
+    const int t_delta_detection = 500000; //micro seconds
     const std::string all_models_path;
     const std::string model_folder;
     const std::string model_file;

@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget *parent):
     ui(new Ui::MainWindow),
     settings(new Settings)
 {
+
     ui->setupUi(this);
     increase_tab_width();
     update_ui_settings();
@@ -143,10 +144,16 @@ void MainWindow::on_bounding_boxes_run_button_clicked()
 {
     if (ui->bounding_boxes_run_button->text() == "||" && ui->object_detection_run_button->text() == "||"){
         ui->bounding_boxes_run_button->setText(">");
+        ui->tracking_run_button->setText(">");
         camera->toggle_bounding_boxes = false;
+        camera->toggle_tracking = false;
+
+        ui->tracking_run_button->setEnabled(false);
     }else{
         ui->bounding_boxes_run_button->setText("||");
         camera->toggle_bounding_boxes = true;
+
+        ui->tracking_run_button->setEnabled(true);
     }
 }
 

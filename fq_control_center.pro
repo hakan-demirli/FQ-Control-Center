@@ -152,3 +152,10 @@ QMAKE_CXXFLAGS+= -std=gnu++14
 
 QMAKE_CXXFLAGS_RELEASE += -Ofast
 
+DISTFILES += \
+    config/bench_records.txt \
+    config/camera_cfg.json \
+    config/compile_commands.json \
+    config/info.json \
+    config/ui_cfg.json
+
