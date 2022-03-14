@@ -24,3 +24,16 @@ TrackerCSRT -> Accurate but slow
 
 OpenCV 4.5+ removed tracker algorithms.
 downgrading to 4.2 for the arm
+
+CAMERA [TODO]
+
+- Try HOG detection.
+    ``` hog = cv2.HOGDescriptor()
+        hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
+    ```
+- Implement OpenCL accelerator
+- More camera paramater for camera_cfg
+    - Tracker algorithm
+    - Video file as a source
+# -------------------------------------------------
+
