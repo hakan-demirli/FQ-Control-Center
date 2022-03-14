@@ -86,48 +86,53 @@ void CameraLoop::main_loop(void) {
     tracker_last_index = confidences.size();
 
     while (toggle_stream) {
-        cro_all.tic();
-        image = usb_webcam.read();
+        try {
+            cro_all.tic();
+            image = usb_webcam.read();
+            if (image.empty())
+                continue;
+            if (toggle_object_detection && (total_frames >= cfg["object_detection_wait_frames"])){
+                total_frames = 0;
+                indices.clear();
+                detect_objects();
+                create_bounding_boxes_confidences_and_trackers();
+                if(!rois.empty())
+                    remove_duplicate_bounding_boxes_confidences_and_trackers();
 
-        if (toggle_object_detection && (total_frames >= cfg["object_detection_wait_frames"])){
-            total_frames = 0;
-            indices.clear();
-            detect_objects();
-            create_bounding_boxes_confidences_and_trackers();
-            if(!rois.empty())
-                remove_duplicate_bounding_boxes_confidences_and_trackers();
+                for(const auto& roi : rois){
+                    if(toggle_bounding_boxes){
+                        cv::rectangle(image, roi, cv::Scalar(0,0,255), 2);
+                    }
+                }
+            }else if(toggle_tracking && !rois.empty()){
+                for(int i = rois.size()-1; i >= 0; --i) {
+                    bool alive = bunch_of_trackers[i]->update(image,rois[i]);
+                    if(alive)
+                        cv::rectangle(image, rois[i], cv::Scalar(0,0,255), 2);
+                    else if(tracker_total_missed_frames[i] > cfg["tracker_max_missed_frames"]){
+                        bunch_of_trackers.erase(bunch_of_trackers.begin() + i);
+                        confidences.erase(confidences.begin() + i);
+                        tracker_total_missed_frames.erase(tracker_total_missed_frames.begin() + i);
+                        rois.erase(rois.begin() + i);
+                    }else{
+                        tracker_total_missed_frames[i] += 1;
+                    }
+                }
+            }else{
+                //Emmitting frames non-stop suffocates the GUI. Hence, the delay.
+                QThread::msleep(5);
+            }
+            total_frames += 1;
+            //cv::putText(image, "us: " + std::to_string(cro.toc()), cv::Point(50, 50), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(0, 255, 0), 2, false);
+            //cv::imshow("image", image);
 
-            for(const auto& roi : rois){
-                if(toggle_bounding_boxes){
-                    cv::rectangle(image, roi, cv::Scalar(0,0,255), 2);
-                }
-            }
-        }else if(toggle_tracking && !rois.empty()){
-            for(int i = rois.size()-1; i >= 0; --i) {
-                cv::Rect2d t_roi = rois[i];
-                bool alive = bunch_of_trackers[i]->update(image,t_roi);
-                if(alive)
-                    cv::rectangle(image, t_roi, cv::Scalar(0,0,255), 2);
-                else if(tracker_total_missed_frames[i] > cfg["tracker_max_missed_frames"]){
-                    bunch_of_trackers.erase(bunch_of_trackers.begin() + i);
-                    confidences.erase(confidences.begin() + i);
-                    tracker_total_missed_frames.erase(tracker_total_missed_frames.begin() + i);
-                    rois.erase(rois.begin() + i);
-                }else{
-                    tracker_total_missed_frames[i] += 1;
-                }
-            }
-        }else{
-            //Emmitting frames non-stop suffocates the GUI. Hence, the delay.
-            QThread::msleep(10);
+            if (toggle_video)
+                emit sendFrame(image);
+            if (toggle_stats)
+                emit sendStats(cro_all.toc());
+        }  catch (int) {
+            qDebug() << "ignoring an exception";
         }
-        total_frames += 1;
-        //cv::putText(image, "us: " + std::to_string(cro.toc()), cv::Point(50, 50), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(0, 255, 0), 2, false);
-        //cv::imshow("image", image);
 
-        if (toggle_video)
-            emit sendFrame(image);
-        if (toggle_stats)
-            emit sendStats(cro_all.toc());
     }
 }
