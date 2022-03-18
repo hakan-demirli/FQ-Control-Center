@@ -2,4 +2,7 @@
 *.log
 *.debug
 *.pizza
-opencv_dnn_model/
+**/opencv_dnn_model/
+**/build-**/
+**/**-Debug/
+**/**-Release/
