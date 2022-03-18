@@ -9,11 +9,7 @@
 #include "camera_loop.h"
 #include "settings.h"
 
-#include "jkqtfastplotter/jkqtfastplotter.h"
-
-#define N1 20
-#define XMAX 10.0
-#define IMAGE_N 300
+#include <opencv2/plot.hpp>
 
 
 QT_BEGIN_NAMESPACE
@@ -31,6 +27,7 @@ public:
 private slots:
     void receiveFrame(cv::Mat frame);
     void receiveCameraStats(long compute_time);
+    void updateGasPlots(std::vector<float> g_data);
 
     void on_camera_run_button_clicked();
     void on_apply_camera_settings_button_clicked();
@@ -48,13 +45,8 @@ private:
     Settings* settings;
     CameraLoop* camera;
 
-
-    double* x;
-    double* y1;
-    double* y2;
-    double* y3;
-    QVector<double> xx;
-    QVector<double> yy;
+    std::vector<float> gas_plot_1;
+    cv::Mat gas_plot_1_image;
 
 };
 #endif // MAINWINDOW_H

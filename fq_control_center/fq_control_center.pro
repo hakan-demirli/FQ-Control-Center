@@ -19,6 +19,7 @@ DEFINES -= QT_DEPRECATED_WARNINGS
 SOURCES += \
     camera_loop.cpp \
     fps.cpp \
+    gas_sensors.cpp \
     main.cpp \
     mainwindow.cpp \
     settings.cpp \
@@ -27,6 +28,7 @@ SOURCES += \
 HEADERS += \
     camera_loop.h \
     fps.h \
+    gas_sensors.h \
     json.hpp \
     mainwindow.h \
     settings.h \
@@ -36,9 +38,6 @@ FORMS += \
     mainwindow.ui
 
 # message($$QMAKESPEC)
-
-include($$PWD/jkqtplotter/jkqtpcommon.pri)
-include($$PWD/jkqtplotter/jkqtfastplotter.pri)
 
 QMAKE_CXXFLAGS += -Wno-deprecated-copy
 
@@ -154,7 +153,7 @@ QMAKE_CXXFLAGS_RELEASE += -Ofast
 DISTFILES += \
     config/bench_records.txt \
     config/camera_cfg.json \
+    config/camera_ui_cfg.json \
     config/compile_commands.json \
-    config/info.json \
-    config/ui_cfg.json
+    config/info.json
 

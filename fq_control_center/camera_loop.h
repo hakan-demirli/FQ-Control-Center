@@ -20,7 +20,8 @@
 #include "webcam.h"
 #include "json.hpp"
 
-# include <QDebug>
+#include <QDebug>
+
 
 using json = nlohmann::json;
 

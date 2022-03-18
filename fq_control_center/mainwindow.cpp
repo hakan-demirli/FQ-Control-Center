@@ -5,50 +5,15 @@
 MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    settings(new Settings)
+    settings(new Settings),
+    gas_plot_1(1000)
 {
-
     ui->setupUi(this);
     increase_tab_width();
     update_ui_settings();
     ui->video_output_label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
     initialize_camera();
-
-    x=(double*)calloc(N1, sizeof(double));
-    y1=(double*)calloc(N1, sizeof(double));
-    y2=(double*)calloc(N1, sizeof(double));
-    y3=(double*)calloc(N1, sizeof(double));
-
-    //auto image=(double*)calloc(IMAGE_N*IMAGE_N, sizeof(double));
-
-    xx.clear();
-    yy.clear();
-    for (int i=0; i<N1; i++) {
-        x[i]=(i+1)*XMAX/(double)N1;
-        xx.push_back(x[i]);
-        yy.push_back(sin(0.5*M_PI*x[i])+2.0);
-        std::cout<<xx[i]<<", "<<yy[i]<<std::endl;
-        y1[i]=i*XMAX/(double)N1;
-        y2[i]=log(x[i]);
-        y3[i]=log10(x[i]);
-    }
-
-    JKQTFPVBarPlot* p1=new JKQTFPVBarPlot(ui->gas_sensor_1_plotter, N1, x, y1);
-    JKQTFPLinePlot* p2=new JKQTFPLinePlot(ui->gas_sensor_1_plotter, N1, x, y2, QColor("blue"));
-    JKQTFPLinePlot* p3=new JKQTFPLinePlot(ui->gas_sensor_1_plotter, N1, x, y3, QColor("darkgreen"));
-    JKQTFPLinePlot* pv=new JKQTFPLinePlot(ui->gas_sensor_1_plotter, &xx, &yy, QColor("black"), Qt::SolidLine, 3);
-
-    //JKQTFPimagePlot* p5=new JKQTFPimagePlot(ui->gas_sensor_1_plotter, image, JKQTFP_double, IMAGE_N, IMAGE_N, 0, 10, 0, 10, JKQTFP_GRAY);
-
-    ///JKQTFPXRangePlot* p6 = new JKQTFPXRangePlot(ui->gas_sensor_1_plotter, 2.25, 7.75);
-    //p6->setFillStyle(Qt::SolidPattern);
-
-    ui->gas_sensor_1_plotter->addPlot(p1);
-    ui->gas_sensor_1_plotter->addPlot(p2);
-    ui->gas_sensor_1_plotter->addPlot(p3);
-    //ui->gas_sensor_1_plotter->addPlot(p5);
-    ui->gas_sensor_1_plotter->addPlot(pv);
 }
 
 MainWindow::~MainWindow()
@@ -62,13 +27,14 @@ void MainWindow::initialize_camera(){
     connect(camera, SIGNAL(sendStats(long)), this, SLOT(receiveCameraStats(long)));
     camera->run();
 }
+
 void MainWindow::update_ui_settings()
 {
-    ui->camera_run_button->setText(QString::fromStdString(settings->ui_cfg["run"]));
-    ui->object_detection_run_button->setText(QString::fromStdString(settings->ui_cfg["object detection"]));
-    ui->tracking_run_button->setText(QString::fromStdString(settings->ui_cfg["tracking"]));
-    ui->bounding_boxes_run_button->setText(QString::fromStdString(settings->ui_cfg["bounding boxes"]));
-    ui->camera_stats_run_button->setText(QString::fromStdString(settings->ui_cfg["stats"]));
+    ui->camera_run_button->setText(QString::fromStdString(settings->camera_ui_cfg["run"]));
+    ui->object_detection_run_button->setText(QString::fromStdString(settings->camera_ui_cfg["object detection"]));
+    ui->tracking_run_button->setText(QString::fromStdString(settings->camera_ui_cfg["tracking"]));
+    ui->bounding_boxes_run_button->setText(QString::fromStdString(settings->camera_ui_cfg["bounding boxes"]));
+    ui->camera_stats_run_button->setText(QString::fromStdString(settings->camera_ui_cfg["stats"]));
 }
 
 void MainWindow::increase_tab_width()
@@ -83,6 +49,16 @@ void MainWindow::receiveFrame(cv::Mat image)
 {
     QPixmap pix = QPixmap::fromImage(QImage((unsigned char*) image.data, image.cols, image.rows, QImage::Format_RGB888).rgbSwapped());
     ui->video_output_label->setPixmap(pix);
+}
+
+void MainWindow::updateGasPlots(std::vector<float> g_data)
+{
+    cv::Mat data(gas_plot_1);
+    cv::Ptr<cv::plot::Plot2d> plot = cv::plot::Plot2d::create(data);
+    plot->render( gas_plot_1_image );
+    //cv::imshow( "sine", image );
+    QPixmap pix = QPixmap::fromImage(QImage((unsigned char*) gas_plot_1_image.data, gas_plot_1_image.cols, gas_plot_1_image.rows, QImage::Format_RGB888).rgbSwapped());
+    ui->gas_sensor_1_label->setPixmap(pix);
 }
 
 void MainWindow::receiveCameraStats(long compute_time)

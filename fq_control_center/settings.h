@@ -18,13 +18,13 @@ public:
     explicit Settings(QObject *parent = nullptr);
 
     json camera_cfg;
-    json ui_cfg;
+    json camera_ui_cfg;
 
 private:
     std::fstream camera_stream;
-    std::fstream ui_stream;
+    std::fstream camera_ui_stream;
 
-    const std::string UI_CFG_FILE = "./config/ui_cfg.json";
+    const std::string CAMERA_UI_CFG_FILE = "./config/camera_ui_cfg.json";
     const std::string CAMERA_CFG_FILE = "./config/camera_cfg.json";
 
 public slots:

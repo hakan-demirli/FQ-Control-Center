@@ -1,0 +1,7 @@
+{
+  "run": ">",
+  "object detection": ">",
+  "tracking": ">",
+  "bounding boxes": ">",
+  "stats": ">"
+}
