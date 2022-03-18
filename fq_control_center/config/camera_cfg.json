@@ -10,5 +10,10 @@
   "model_config_file": "graph.pbtxt",
   "nmsThreshold": 0.2,
   "object_detection_wait_frames": 20,
-  "tracker_max_missed_frames": 3
+  "tracker_max_missed_frames": 3,
+  "run": ">",
+  "object detection": ">",
+  "tracking": ">",
+  "bounding boxes": ">",
+  "stats": ">"
 }

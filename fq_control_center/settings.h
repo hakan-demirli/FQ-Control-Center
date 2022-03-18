@@ -18,14 +18,14 @@ public:
     explicit Settings(QObject *parent = nullptr);
 
     json camera_cfg;
-    json camera_ui_cfg;
+    json gas_sensors_cfg;
 
 private:
     std::fstream camera_stream;
-    std::fstream camera_ui_stream;
+    std::fstream gas_sensors_stream;
 
-    const std::string CAMERA_UI_CFG_FILE = "./config/camera_ui_cfg.json";
     const std::string CAMERA_CFG_FILE = "./config/camera_cfg.json";
+    const std::string GAS_SENSORS_CFG_FILE = "./config/gas_sensors_cfg.json";
 
 public slots:
     void save_cfg_files();

@@ -153,7 +153,7 @@ QMAKE_CXXFLAGS_RELEASE += -Ofast
 DISTFILES += \
     config/bench_records.txt \
     config/camera_cfg.json \
-    config/camera_ui_cfg.json \
     config/compile_commands.json \
+    config/gas_sensors_cfg.json \
     config/info.json
 

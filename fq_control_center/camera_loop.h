@@ -27,12 +27,13 @@ using json = nlohmann::json;
 
 class CameraLoop: public QObject {
     Q_OBJECT
+private:
+    json cfg;
 public:
     explicit CameraLoop(json cfg, QObject *parent = nullptr);
     ~CameraLoop();
     void run(void);
 
-    json cfg;
     bool toggle_stream;
     bool toggle_video;
     bool toggle_stats;

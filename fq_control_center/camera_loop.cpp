@@ -5,11 +5,11 @@ CameraLoop::CameraLoop(json cfg, QObject *parent) :
     QObject(parent),
     cfg(cfg),
     toggle_stream(true),
-    toggle_video(true),
-    toggle_stats(true),
-    toggle_object_detection(true),
-    toggle_tracking(true),
-    toggle_bounding_boxes(true),
+    toggle_video(cfg["run"]=="||"),
+    toggle_stats(cfg["stats"]=="||"),
+    toggle_object_detection(cfg["object detection"]=="||"),
+    toggle_tracking(cfg["tracking"]=="||"),
+    toggle_bounding_boxes(cfg["bounding boxes"]=="||"),
     all_models_path(cfg["all_models_path"]),
     model_folder(cfg["model_folder"]),
     model_file(all_models_path + "/" + model_folder + "/" + cfg["model_file"].get<std::string>()),
@@ -150,6 +150,5 @@ void CameraLoop::main_loop(void) {
             // if there is a catastrophic crash we have to wait a little so the app wont freeze
             QThread::msleep(5);
         }
-
     }
 }

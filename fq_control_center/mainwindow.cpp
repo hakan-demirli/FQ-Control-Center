@@ -24,8 +24,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::initialize_gas_sensors()
 {
-    gas_sensors = new GasSensors(nullptr);
-    connect(gas_sensors, SIGNAL(sendGasData(QVector<float>)), this, SLOT(receiveGasData(QVector<float>)));
+    gas_sensors = new GasSensors(settings->gas_sensors_cfg, nullptr);
+    connect(gas_sensors, SIGNAL(sendGasData(std::vector<float>)), this, SLOT(updateGasPlots(std::vector<float>)));
     gas_sensors->run();
 }
 
@@ -38,11 +38,16 @@ void MainWindow::initialize_camera(){
 
 void MainWindow::update_ui_settings()
 {
-    ui->camera_run_button->setText(QString::fromStdString(settings->camera_ui_cfg["run"]));
-    ui->object_detection_run_button->setText(QString::fromStdString(settings->camera_ui_cfg["object detection"]));
-    ui->tracking_run_button->setText(QString::fromStdString(settings->camera_ui_cfg["tracking"]));
-    ui->bounding_boxes_run_button->setText(QString::fromStdString(settings->camera_ui_cfg["bounding boxes"]));
-    ui->camera_stats_run_button->setText(QString::fromStdString(settings->camera_ui_cfg["stats"]));
+    ui->camera_run_button->setText(QString::fromStdString(settings->camera_cfg["run"]));
+    ui->object_detection_run_button->setText(QString::fromStdString(settings->camera_cfg["object detection"]));
+    ui->tracking_run_button->setText(QString::fromStdString(settings->camera_cfg["tracking"]));
+    ui->bounding_boxes_run_button->setText(QString::fromStdString(settings->camera_cfg["bounding boxes"]));
+    ui->camera_stats_run_button->setText(QString::fromStdString(settings->camera_cfg["stats"]));
+    if (ui->object_detection_run_button->text() == ">"){
+        ui->bounding_boxes_run_button->setEnabled(false);
+        ui->tracking_run_button->setEnabled(false);
+    }else if(ui->bounding_boxes_run_button->text() == ">")
+        ui->tracking_run_button->setEnabled(false);
 }
 
 void MainWindow::increase_tab_width()
@@ -61,10 +66,10 @@ void MainWindow::receiveFrame(cv::Mat image)
 
 void MainWindow::updateGasPlots(std::vector<float> g_data)
 {
-    cv::Mat data(gas_plot_1);
-    cv::Ptr<cv::plot::Plot2d> plot = cv::plot::Plot2d::create(data);
-    plot->render( gas_plot_1_image );
-    //cv::imshow( "sine", image );
+    gas_plot_1.erase(gas_plot_1.begin(), gas_plot_1.begin()+10);
+    gas_plot_1.insert(std::end(gas_plot_1), std::begin(g_data), std::end(g_data));
+    cv::Ptr<cv::plot::Plot2d> plot = cv::plot::Plot2d::create(gas_plot_1);
+    plot->render(gas_plot_1_image);
     QPixmap pix = QPixmap::fromImage(QImage((unsigned char*) gas_plot_1_image.data, gas_plot_1_image.cols, gas_plot_1_image.rows, QImage::Format_RGB888).rgbSwapped());
     ui->gas_sensor_1_label->setPixmap(pix);
 }
@@ -109,7 +114,6 @@ void MainWindow::on_object_detection_run_button_clicked()
         camera->toggle_object_detection = true;
 
         ui->bounding_boxes_run_button->setEnabled(true);
-        ui->tracking_run_button->setEnabled(true);
     }
 }
 

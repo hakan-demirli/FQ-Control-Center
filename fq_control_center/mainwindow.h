@@ -38,10 +38,10 @@ private slots:
     void on_camera_stats_run_button_clicked();
 
 private:
-    void increase_tab_width();
-    void update_ui_settings();
-    void initialize_camera();
-    void initialize_gas_sensors();
+    void increase_tab_width(void);
+    void update_ui_settings(void);
+    void initialize_camera(void);
+    void initialize_gas_sensors(void);
 
     Ui::MainWindow *ui;
     Settings* settings;
