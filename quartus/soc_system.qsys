@@ -16,6 +16,11 @@
          value = "10";
          type = "int";
       }
+      datum sopceditor_expanded
+      {
+         value = "1";
+         type = "boolean";
+      }
    }
    element ILC.avalon_slave
    {
@@ -37,6 +42,11 @@
          value = "13";
          type = "int";
       }
+      datum sopceditor_expanded
+      {
+         value = "1";
+         type = "boolean";
+      }
    }
    element alt_vip_vfr_hdmi
    {
@@ -44,6 +54,11 @@
       {
          value = "12";
          type = "int";
+      }
+      datum sopceditor_expanded
+      {
+         value = "1";
+         type = "boolean";
       }
    }
    element alt_vip_vfr_hdmi.avalon_slave
@@ -147,6 +162,11 @@
          value = "4";
          type = "int";
       }
+      datum sopceditor_expanded
+      {
+         value = "1";
+         type = "boolean";
+      }
    }
    element fpga_only_master
    {
@@ -188,6 +208,11 @@
       {
          value = "0";
          type = "boolean";
+      }
+      datum baseAddress
+      {
+         value = "0";
+         type = "String";
       }
    }
    element hps_only_master
@@ -262,6 +287,11 @@
          value = "5";
          type = "int";
       }
+      datum sopceditor_expanded
+      {
+         value = "1";
+         type = "boolean";
+      }
    }
    element mm_bridge_0.s0
    {
@@ -269,6 +299,27 @@
       {
          value = "1";
          type = "boolean";
+      }
+   }
+   element simple_memory_0
+   {
+      datum _sortIndex
+      {
+         value = "15";
+         type = "int";
+      }
+   }
+   element simple_memory_0.avalon_slave_0
+   {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
+      datum baseAddress
+      {
+         value = "24576";
+         type = "String";
       }
    }
    element sysid_qsys
@@ -1098,6 +1149,9 @@
   <parameter name="USE_AUTO_ADDRESS_WIDTH" value="1" />
   <parameter name="USE_RESPONSE" value="0" />
  </module>
+ <module name="simple_memory_0" kind="simple_memory" version="1.0" enabled="1">
+  <parameter name="ADDRESS_SIZE" value="4" />
+ </module>
  <module
    name="sysid_qsys"
    kind="altera_avalon_sysid_qsys"
@@ -1148,6 +1202,15 @@
    end="alt_vip_vfr_hdmi.avalon_slave">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x00031000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="17.0"
+   start="mm_bridge_0.m0"
+   end="simple_memory_0.avalon_slave_0">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x6000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1285,6 +1348,11 @@
    kind="clock"
    version="17.0"
    start="clk_0.clk"
+   end="simple_memory_0.clock" />
+ <connection
+   kind="clock"
+   version="17.0"
+   start="clk_0.clk"
    end="alt_vip_vfr_hdmi.clock_master" />
  <connection
    kind="clock"
@@ -1413,6 +1481,11 @@
    version="17.0"
    start="clk_0.clk_reset"
    end="mm_bridge_0.reset" />
+ <connection
+   kind="reset"
+   version="17.0"
+   start="clk_0.clk_reset"
+   end="simple_memory_0.reset" />
  <connection kind="reset" version="17.0" start="clk_0.clk_reset" end="ILC.reset_n" />
  <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
  <interconnectRequirement for="$system" name="qsys_mm.maxAdditionalLatency" value="1" />
