@@ -14,11 +14,19 @@ MainWindow::MainWindow(QWidget *parent):
     ui->video_output_label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
     initialize_camera();
+    initialize_gas_sensors();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::initialize_gas_sensors()
+{
+    gas_sensors = new GasSensors(nullptr);
+    connect(gas_sensors, SIGNAL(sendGasData(QVector<float>)), this, SLOT(receiveGasData(QVector<float>)));
+    gas_sensors->run();
 }
 
 void MainWindow::initialize_camera(){

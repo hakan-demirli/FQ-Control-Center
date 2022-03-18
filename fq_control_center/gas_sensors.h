@@ -11,10 +11,11 @@
 
 using json = nlohmann::json;
 
-class gas_sensors: public QObject {
+class GasSensors: public QObject {
     Q_OBJECT
 public:
-    explicit gas_sensors(QObject *parent = nullptr);
+    explicit GasSensors(QObject *parent = nullptr);
+    void run();
 
 private:
     void save_data();
@@ -23,7 +24,6 @@ private:
 
     std::vector<float> gas_plot_1;
     json gas_sensor_1_data;
-
 
 };
 

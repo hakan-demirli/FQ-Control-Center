@@ -8,6 +8,7 @@
 
 #include "camera_loop.h"
 #include "settings.h"
+#include "gas_sensors.h"
 
 #include <opencv2/plot.hpp>
 
@@ -40,10 +41,12 @@ private:
     void increase_tab_width();
     void update_ui_settings();
     void initialize_camera();
+    void initialize_gas_sensors();
 
     Ui::MainWindow *ui;
     Settings* settings;
     CameraLoop* camera;
+    GasSensors* gas_sensors;
 
     std::vector<float> gas_plot_1;
     cv::Mat gas_plot_1_image;

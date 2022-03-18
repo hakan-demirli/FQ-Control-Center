@@ -46,6 +46,7 @@ inline void CameraLoop::detect_objects(){
 }
 
 inline void CameraLoop::create_bounding_boxes_confidences_and_trackers(){
+    // create bounding boxes, thresholds and confidences from object detection results
     for (int i = 0; i < results.rows; i++){
         int class_id = int(results.at<float>(i, 1));
         float confidence = results.at<float>(i, 2);
@@ -66,8 +67,15 @@ inline void CameraLoop::create_bounding_boxes_confidences_and_trackers(){
 }
 
 inline void CameraLoop::remove_duplicate_bounding_boxes_confidences_and_trackers(){
+    // apply non maximum suppresion to find duplicate bounding boxes
     cv::dnn::NMSBoxes(rois, confidences, cfg["min_confidence_score"], cfg["nmsThreshold"], indices);
 
+    // remove duplicate bounding boxes and their respective trackers and confidences
+    // indices returns the ones that should be alive.
+    // Algorithm:
+    //  start from the bottom and search if the bounding box is in index
+    //    if it is don't delete
+    //    if not remove it
     for(int i = rois.size()-1; i >= 0; --i) {
         if(std::find(indices.begin(), indices.end(), i) != indices.end()) {
         } else {
@@ -81,16 +89,21 @@ inline void CameraLoop::remove_duplicate_bounding_boxes_confidences_and_trackers
 
 void CameraLoop::main_loop(void) {
 
+    // Increase thread priority for extra performance.
     QThread::currentThread()->setPriority(QThread::HighPriority);
+    // Start collecting frames
     usb_webcam.run();
-    tracker_last_index = confidences.size();
 
     while (toggle_stream) {
+        // ignore all exceptions from camera
         try {
+            // start cronometer to find out compute time
             cro_all.tic();
+            // read a frame
             image = usb_webcam.read();
             if (image.empty())
                 continue;
+            //  Object detection is costly, so run object detection every x frame.
             if (toggle_object_detection && (total_frames >= cfg["object_detection_wait_frames"])){
                 total_frames = 0;
                 indices.clear();
@@ -99,13 +112,15 @@ void CameraLoop::main_loop(void) {
                 if(!rois.empty())
                     remove_duplicate_bounding_boxes_confidences_and_trackers();
 
-                for(const auto& roi : rois){
-                    if(toggle_bounding_boxes){
+                if(toggle_bounding_boxes){
+                    for(const auto& roi : rois){
                         cv::rectangle(image, roi, cv::Scalar(0,0,255), 2);
                     }
                 }
+            // if we are not detecting new objects we are tracking them
             }else if(toggle_tracking && !rois.empty()){
                 for(int i = rois.size()-1; i >= 0; --i) {
+                    // check if the object is still on frame
                     bool alive = bunch_of_trackers[i]->update(image,rois[i]);
                     if(alive)
                         cv::rectangle(image, rois[i], cv::Scalar(0,0,255), 2);
@@ -132,6 +147,8 @@ void CameraLoop::main_loop(void) {
                 emit sendStats(cro_all.toc());
         }  catch (int) {
             qDebug() << "ignoring an exception";
+            // if there is a catastrophic crash we have to wait a little so the app wont freeze
+            QThread::msleep(5);
         }
 
     }

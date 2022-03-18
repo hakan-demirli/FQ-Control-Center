@@ -1,24 +1,29 @@
 #include "gas_sensors.h"
 
 
-gas_sensors::gas_sensors(QObject *parent) :
+GasSensors::GasSensors(QObject *parent) :
     QObject(parent),
     gas_plot_1(10)
 {
     gas_sensor_1_data["all"] = {0};
 }
 
-void gas_sensors::save_data()
+void GasSensors::run()
 {
 
 }
 
-void gas_sensors::update_data()
+void GasSensors::save_data()
 {
 
 }
 
-void gas_sensors::read_gas_sensors()
+void GasSensors::update_data()
+{
+
+}
+
+void GasSensors::read_gas_sensors()
 {
 
 }
