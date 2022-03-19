@@ -7,7 +7,10 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <stdlib.h>
+#include <time.h>
 
+#include "constants.h"
 #include "json.hpp"
 
 
@@ -30,18 +33,17 @@ private:
     void read_gas_sensors(void);
 
     QThread m_thread;
-    std::vector<float> gas_plot_1;
-    std::vector<float> gas_sensor_1_data;
-    const std::string DATA_FILE_0 = "./data/gas_sensor_0_data.log";
-    std::fstream gas_sensor_data_stream;
+    std::vector<std::vector<float>> gas_plot;
+    std::vector<std::vector<float>> gas_sensor_data;
+
+    std::vector<std::fstream> gas_sensor_data_stream;
     json data_j;
-    int a = 11;
 
 public slots:
     void main_loop(void);
 
 signals:
-    void sendGasData(std::vector<float>);
+    void sendGasData(std::vector<std::vector<float>>);
 };
 
 #endif // GAS_SENSORS_H

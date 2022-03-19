@@ -4,12 +4,15 @@
 GasSensors::GasSensors(json cfg, QObject *parent) :
     QObject(parent),
     cfg(cfg),
-    gas_plot_1((int)cfg["packet size"]),
-    gas_sensor_1_data((int)cfg["packet size"])
+    gas_plot(constants::NUMBER_OF_GAS_SENSORS, std::vector<float>((int)cfg["packet size"])),
+    gas_sensor_data(constants::NUMBER_OF_GAS_SENSORS, std::vector<float>((int)cfg["packet size"]))
 {
-    gas_sensor_data_stream.open(DATA_FILE_0, std::ios::app);
-    gas_sensor_data_stream.clear();
-    gas_sensor_data_stream.flush();
+    for (int i = 0; i<constants::NUMBER_OF_GAS_SENSORS; ++i){
+        std::string file_name = constants::DATA_FILE_NAME + std::to_string(i) + ".log";
+        std::fstream temp;
+        temp.open(file_name, std::ios::app);
+        gas_sensor_data_stream.push_back(std::move(temp));
+    }
     moveToThread(&m_thread);
     m_thread.start();
 }
@@ -30,21 +33,26 @@ void GasSensors::run()
 
 void GasSensors::save_data()
 {
-    for (float i : gas_sensor_1_data)
-        gas_sensor_data_stream << i << ",\n";
-    gas_sensor_data_stream.clear();
-    gas_sensor_data_stream.flush();
+    for (int i = 0; i<constants::NUMBER_OF_GAS_SENSORS; ++i){
+        for (float flt : gas_sensor_data[i])
+            gas_sensor_data_stream[i] << flt << ",\n";
+        gas_sensor_data_stream[i].clear();
+        gas_sensor_data_stream[i].flush();
+    }
 }
 
 void GasSensors::read_gas_sensors()
 {
-    a += 1;
-    gas_plot_1.push_back(a);
-    gas_sensor_1_data.push_back(a);
+    for (int i = 0; i<constants::NUMBER_OF_GAS_SENSORS; ++i){
+        int rint = rand() % 10 + 1;
+        gas_plot[i].push_back(rint);
+        gas_sensor_data[i].push_back(rint);
+    }
 }
 
 void GasSensors::main_loop()
 {
+    srand (time(NULL));
     unsigned int sleep_counter = 0;
     unsigned int send_counter = 0;
     while(toggle_sensors){
@@ -56,13 +64,14 @@ void GasSensors::main_loop()
         if(sleep_counter == cfg["save period"]){
             sleep_counter = 0;
             save_data();
-            gas_sensor_1_data.clear();
-            a=0;
+            for (auto& t : gas_sensor_data)
+                t.clear();
         }
         if(send_counter == cfg["send period"]){
             send_counter = 0;
-            emit sendGasData(gas_plot_1);
-            gas_plot_1.clear();
+            emit sendGasData(gas_plot);
+            for (auto& t : gas_plot)
+                t.clear();
         }
     }
 }

@@ -535,7 +535,7 @@
              </property>
              <widget class="QWidget" name="tab">
               <attribute name="title">
-               <string>Sensor Data</string>
+               <string>Sensor Data 0</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_8">
                <item row="0" column="0">
@@ -543,13 +543,13 @@
                  <item>
                   <widget class="QGroupBox" name="groupBox_3">
                    <property name="title">
-                    <string>GroupBox</string>
+                    <string>Gas Sensor 0</string>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_9">
                     <item row="0" column="0">
-                     <widget class="QLabel" name="gas_sensor_1_label">
+                     <widget class="QLabel" name="gas_sensor_0_label">
                       <property name="text">
-                       <string>TextLabel</string>
+                       <string>G0</string>
                       </property>
                      </widget>
                     </item>
@@ -559,13 +559,56 @@
                  <item>
                   <widget class="QGroupBox" name="groupBox_4">
                    <property name="title">
-                    <string>GroupBox</string>
+                    <string>Gas Sensor 1</string>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_10">
                     <item row="0" column="0">
-                     <widget class="QLabel" name="gas_sensor_1_label_2">
+                     <widget class="QLabel" name="gas_sensor_1_label">
                       <property name="text">
-                       <string>TextLabel</string>
+                       <string>G1</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="tab_3">
+              <attribute name="title">
+               <string>Sensor Data 1</string>
+              </attribute>
+              <layout class="QGridLayout" name="gridLayout_12">
+               <item row="0" column="0">
+                <layout class="QGridLayout" name="gridLayout_11">
+                 <item row="0" column="0">
+                  <widget class="QGroupBox" name="groupBox_5">
+                   <property name="title">
+                    <string>Gas Sensor 2</string>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_14">
+                    <item row="0" column="0">
+                     <widget class="QLabel" name="gas_sensor_2_label">
+                      <property name="text">
+                       <string>G2</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QGroupBox" name="groupBox_6">
+                   <property name="title">
+                    <string>Gas Sensor 3</string>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_13">
+                    <item row="0" column="0">
+                     <widget class="QLabel" name="gas_sensor_3_label">
+                      <property name="text">
+                       <string>G3</string>
                       </property>
                      </widget>
                     </item>

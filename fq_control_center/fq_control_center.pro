@@ -27,6 +27,7 @@ SOURCES += \
 
 HEADERS += \
     camera_loop.h \
+    constants.h \
     fps.h \
     gas_sensors.h \
     json.hpp \
@@ -156,5 +157,8 @@ DISTFILES += \
     config/compile_commands.json \
     config/gas_sensors_cfg.json \
     config/info.json \
-    data/gas_sensor_0_data.log
+    data/gas_sensor_data_0.log \
+    data/gas_sensor_data_1.log \
+    data/gas_sensor_data_2.log \
+    data/gas_sensor_data_3.log
 

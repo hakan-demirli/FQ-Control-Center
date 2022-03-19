@@ -5,10 +5,12 @@
 
 #include <QTabBar>
 #include <QThread>
+#include <QLabel>
 
 #include "camera_loop.h"
 #include "settings.h"
 #include "gas_sensors.h"
+#include "constants.h"
 
 #include <opencv2/plot.hpp>
 
@@ -28,7 +30,7 @@ public:
 private slots:
     void receiveFrame(cv::Mat frame);
     void receiveCameraStats(long compute_time);
-    void updateGasPlots(std::vector<float> g_data);
+    void updateGasPlots(std::vector<std::vector<float>> g_data);
 
     void on_camera_run_button_clicked();
     void on_apply_camera_settings_button_clicked();
@@ -48,9 +50,9 @@ private:
     CameraLoop* camera;
     GasSensors* gas_sensors;
 
-    std::vector<double> gas_plot_1;
-    cv::Mat gas_plot_1_image;
-    std::vector<int> zero_to_thousand;
+    QLabel* gas_sensor_label[constants::NUMBER_OF_GAS_SENSORS];
+    std::vector<std::vector<double>> gas_plot;
+    cv::Mat gas_plot_image;
 
 };
 #endif // MAINWINDOW_H
