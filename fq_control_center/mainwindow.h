@@ -48,8 +48,9 @@ private:
     CameraLoop* camera;
     GasSensors* gas_sensors;
 
-    std::vector<float> gas_plot_1;
+    std::vector<double> gas_plot_1;
     cv::Mat gas_plot_1_image;
+    std::vector<int> zero_to_thousand;
 
 };
 #endif // MAINWINDOW_H

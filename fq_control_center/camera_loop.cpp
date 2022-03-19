@@ -51,7 +51,6 @@ inline void CameraLoop::create_bounding_boxes_confidences_and_trackers(){
         int class_id = int(results.at<float>(i, 1));
         float confidence = results.at<float>(i, 2);
 
-        // Check if the detection is over the min threshold and then draw bbox
         if (confidence > cfg["min_confidence_score"] &&  class_id == 1){
             int bboxX = int(results.at<float>(i, 3) * image.cols);
             int bboxY = int(results.at<float>(i, 4) * image.rows);

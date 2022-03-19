@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent):
 
     initialize_camera();
     initialize_gas_sensors();
+
 }
 
 MainWindow::~MainWindow()
@@ -66,12 +67,23 @@ void MainWindow::receiveFrame(cv::Mat image)
 
 void MainWindow::updateGasPlots(std::vector<float> g_data)
 {
-    gas_plot_1.erase(gas_plot_1.begin(), gas_plot_1.begin()+10);
+
+
+    if (!gas_plot_1.empty() || g_data.size() != 0)
+        gas_plot_1.erase(gas_plot_1.begin(), gas_plot_1.begin()+g_data.size());
     gas_plot_1.insert(std::end(gas_plot_1), std::begin(g_data), std::end(g_data));
-    cv::Ptr<cv::plot::Plot2d> plot = cv::plot::Plot2d::create(gas_plot_1);
+    cv::Mat data(gas_plot_1);
+    cv::Ptr<cv::plot::Plot2d> plot = cv::plot::Plot2d::create(data);
+    //plot->setPlotSize(ui->gas_sensor_1_label->width(),ui->gas_sensor_1_label->height());
+    plot->setShowText(true);
+    plot->setInvertOrientation(true);
+    plot->setMaxX(1000);
+    plot->setMaxY(1000);
+    plot->setPlotAxisColor(cv::Scalar(0, 0, 255));
     plot->render(gas_plot_1_image);
-    QPixmap pix = QPixmap::fromImage(QImage((unsigned char*) gas_plot_1_image.data, gas_plot_1_image.cols, gas_plot_1_image.rows, QImage::Format_RGB888).rgbSwapped());
+    QPixmap pix = QPixmap::fromImage(QImage((unsigned char*)gas_plot_1_image.data, gas_plot_1_image.cols, gas_plot_1_image.rows, QImage::Format_RGB888));
     ui->gas_sensor_1_label->setPixmap(pix);
+    cv::imshow( "sine", gas_plot_1_image );
 }
 
 void MainWindow::receiveCameraStats(long compute_time)

@@ -1,4 +1,6 @@
 {
-  "packet_size": 10,
-  "bounding boxes": ">"
+  "packet size": 10,
+  "read period": 10,
+  "send period": 100,
+  "save period": 2000
 }

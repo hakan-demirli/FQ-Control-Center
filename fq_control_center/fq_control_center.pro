@@ -155,5 +155,6 @@ DISTFILES += \
     config/camera_cfg.json \
     config/compile_commands.json \
     config/gas_sensors_cfg.json \
-    config/info.json
+    config/info.json \
+    data/gas_sensor_0_data.log
 
