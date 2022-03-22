@@ -13,7 +13,7 @@ CameraLoop::CameraLoop(json cfg, QObject *parent) :
     detecting_results(&results_1),
     new_per_frame_period(&per_frame_period_0),
     tracking_per_frame_period(&per_frame_period_0),
-    usb_webcam(Webcam::getInstance(cfg,webcam_done_cv,all_done_cv,flag_mutex,object_detector_done_bool,parent)),
+    webcam(Webcam::getInstance(cfg,webcam_done_cv,all_done_cv,flag_mutex,object_detector_done_bool,parent)),
     object_tracker(ObjectTracker::getInstance(cfg,object_tracker_done_cv,all_done_cv,object_tracker_done_mutex,parent)),
     object_detector(ObjectDetector::getInstance(cfg,object_detector_done_cv,all_done_cv,flag_mutex,object_detector_done_bool,parent))
 {
@@ -21,9 +21,9 @@ CameraLoop::CameraLoop(json cfg, QObject *parent) :
     moveToThread(&m_thread);
     m_thread.start();
 
-    usb_webcam.new_frames = new_frames;
-    usb_webcam.new_per_frame_period = new_per_frame_period;
-    usb_webcam.run();
+    webcam.new_frames = new_frames;
+    webcam.new_per_frame_period = new_per_frame_period;
+    webcam.run();
 
     webcam_done_mutex.lock();
     webcam_done_cv.wait(&webcam_done_mutex);
@@ -31,7 +31,7 @@ CameraLoop::CameraLoop(json cfg, QObject *parent) :
     std::swap(tracking_frames,detecting_frames);
     std::swap(new_frames,detecting_frames);
 
-    usb_webcam.new_frames = new_frames;
+    webcam.new_frames = new_frames;
 
     object_detector.detecting_frame = &detecting_frames->front();
     object_detector.detecting_results = detecting_results;
@@ -52,7 +52,7 @@ CameraLoop::~CameraLoop(){
 
 
     qDebug() << "Destroying PlayGround Object";
-    usb_webcam.keep_running = false;
+    webcam.keep_running = false;
     object_detector.keep_running = false;
     object_tracker.keep_running = false;
 
@@ -91,7 +91,7 @@ void CameraLoop::main_loop(void) {
 
         std::swap(new_per_frame_period,tracking_per_frame_period);
 
-        usb_webcam.new_frames = new_frames;
+        webcam.new_frames = new_frames;
 
         object_detector.detecting_frame = &detecting_frames->front();
         object_detector.detecting_results = detecting_results;

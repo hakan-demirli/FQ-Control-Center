@@ -71,6 +71,8 @@ void MainWindow::increase_tab_width()
     ui->tabWidget->tabBar()->setExpanding(true);
     ui->camera_tabs->tabBar()->setDocumentMode(true);
     ui->camera_tabs->tabBar()->setExpanding(true);
+    ui->gas_sensors_tabs->tabBar()->setDocumentMode(true);
+    ui->gas_sensors_tabs->tabBar()->setExpanding(true);
 }
 
 void MainWindow::receiveFrame(cv::Mat image)

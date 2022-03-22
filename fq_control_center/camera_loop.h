@@ -83,7 +83,7 @@ public:
     ~CameraLoop();
     void run(void);
 
-    Webcam& usb_webcam;
+    Webcam& webcam;
     ObjectTracker& object_tracker;
     ObjectDetector& object_detector;
 
