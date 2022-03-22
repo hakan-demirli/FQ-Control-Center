@@ -15,6 +15,10 @@ GasSensors::GasSensors(json cfg, QObject *parent) :
     }
     moveToThread(&m_thread);
     m_thread.start();
+
+    #ifdef  FPGA
+        initialize_fpga_bridge();
+    #endif
 }
 
 GasSensors::~GasSensors(){
@@ -28,6 +32,7 @@ GasSensors::~GasSensors(){
 
 void GasSensors::run()
 {
+    initialize_fpga_bridge();
     QMetaObject::invokeMethod( this, "main_loop");
 }
 
@@ -41,10 +46,47 @@ void GasSensors::save_data()
     }
 }
 
+void GasSensors::initialize_fpga_bridge(){
+
+    qDebug() << "Accessing the FPGA Brige";
+
+    // Open the Linux memory driver with read and write privalages
+    int fd = open("/dev/mem", (O_RDWR | O_SYNC));
+
+    // Check that the opening was sucsessfull
+    if (fd < 0){
+        qDebug() << "\nERROR: Failed to read the memory driver!";
+        std::abort();
+    }
+
+    // Create a Memory Map to access the FPGA Bridge address space
+    fpga_bridge_map = mmap(NULL, LWH2F_RANGE, PROT_WRITE | PROT_READ, MAP_SHARED, fd,
+        ALT_LWFPGASLVS_OFST);
+
+    // Check that the opening was sucsessful
+    if (fpga_bridge_map == MAP_FAILED){
+        qDebug() << "\nERROR: Failed to open the memory Map!" << endl;
+        std::abort();
+    }
+    // Allocate a pointer to the maped address space
+    uint32_t* fpga_bridge_base = (uint32_t*)fpga_bridge_map;
+
+    qDebug() << "Read the simple memory over the FPGA Bridge" << endl;
+
+    simple_memory_0 = (fpga_bridge_base + (SIMPLE_MEMORY_OFFSET / 4));
+    *simple_memory_0 = 0;
+
+    qDebug() << "Simple Memory:" << *simple_memory_0;
+
+    qDebug() << "Finished fpga bridge initialization";
+}
+
 void GasSensors::read_gas_sensors()
 {
     for (int i = 0; i<constants::NUMBER_OF_GAS_SENSORS; ++i){
-        int rint = rand() % 10 + 1;
+        //int rint = rand() % 10 + 1;
+        *simple_memory_0 = *simple_memory_0 + 1;
+        int rint = *simple_memory_0;
         gas_plot[i].push_back(rint);
         gas_sensor_data[i].push_back(rint);
     }

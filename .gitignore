@@ -1,8 +1,11 @@
+bin/*
 *.user
 *.log
 *.debug
 *.pizza
-**/opencv_dnn_model/
-**/build-**/
-**/**-Debug/
-**/**-Release/
+**/opencv_dnn_model/*
+**/build-**/*
+**/**-Debug/*
+**/**-Release/*
+quartus/db/*
+quartus/.qsys_edit/*
