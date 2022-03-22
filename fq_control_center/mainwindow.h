@@ -6,6 +6,7 @@
 #include <QTabBar>
 #include <QThread>
 #include <QLabel>
+#include <QPushButton>
 
 #include "camera_loop.h"
 #include "settings.h"
@@ -38,9 +39,16 @@ private slots:
     void on_bounding_boxes_run_button_clicked();
     void on_camera_stats_run_button_clicked();
 
+    void on_gas_sensor_0_run_button_clicked();
+
+    void on_gas_sensor_1_run_button_clicked();
+
+    void on_gas_sensor_2_run_button_clicked();
+
+    void on_gas_sensor_3_run_button_clicked();
+
 private:
     void increase_tab_width(void);
-    void update_ui_settings(void);
     void initialize_camera(void);
     void initialize_gas_sensors(void);
 
@@ -49,8 +57,9 @@ private:
     CameraLoop& camera;
     GasSensors* gas_sensors;
 
-    QLabel* gas_sensor_label[constants::NUMBER_OF_GAS_SENSORS];
-    std::vector<std::vector<double>> gas_plot;
+    QLabel* gas_sensor_plot_label[constants::NUMBER_OF_GAS_SENSORS];
+    QPushButton* gas_sensor_run_button[constants::NUMBER_OF_GAS_SENSORS];
+    std::vector<std::vector<double>> gas_plot_data;
     cv::Mat gas_plot_image;
 
 };

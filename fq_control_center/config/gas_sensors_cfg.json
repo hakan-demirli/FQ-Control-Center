@@ -2,5 +2,6 @@
   "packet size": 10,
   "read period": 10,
   "send period": 100,
-  "save period": 2000
+  "save period": 2000,
+  "Gas Sensor Plots": [">",">",">",">"]
 }

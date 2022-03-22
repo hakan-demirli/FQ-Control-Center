@@ -7,23 +7,10 @@ MainWindow::MainWindow(QWidget *parent):
     ui(new Ui::MainWindow),
     settings(new Settings),
     camera(CameraLoop::getInstance(settings->camera_cfg, nullptr)),
-    gas_plot(constants::NUMBER_OF_GAS_SENSORS, std::vector<double>(1000,1))
+    gas_plot_data(constants::NUMBER_OF_GAS_SENSORS, std::vector<double>(1000,1))
 {
     ui->setupUi(this);
-
-    //create an array of plot labels for easy handling
-    gas_sensor_label[0] = ui->gas_sensor_0_label;
-    gas_sensor_label[1] = ui->gas_sensor_1_label;
-    gas_sensor_label[2] = ui->gas_sensor_2_label;
-    gas_sensor_label[3] = ui->gas_sensor_3_label;
-    for(unsigned i = 0; i < gas_plot.size(); ++i) {
-        gas_sensor_label[i]->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    }
-
     increase_tab_width();
-    update_ui_settings();
-    ui->video_output_label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-
     initialize_camera();
     initialize_gas_sensors();
 }
@@ -36,20 +23,32 @@ MainWindow::~MainWindow()
 
 void MainWindow::initialize_gas_sensors()
 {
+    //create arrays for easy handling
+    gas_sensor_plot_label[0] = ui->gas_sensor_0_plot_label;
+    gas_sensor_plot_label[1] = ui->gas_sensor_1_plot_label;
+    gas_sensor_plot_label[2] = ui->gas_sensor_2_plot_label;
+    gas_sensor_plot_label[3] = ui->gas_sensor_3_plot_label;
+
+    gas_sensor_run_button[0] = ui->gas_sensor_0_run_button;
+    gas_sensor_run_button[1] = ui->gas_sensor_1_run_button;
+    gas_sensor_run_button[2] = ui->gas_sensor_2_run_button;
+    gas_sensor_run_button[3] = ui->gas_sensor_3_run_button;
+
+    for(unsigned i = 0; i < gas_plot_data.size(); ++i) {
+        gas_sensor_plot_label[i]->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+        gas_sensor_run_button[i]->setText(QString::fromStdString(settings->gas_sensors_cfg["Gas Sensor Plots"][i]));
+    }
+
     gas_sensors = new GasSensors(settings->gas_sensors_cfg, nullptr);
+
     connect(gas_sensors, SIGNAL(sendGasData(std::vector<std::vector<float> >)), this, SLOT(updateGasPlots(std::vector<std::vector<float> >)));
     gas_sensors->run();
 }
 
 void MainWindow::initialize_camera()
 {
-    connect(&camera.object_tracker, SIGNAL(sendFrame(cv::Mat)), this, SLOT(receiveFrame(cv::Mat)));
-    connect(&camera.object_tracker, SIGNAL(sendStats(std::vector<unsigned int>)), this, SLOT(receiveCameraStats(std::vector<unsigned int>)));
-    camera.run();
-}
+    ui->video_output_label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
-void MainWindow::update_ui_settings()
-{
     ui->camera_run_button->setText(QString::fromStdString(settings->camera_cfg["Run"]));
     ui->object_detection_run_button->setText(QString::fromStdString(settings->camera_cfg["Object Detection"]));
     ui->tracking_run_button->setText(QString::fromStdString(settings->camera_cfg["Object Tracking"]));
@@ -60,6 +59,10 @@ void MainWindow::update_ui_settings()
         ui->tracking_run_button->setEnabled(false);
     }else if(ui->bounding_boxes_run_button->text() == ">")
         ui->tracking_run_button->setEnabled(false);
+
+    connect(&camera.object_tracker, SIGNAL(sendFrame(cv::Mat)), this, SLOT(receiveFrame(cv::Mat)));
+    connect(&camera.object_tracker, SIGNAL(sendStats(std::vector<unsigned int>)), this, SLOT(receiveCameraStats(std::vector<unsigned int>)));
+    camera.run();
 }
 
 void MainWindow::increase_tab_width()
@@ -78,28 +81,32 @@ void MainWindow::receiveFrame(cv::Mat image)
 
 void MainWindow::updateGasPlots(std::vector<std::vector<float>> g_data)
 {
-    for(unsigned i = 0; i < gas_plot.size(); ++i) {
-        if (!gas_plot[i].empty() || g_data[i].size() != 0)
-            gas_plot[i].erase(gas_plot[i].begin(), gas_plot[i].begin()+g_data[i].size());
-        gas_plot[i].insert(std::end(gas_plot[i]), std::begin(g_data[i]), std::end(g_data[i]));
-        cv::Mat data(gas_plot[i]);
-        cv::Ptr<cv::plot::Plot2d> plot = cv::plot::Plot2d::create(data);
-        // plot width has to be multiple of 4 if it is bigger than 400 pixels.
-        // otherwise plot is disorted.
-        // I don't know why and I don't have time to investigate further
-        unsigned int plot_width = gas_sensor_label[i]->width();
-        plot_width = plot_width - plot_width%4;
-        plot->setPlotSize(plot_width,gas_sensor_label[i]->height()); // disorts the image
-        //qDebug() << ui->gas_sensor_1_label->width() << " " << ui->gas_sensor_1_label->height();
-        plot->setShowText(true);
-        plot->setInvertOrientation(true);
-        plot->setMaxX(1000);
-        //plot->setMaxY(1000);
-        plot->setPlotAxisColor(cv::Scalar(0, 0, 255));
-        plot->render(gas_plot_image);
-        QPixmap pix = QPixmap::fromImage(QImage((unsigned char*)gas_plot_image.data, gas_plot_image.cols, gas_plot_image.rows, QImage::Format_RGB888));
-        gas_sensor_label[i]->setPixmap(pix);
-        //cv::imshow( "plot", gas_plot_image );
+    for(unsigned i = 0; i < gas_plot_data.size(); ++i) {
+        if(gas_sensor_run_button[i]->text() == ">"){
+            // don't plot if it is stopped
+        }else{
+            if (!gas_plot_data[i].empty() || g_data[i].size() != 0)
+                gas_plot_data[i].erase(gas_plot_data[i].begin(), gas_plot_data[i].begin()+g_data[i].size());
+            gas_plot_data[i].insert(std::end(gas_plot_data[i]), std::begin(g_data[i]), std::end(g_data[i]));
+            cv::Mat data(gas_plot_data[i]);
+            cv::Ptr<cv::plot::Plot2d> plot = cv::plot::Plot2d::create(data);
+            // plot width has to be multiple of 4 if it is bigger than 400 pixels.
+            // otherwise plot is distorted.
+            // I don't know why and I don't have time to investigate further
+            unsigned int plot_width = gas_sensor_plot_label[i]->width();
+            plot_width = plot_width - plot_width%4;
+            plot->setPlotSize(plot_width,gas_sensor_plot_label[i]->height()); // disorts the image
+            //qDebug() << ui->gas_sensor_1_label->width() << " " << ui->gas_sensor_1_label->height();
+            plot->setShowText(true);
+            plot->setInvertOrientation(true);
+            plot->setMaxX(1000);
+            //plot->setMaxY(1000);
+            plot->setPlotAxisColor(cv::Scalar(0, 0, 255));
+            plot->render(gas_plot_image);
+            QPixmap pix = QPixmap::fromImage(QImage((unsigned char*)gas_plot_image.data, gas_plot_image.cols, gas_plot_image.rows, QImage::Format_RGB888));
+            gas_sensor_plot_label[i]->setPixmap(pix);
+            //cv::imshow( "plot", gas_plot_image );
+        }
     }
 }
 
@@ -183,3 +190,38 @@ void MainWindow::on_camera_stats_run_button_clicked()
     }
 }
 
+void MainWindow::on_gas_sensor_0_run_button_clicked()
+{
+    if (gas_sensor_run_button[0]->text() == "||"){
+        gas_sensor_run_button[0]->setText(">");
+    }else{
+        gas_sensor_run_button[0]->setText("||");
+    }
+}
+
+void MainWindow::on_gas_sensor_1_run_button_clicked()
+{
+    if (gas_sensor_run_button[1]->text() == "||"){
+        gas_sensor_run_button[1]->setText(">");
+    }else{
+        gas_sensor_run_button[1]->setText("||");
+    }
+}
+
+void MainWindow::on_gas_sensor_2_run_button_clicked()
+{
+    if (gas_sensor_run_button[2]->text() == "||"){
+        gas_sensor_run_button[2]->setText(">");
+    }else{
+        gas_sensor_run_button[2]->setText("||");
+    }
+}
+
+void MainWindow::on_gas_sensor_3_run_button_clicked()
+{
+    if (gas_sensor_run_button[3]->text() == "||"){
+        gas_sensor_run_button[3]->setText(">");
+    }else{
+        gas_sensor_run_button[3]->setText("||");
+    }
+}
