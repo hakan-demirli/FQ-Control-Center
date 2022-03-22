@@ -44,6 +44,8 @@ private slots:
     void on_gas_sensor_3_run_button_clicked();
     void on_middle_point_run_button_clicked();
 
+    void on_boundary_line_run_button_clicked();
+
 private:
     void increase_tab_width(void);
     void initialize_camera(void);

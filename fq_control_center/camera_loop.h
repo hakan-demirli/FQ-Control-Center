@@ -67,15 +67,6 @@ private:
     cv::Mat* tracking_results;
     cv::Mat* detecting_results;
 
-    unsigned long int per_frame_period_0;
-    unsigned long int per_frame_period_1;
-    unsigned long int* new_per_frame_period;
-    unsigned long int* tracking_per_frame_period;
-
-    //unsigned long total_frame_time;
-
-
-
 public:
     static CameraLoop& getInstance(json cfg, QObject *parent = nullptr);
     CameraLoop(CameraLoop const&) = delete;

@@ -41,7 +41,6 @@ public:
     void run();
 
     std::vector<cv::Mat>* new_frames;
-    unsigned long int* new_per_frame_period;
     bool keep_running;
 
 private:

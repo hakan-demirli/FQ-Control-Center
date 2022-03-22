@@ -17,8 +17,8 @@ Webcam::Webcam(json cfg,
 {
     cap = cv::VideoCapture((int)cfg["Source"]);
     cap.set(cv::CAP_PROP_BUFFERSIZE, 1); // [TODO] EXPERIMENT WITH THE CONSTANT BUFFERSIZE
-    cap.set(cv::CAP_PROP_FRAME_HEIGHT, (int)cfg["Size"][0]);
-    cap.set(cv::CAP_PROP_FRAME_WIDTH, (int)cfg["Size"][1]);
+    cap.set(cv::CAP_PROP_FRAME_HEIGHT, (int)cfg["Size"][1]);
+    cap.set(cv::CAP_PROP_FRAME_WIDTH, (int)cfg["Size"][0]);
     moveToThread(&m_thread);
     m_thread.start();
 }

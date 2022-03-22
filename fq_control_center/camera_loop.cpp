@@ -11,8 +11,6 @@ CameraLoop::CameraLoop(json cfg, QObject *parent) :
     tracking_frames(&frames_2),
     tracking_results(&results_0),
     detecting_results(&results_1),
-    new_per_frame_period(&per_frame_period_0),
-    tracking_per_frame_period(&per_frame_period_0),
     webcam(Webcam::getInstance(cfg,webcam_done_cv,all_done_cv,flag_mutex,object_detector_done_bool,parent)),
     object_tracker(ObjectTracker::getInstance(cfg,object_tracker_done_cv,all_done_cv,object_tracker_done_mutex,parent)),
     object_detector(ObjectDetector::getInstance(cfg,object_detector_done_cv,all_done_cv,flag_mutex,object_detector_done_bool,parent))
@@ -22,7 +20,6 @@ CameraLoop::CameraLoop(json cfg, QObject *parent) :
     m_thread.start();
 
     webcam.new_frames = new_frames;
-    webcam.new_per_frame_period = new_per_frame_period;
     webcam.run();
 
     webcam_done_mutex.lock();
@@ -38,7 +35,6 @@ CameraLoop::CameraLoop(json cfg, QObject *parent) :
 
     object_tracker.tracking_frames = tracking_frames;
     object_tracker.tracking_results = tracking_results;
-    object_tracker.tracking_per_frame_period = tracking_per_frame_period;
 
     all_done_cv.wakeAll();
     webcam_done_mutex.unlock();
@@ -89,8 +85,6 @@ void CameraLoop::main_loop(void) {
 
         std::swap(tracking_results,detecting_results);
 
-        std::swap(new_per_frame_period,tracking_per_frame_period);
-
         webcam.new_frames = new_frames;
 
         object_detector.detecting_frame = &detecting_frames->front();
@@ -98,7 +92,6 @@ void CameraLoop::main_loop(void) {
 
         object_tracker.tracking_frames = tracking_frames;
         object_tracker.tracking_results = tracking_results;
-        object_tracker.tracking_per_frame_period = tracking_per_frame_period;
 
         all_done_cv.wakeAll();
         webcam_done_mutex.unlock();

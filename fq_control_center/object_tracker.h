@@ -50,6 +50,7 @@ public:
 
     bool keep_running;
     bool toggle_video;
+    bool toggle_boundary_line;
     bool toggle_object_tracking;
     bool toggle_bounding_boxes;
     bool toggle_middle_point;
@@ -57,7 +58,6 @@ public:
     bool object_tracker_done;
 
     std::vector<cv::Mat>* tracking_frames;
-    unsigned long int* tracking_per_frame_period;
     cv::Mat* tracking_results;
 
 private:

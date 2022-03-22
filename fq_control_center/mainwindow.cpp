@@ -50,15 +50,25 @@ void MainWindow::initialize_camera()
     ui->video_output_label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
     ui->camera_run_button->setText(QString::fromStdString(settings->camera_cfg["Run"]));
+    ui->boundary_line_run_button->setText(QString::fromStdString(settings->camera_cfg["Boundary Line"]));
     ui->object_detection_run_button->setText(QString::fromStdString(settings->camera_cfg["Object Detection"]));
     ui->tracking_run_button->setText(QString::fromStdString(settings->camera_cfg["Object Tracking"]));
+    ui->middle_point_run_button->setText(QString::fromStdString(settings->camera_cfg["Middle Point"]));
     ui->bounding_boxes_run_button->setText(QString::fromStdString(settings->camera_cfg["Bounding Boxes"]));
     ui->camera_stats_run_button->setText(QString::fromStdString(settings->camera_cfg["Stats"]));
+
+    if(ui->camera_run_button->text() == ">"){
+        ui->boundary_line_run_button->setEnabled(false);
+    }
     if (ui->object_detection_run_button->text() == ">"){
+        ui->tracking_run_button->setEnabled(false);
+        ui->middle_point_run_button->setEnabled(false);
         ui->bounding_boxes_run_button->setEnabled(false);
-        ui->tracking_run_button->setEnabled(false);
-    }else if(ui->bounding_boxes_run_button->text() == ">")
-        ui->tracking_run_button->setEnabled(false);
+
+    }else if(ui->tracking_run_button->text() == ">"){
+        ui->middle_point_run_button->setEnabled(false);
+        ui->bounding_boxes_run_button->setEnabled(false);
+    }
 
     connect(&camera.object_tracker, SIGNAL(sendFrame(cv::Mat)), this, SLOT(receiveFrame(cv::Mat)));
     connect(&camera.object_tracker, SIGNAL(sendStats(std::vector<unsigned int>)), this, SLOT(receiveCameraStats(std::vector<unsigned int>)));
@@ -121,10 +131,30 @@ void MainWindow::on_camera_run_button_clicked()
 {
     if (ui->camera_run_button->text() == "||"){
         ui->camera_run_button->setText(">");
+        ui->boundary_line_run_button->setText(">");
+
         camera.object_tracker.toggle_video = false;
+
+        ui->boundary_line_run_button->setEnabled(false);
     }else{
         ui->camera_run_button->setText("||");
+
         camera.object_tracker.toggle_video = true;
+
+        ui->boundary_line_run_button->setEnabled(true);
+    }
+}
+
+void MainWindow::on_boundary_line_run_button_clicked()
+{
+    if (ui->boundary_line_run_button->text() == "||"){
+        ui->boundary_line_run_button->setText(">");
+
+        camera.object_tracker.toggle_boundary_line = false;
+    }else{
+        ui->boundary_line_run_button->setText("||");
+
+        camera.object_tracker.toggle_boundary_line = true;
     }
 }
 
@@ -248,3 +278,5 @@ void MainWindow::on_gas_sensor_3_run_button_clicked()
         gas_sensor_run_button[3]->setText("||");
     }
 }
+
+

@@ -10,6 +10,7 @@ ObjectTracker::ObjectTracker(json cfg,
     cfg(cfg),
     keep_running(true),
     toggle_video(cfg["Run"]=="||"),
+    toggle_boundary_line(cfg["Bondary Line"]=="||"),
     toggle_object_tracking(cfg["Object Tracking"]=="||"),
     toggle_bounding_boxes(cfg["Bounding Boxes"]=="||"),
     toggle_middle_point(cfg["Middle Point"]=="||"),
@@ -115,12 +116,14 @@ inline void ObjectTracker::track_and_emit(void) {
                                       rois[i],
                                       cv::Scalar(cfg["Color"][0],cfg["Color"][1],cfg["Color"][2]),
                                       cfg["Rectangle Thickness"]);
-                    if(toggle_middle_point)
+                    if(toggle_middle_point){
+                        auto middle_point = (rois[i].br() + rois[i].tl())*0.5;
                         cv::circle(fr,
-                                   (rois[i].br() + rois[i].tl())*0.5,
-                                    cfg["Circle Radius"],
-                                    cv::Scalar(cfg["Color"][0],cfg["Color"][1],cfg["Color"][2]),
-                                    cfg["Circle Thickness"]);
+                                   middle_point,
+                                   cfg["Circle Radius"],
+                                   cv::Scalar(cfg["Color"][0],cfg["Color"][1],cfg["Color"][2]),
+                                   cfg["Circle Thickness"]);
+                    }
                 }
                 else if(tracker_total_missed_frames[i] > cfg["Tracker Max Missed Frames"]){
                     bunch_of_trackers.erase(bunch_of_trackers.begin() + i);
@@ -130,17 +133,25 @@ inline void ObjectTracker::track_and_emit(void) {
                 }else{
                     tracker_total_missed_frames[i] += 1;
                 }
-                //sleep for the remaining time to achieve a constant frame rate
-                long long int t = *tracking_per_frame_period - cro_tracking.toc();
-                QThread::usleep(std::max<long long int>(t, 0));
+                //sleep for the remaining time for consistent frame rate
+                //QThread::usleep(1);
             }
         }
-        if (toggle_video)
+        if (toggle_video){
+            if(toggle_boundary_line){
+                cv::line(fr,
+                         cv::Point(int(cfg["Boundary Start Point"][0]),int(cfg["Boundary Start Point"][1])),
+                         cv::Point(int(cfg["Boundary End Point"][0]),int(cfg["Boundary End Point"][1])),
+                         cv::Scalar(cfg["Color"][2],cfg["Color"][1],cfg["Color"][0]),
+                         cfg["Boundary Thickness"]);
+            }
             emit sendFrame(fr);
+        }
         if (toggle_stats){
             stats.push_back(bunch_of_trackers.size());
             stats.push_back(cro_tracking.toc());
             emit sendStats(stats);
+            stats.clear();
         }
     }
 }
