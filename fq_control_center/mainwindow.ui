@@ -27,7 +27,7 @@
        <enum>QTabWidget::West</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="about_tab">
        <attribute name="title">
@@ -48,7 +48,7 @@
            <item row="1" column="0">
             <widget class="QTabWidget" name="camera_tabs">
              <property name="currentIndex">
-              <number>0</number>
+              <number>1</number>
              </property>
              <widget class="QWidget" name="camera_tab_1">
               <attribute name="title">
@@ -479,19 +479,6 @@
                     </size>
                    </property>
                   </spacer>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="apply_camera_settings_button">
-                   <property name="sizeIncrement">
-                    <size>
-                     <width>0</width>
-                     <height>64</height>
-                    </size>
-                   </property>
-                   <property name="text">
-                    <string>Apply</string>
-                   </property>
-                  </widget>
                  </item>
                  <item>
                   <spacer name="horizontalSpacer_5">

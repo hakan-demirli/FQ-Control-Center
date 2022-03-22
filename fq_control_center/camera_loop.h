@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <algorithm>
+#include <functional>
 
 #include <opencv2/core/utility.hpp>
 #include <opencv2/dnn.hpp>
@@ -11,16 +13,20 @@
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
 
+#include <QWaitCondition>
+#include <QSemaphore>
 #include <QObject>
 #include <QImage>
 #include <QPixmap>
 #include <QThread>
+#include <QDebug>
+#include <QMutex>
 
 #include "fps.h"
 #include "webcam.h"
 #include "json.hpp"
-
-#include <QDebug>
+#include "object_tracker.h"
+#include "object_detector.h"
 
 
 using json = nlohmann::json;
@@ -30,49 +36,60 @@ class CameraLoop: public QObject {
 private:
     json cfg;
 public:
-    explicit CameraLoop(json cfg, QObject *parent = nullptr);
-    ~CameraLoop();
-    void run(void);
-
-    bool toggle_stream;
-    bool toggle_video;
-    bool toggle_stats;
-    bool toggle_object_detection;
-    bool toggle_tracking;
-    bool toggle_bounding_boxes;
-
+    bool keep_running;
 private:
+    explicit CameraLoop(json cfg, QObject *parent = nullptr);
     void detect_objects(void);
     void create_bounding_boxes_confidences_and_trackers(void);
     void remove_duplicate_bounding_boxes_confidences_and_trackers(void);
+    void tracking_loop();
+
 
     QThread m_thread;
-    const std::string all_models_path;
-    const std::string model_folder;
-    const std::string model_file;
-    const std::string model_config_file;
+    bool object_detector_done_bool;
+    QWaitCondition webcam_done_cv;
+    QWaitCondition object_detector_done_cv;
+    QWaitCondition object_tracker_done_cv;
+    QWaitCondition all_done_cv;
+    QMutex flag_mutex;
+    QMutex webcam_done_mutex;
+    QMutex object_detector_done_mutex;
+    QMutex object_tracker_done_mutex;
+
+    std::vector<cv::Mat> frames_0;
+    std::vector<cv::Mat> frames_1;
+    std::vector<cv::Mat> frames_2;
+    std::vector<cv::Mat>* new_frames;
+    std::vector<cv::Mat>* detecting_frames;
+    std::vector<cv::Mat>* tracking_frames;
+    cv::Mat results_0;
+    cv::Mat results_1;
+    cv::Mat* tracking_results;
+    cv::Mat* detecting_results;
+
+    unsigned long int per_frame_period_0;
+    unsigned long int per_frame_period_1;
+    unsigned long int* new_per_frame_period;
+    unsigned long int* tracking_per_frame_period;
+
+    //unsigned long total_frame_time;
+
+
+
+public:
+    static CameraLoop& getInstance(json cfg, QObject *parent = nullptr);
+    CameraLoop(CameraLoop const&) = delete;
+    void operator=(CameraLoop const&) = delete;
+    ~CameraLoop();
+    void run(void);
+
     Webcam& usb_webcam;
-
-    cv::Scalar mean_blob = cv::Scalar(127.5, 127.5, 127.5);
-    cv::Mat image;
-    cv::Mat results;
-
-    QVector<cv::Ptr<cv::Tracker>> bunch_of_trackers;
-    std::vector<unsigned int> tracker_total_missed_frames;
-    std::vector<cv::Rect2d> rois;
-    std::vector<float> confidences;
-    unsigned int total_frames;
-    unsigned int tracker_last_index;
-    std::vector<int> indices;
-    fps cro_all;
+    ObjectTracker& object_tracker;
+    ObjectDetector& object_detector;
 
 public slots:
     void main_loop(void);
 
-signals:
-    void sendValue(int newValue);
-    void sendFrame(cv::Mat frame);
-    void sendStats(long compute_time);
 };
 
 

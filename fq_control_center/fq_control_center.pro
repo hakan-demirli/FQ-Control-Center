@@ -22,6 +22,8 @@ SOURCES += \
     gas_sensors.cpp \
     main.cpp \
     mainwindow.cpp \
+    object_detector.cpp \
+    object_tracker.cpp \
     settings.cpp \
     webcam.cpp
 
@@ -32,6 +34,8 @@ HEADERS += \
     gas_sensors.h \
     json.hpp \
     mainwindow.h \
+    object_detector.h \
+    object_tracker.h \
     settings.h \
     webcam.h
 

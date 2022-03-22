@@ -29,11 +29,10 @@ public:
 
 private slots:
     void receiveFrame(cv::Mat frame);
-    void receiveCameraStats(long compute_time);
+    void receiveCameraStats(std::vector<unsigned int> stats);
     void updateGasPlots(std::vector<std::vector<float>> g_data);
 
     void on_camera_run_button_clicked();
-    void on_apply_camera_settings_button_clicked();
     void on_object_detection_run_button_clicked();
     void on_tracking_run_button_clicked();
     void on_bounding_boxes_run_button_clicked();
@@ -47,7 +46,7 @@ private:
 
     Ui::MainWindow *ui;
     Settings* settings;
-    CameraLoop* camera;
+    CameraLoop& camera;
     GasSensors* gas_sensors;
 
     QLabel* gas_sensor_label[constants::NUMBER_OF_GAS_SENSORS];

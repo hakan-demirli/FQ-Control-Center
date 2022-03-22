@@ -1,37 +1,63 @@
 #ifndef WEBCAM_H
 #define WEBCAM_H
 
+#include <QObject>
+#include <QThread>
+#include <QDebug>
+#include <QWaitCondition>
+#include <QMutex>
+
 #include <opencv2/opencv.hpp>
 #include <thread>
+#include <atomic>
+
+#include "fps.h"
+#include "json.hpp"
 
 
-class Webcam{
-    public:
-        /* 
-        * webcam is a singleton class that reads frames from a webcam asynchronously.
-        */
-        static Webcam& getInstance(const int,const int, const int);
-        cv::Mat read();
-        void run();
-        void stop();
-        Webcam(Webcam const&) = delete;
-        ~Webcam();
-        void operator=(Webcam const&) = delete;
-    
-    private:
-        void update();
-        Webcam(const int,const int, const int);
+using json = nlohmann::json;
 
-    public:
+class Webcam: public QObject {
+    Q_OBJECT
+private:
+    json cfg;
+    explicit Webcam(json cfg,
+                    QWaitCondition& webcam_done_cv,
+                    QWaitCondition& all_done_cv,
+                    QMutex& flag_mutex,
+                    bool& object_detector_done_bool,
+                    QObject *parent = nullptr);
 
-    private:
-        bool thread_run;
-        const int src;
-        const int width;
-        const int height;
-        cv::VideoCapture cap;
-        cv::Mat frame;
-        std::thread frame_reader;
+public:
+    static Webcam& getInstance(json cfg,
+                               QWaitCondition& webcam_done_cv,
+                               QWaitCondition& all_done_cv,
+                               QMutex& flag_mutex,
+                               bool& object_detector_done_bool,
+                               QObject *parent = nullptr);
+    void operator=(Webcam const&) = delete;
+    Webcam(Webcam const&) = delete;
+    ~Webcam();
+    void run();
+
+    std::vector<cv::Mat>* new_frames;
+    unsigned long int* new_per_frame_period;
+    bool keep_running;
+
+private:
+    QThread m_thread;
+
+    QWaitCondition& webcam_done_cv;
+    QWaitCondition& all_done_cv;
+    QMutex& flag_mutex;
+    bool& object_detector_done_bool;
+
+    cv::VideoCapture cap;
+    cv::Mat frame;
+    fps cro;
+
+public slots:
+    void main_loop(void);
 };
 
 #endif// WEBCAM_H
