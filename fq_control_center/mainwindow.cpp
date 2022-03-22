@@ -278,5 +278,3 @@ void MainWindow::on_gas_sensor_3_run_button_clicked()
         gas_sensor_run_button[3]->setText("||");
     }
 }
-
-

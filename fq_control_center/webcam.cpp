@@ -16,7 +16,7 @@ Webcam::Webcam(json cfg,
     object_detector_done_bool(object_detector_done_bool)
 {
     cap = cv::VideoCapture((int)cfg["Source"]);
-    cap.set(cv::CAP_PROP_BUFFERSIZE, 1); // [TODO] EXPERIMENT WITH THE CONSTANT BUFFERSIZE
+    cap.set(cv::CAP_PROP_BUFFERSIZE, int(cfg["Camera Buffer Size"]));
     cap.set(cv::CAP_PROP_FRAME_HEIGHT, (int)cfg["Size"][1]);
     cap.set(cv::CAP_PROP_FRAME_WIDTH, (int)cfg["Size"][0]);
     moveToThread(&m_thread);
@@ -52,6 +52,8 @@ Webcam& Webcam::getInstance(json cfg,
 void Webcam::main_loop(){
 
     qDebug() << "Webcam::main_loop thread id:" << QThread::currentThreadId();
+    // read and store frames until object detection is done
+    // then wait for the all_done signal
     while(keep_running){
         cap.read(frame);
         new_frames->push_back(frame);

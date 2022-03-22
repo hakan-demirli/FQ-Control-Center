@@ -32,6 +32,7 @@ HEADERS += \
     constants.h \
     fps.h \
     gas_sensors.h \
+    hps.h \
     json.hpp \
     mainwindow.h \
     object_detector.h \

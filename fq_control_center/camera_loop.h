@@ -49,7 +49,6 @@ private:
     bool object_detector_done_bool;
     QWaitCondition webcam_done_cv;
     QWaitCondition object_detector_done_cv;
-    QWaitCondition object_tracker_done_cv;
     QWaitCondition all_done_cv;
     QMutex flag_mutex;
     QMutex webcam_done_mutex;

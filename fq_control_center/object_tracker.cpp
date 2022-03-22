@@ -2,7 +2,6 @@
 
 
 ObjectTracker::ObjectTracker(json cfg,
-                             QWaitCondition& object_tracker_done_cv,
                              QWaitCondition& all_done_cv,
                              QMutex& object_tracker_done_mutex,
                              QObject *parent) :
@@ -16,7 +15,6 @@ ObjectTracker::ObjectTracker(json cfg,
     toggle_middle_point(cfg["Middle Point"]=="||"),
     toggle_stats(cfg["Stats"]=="||"),
     object_tracker_done(true),
-    object_tracker_done_cv(object_tracker_done_cv),
     all_done_cv(all_done_cv),
     object_tracker_done_mutex(object_tracker_done_mutex)
 {
@@ -25,12 +23,11 @@ ObjectTracker::ObjectTracker(json cfg,
 }
 
 ObjectTracker& ObjectTracker::getInstance(json cfg,
-                                          QWaitCondition& object_tracker_done_cv,
                                           QWaitCondition& all_done_cv,
                                           QMutex& object_tracker_done_mutex,
                                           QObject *parent)
 {
-    static ObjectTracker instance(cfg, object_tracker_done_cv,all_done_cv,object_tracker_done_mutex,parent);
+    static ObjectTracker instance(cfg,all_done_cv,object_tracker_done_mutex,parent);
     return instance;
 }
 
@@ -39,7 +36,6 @@ ObjectTracker::~ObjectTracker(){
     qDebug() << "Destroying ObjectTracker Object";
     if( m_thread.isRunning() )
     {
-        try {object_tracker_done_cv.wakeAll();} catch(int t){}
         try {all_done_cv.wakeAll();} catch(int t){}
         m_thread.quit();
     }
@@ -104,6 +100,9 @@ inline void ObjectTracker::track_and_emit(void) {
             remove_duplicate_bounding_boxes_confidences_and_trackers();
         }
     }
+    // process every frame
+    //    update all trackers
+    //    emit processed frames
     for(auto& fr : *tracking_frames){
         cro_tracking.tic();
         if(toggle_object_tracking && !rois.empty()){
@@ -159,12 +158,12 @@ inline void ObjectTracker::track_and_emit(void) {
 void ObjectTracker::main_loop(void) {
 
     qDebug() << "ObjectTracker::main_loop thread id:" << QThread::currentThreadId();
+    // track and emit all frames then wait for all done
     while(keep_running){
         track_and_emit();
         tracking_frames->clear();
 
         object_tracker_done_mutex.lock();
-        object_tracker_done_cv.wakeAll();
         all_done_cv.wait(&object_tracker_done_mutex);
         object_tracker_done_mutex.unlock();
     }

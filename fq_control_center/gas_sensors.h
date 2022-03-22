@@ -12,6 +12,7 @@
 
 #include "constants.h"
 #include "json.hpp"
+#include "hps.h"
 
 
 using json = nlohmann::json;

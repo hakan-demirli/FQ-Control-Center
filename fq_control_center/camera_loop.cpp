@@ -12,7 +12,7 @@ CameraLoop::CameraLoop(json cfg, QObject *parent) :
     tracking_results(&results_0),
     detecting_results(&results_1),
     webcam(Webcam::getInstance(cfg,webcam_done_cv,all_done_cv,flag_mutex,object_detector_done_bool,parent)),
-    object_tracker(ObjectTracker::getInstance(cfg,object_tracker_done_cv,all_done_cv,object_tracker_done_mutex,parent)),
+    object_tracker(ObjectTracker::getInstance(cfg,all_done_cv,object_tracker_done_mutex,parent)),
     object_detector(ObjectDetector::getInstance(cfg,object_detector_done_cv,all_done_cv,flag_mutex,object_detector_done_bool,parent))
 {
     qDebug() << "Creating CameraLoop Object";
@@ -22,12 +22,15 @@ CameraLoop::CameraLoop(json cfg, QObject *parent) :
     webcam.new_frames = new_frames;
     webcam.run();
 
+    // wait until the first frame is available
     webcam_done_mutex.lock();
     webcam_done_cv.wait(&webcam_done_mutex);
 
+    // swap frame packets so object detection can start with a frame
     std::swap(tracking_frames,detecting_frames);
     std::swap(new_frames,detecting_frames);
 
+    //update pointers of frame packets and shared variables
     webcam.new_frames = new_frames;
 
     object_detector.detecting_frame = &detecting_frames->front();
@@ -36,6 +39,7 @@ CameraLoop::CameraLoop(json cfg, QObject *parent) :
     object_tracker.tracking_frames = tracking_frames;
     object_tracker.tracking_results = tracking_results;
 
+    // wake webcam
     all_done_cv.wakeAll();
     webcam_done_mutex.unlock();
 
@@ -56,7 +60,6 @@ CameraLoop::~CameraLoop(){
     {
         try {webcam_done_cv.wakeAll();} catch(int t){}
         try {object_detector_done_cv.wakeAll();} catch(int t){}
-        try {object_tracker_done_cv.wakeAll();} catch(int t){}
         try {all_done_cv.wakeAll();} catch(int t){}
         m_thread.quit();
     }
@@ -76,6 +79,13 @@ void CameraLoop::main_loop(void) {
 
     qDebug() << "CameraLoop::main_loop thread id:" << QThread::currentThreadId();
 
+    // wait until webcam is done
+    // if it is done object detection is also done
+    // swap all containers
+    // tell everyone to wake-up
+
+    //    No need to wait for tracking
+    //    In worst case jumping couple of frames ahead won't cause serious problems
     while (keep_running) {
         webcam_done_mutex.lock();
         webcam_done_cv.wait(&webcam_done_mutex);

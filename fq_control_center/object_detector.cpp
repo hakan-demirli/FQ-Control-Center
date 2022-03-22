@@ -55,6 +55,7 @@ void ObjectDetector::main_loop(){
 
     cv::Mat blob;
     cv::Mat output;
+    // detect objects and wait for all_done
     while(keep_running){
         if(toggle_object_detection){
             blob = cv::dnn::blobFromImage(*detecting_frame,

@@ -33,13 +33,11 @@ class ObjectTracker: public QObject {
 private:
     const json cfg;
     explicit ObjectTracker(json cfg,
-                           QWaitCondition& object_tracker_done_cv,
                            QWaitCondition& all_done_cv,
                            QMutex& object_tracker_done_mutex,
                            QObject *parent = nullptr);
 public:
     static ObjectTracker& getInstance(json cfg,
-                                      QWaitCondition& object_tracker_done_cv,
                                       QWaitCondition& all_done_cv,
                                       QMutex& object_tracker_done_mutex,
                                       QObject *parent = nullptr);
@@ -66,7 +64,6 @@ private:
     void track_and_emit();
 
     QThread m_thread;
-    QWaitCondition& object_tracker_done_cv;
     QWaitCondition& all_done_cv;
     QMutex& object_tracker_done_mutex;
 
