@@ -133,48 +133,69 @@ void MainWindow::on_object_detection_run_button_clicked()
     if (ui->object_detection_run_button->text() == "||"){
         ui->object_detection_run_button->setText(">");
         ui->tracking_run_button->setText(">");
+        ui->middle_point_run_button->setText(">");
         ui->bounding_boxes_run_button->setText(">");
 
         camera.object_detector.toggle_object_detection = false;
         camera.object_tracker.toggle_object_tracking = false;
+        camera.object_tracker.toggle_middle_point = false;
         camera.object_tracker.toggle_bounding_boxes = false;
 
-        ui->bounding_boxes_run_button->setEnabled(false);
         ui->tracking_run_button->setEnabled(false);
+        ui->middle_point_run_button->setEnabled(false);
+        ui->bounding_boxes_run_button->setEnabled(false);
+
     }else{
         ui->object_detection_run_button->setText("||");
 
         camera.object_detector.toggle_object_detection = true;
 
+        ui->tracking_run_button->setEnabled(true);
+        ui->middle_point_run_button->setEnabled(true);
         ui->bounding_boxes_run_button->setEnabled(true);
     }
 }
 
 void MainWindow::on_tracking_run_button_clicked()
 {
-    if (ui->tracking_run_button->text() == "||" && ui->object_detection_run_button->text() == "||"){
+    if (ui->tracking_run_button->text() == "||"){
         ui->tracking_run_button->setText(">");
+        ui->middle_point_run_button->setText(">");
+        ui->bounding_boxes_run_button->setText(">");
         camera.object_tracker.toggle_object_tracking = false;
+        camera.object_tracker.toggle_middle_point = false;
+        camera.object_tracker.toggle_bounding_boxes = false;
+
+        ui->middle_point_run_button->setEnabled(false);
+        ui->bounding_boxes_run_button->setEnabled(false);
     }else{
         ui->tracking_run_button->setText("||");
         camera.object_tracker.toggle_object_tracking = true;
+
+        ui->middle_point_run_button->setEnabled(true);
+        ui->bounding_boxes_run_button->setEnabled(true);
+    }
+}
+
+void MainWindow::on_middle_point_run_button_clicked()
+{
+    if (ui->middle_point_run_button->text() == "||"){
+        ui->middle_point_run_button->setText(">");
+        camera.object_tracker.toggle_middle_point = false;
+    }else{
+        ui->middle_point_run_button->setText("||");
+        camera.object_tracker.toggle_middle_point = true;
     }
 }
 
 void MainWindow::on_bounding_boxes_run_button_clicked()
 {
-    if (ui->bounding_boxes_run_button->text() == "||" && ui->object_detection_run_button->text() == "||"){
+    if (ui->bounding_boxes_run_button->text() == "||"){
         ui->bounding_boxes_run_button->setText(">");
-        ui->tracking_run_button->setText(">");
         camera.object_tracker.toggle_bounding_boxes = false;
-        camera.object_tracker.toggle_object_tracking = false;
-
-        ui->tracking_run_button->setEnabled(false);
     }else{
         ui->bounding_boxes_run_button->setText("||");
         camera.object_tracker.toggle_bounding_boxes = true;
-
-        ui->tracking_run_button->setEnabled(true);
     }
 }
 

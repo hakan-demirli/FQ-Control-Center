@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     MainWindow w;
 
     qRegisterMetaType<cv::Mat>("cv::Mat");
-    qRegisterMetaType<std::string>("std::string");
+    qRegisterMetaType<std::vector<unsigned int> >("std::vector<unsigned int>");
     qRegisterMetaType<std::vector<std::vector<float>>>("std::vector<std::vector<float>>");
 
     //std::cout << "OpenCV version : " << CV_VERSION << std::endl;

@@ -95,13 +95,14 @@ inline void ObjectTracker::remove_duplicate_bounding_boxes_confidences_and_track
 
 inline void ObjectTracker::track_and_emit(void) {
 
-    create_bounding_boxes_confidences_and_trackers();
+    if(toggle_object_tracking){
+        create_bounding_boxes_confidences_and_trackers();
 
-    if(!rois.empty()){
-        indices.clear();
-        remove_duplicate_bounding_boxes_confidences_and_trackers();
+        if(!rois.empty()){
+            indices.clear();
+            remove_duplicate_bounding_boxes_confidences_and_trackers();
+        }
     }
-
     for(auto& fr : *tracking_frames){
         cro_tracking.tic();
         if(toggle_object_tracking && !rois.empty()){
@@ -150,7 +151,7 @@ void ObjectTracker::main_loop(void) {
     while(keep_running){
         track_and_emit();
         tracking_frames->clear();
-        //upside is the real work
+
         object_tracker_done_mutex.lock();
         object_tracker_done_cv.wakeAll();
         all_done_cv.wait(&object_tracker_done_mutex);

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>846</width>
+    <height>735</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,7 +27,7 @@
        <enum>QTabWidget::West</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="about_tab">
        <attribute name="title">
@@ -154,7 +154,7 @@
               </attribute>
               <layout class="QGridLayout" name="gridLayout_5">
                <item row="0" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_10">
+                <layout class="QHBoxLayout" name="horizontalLayout">
                  <item>
                   <widget class="QLabel" name="camera_info_label">
                    <property name="text">
@@ -234,9 +234,9 @@
                 </layout>
                </item>
                <item row="2" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_8">
+                <layout class="QHBoxLayout" name="horizontalLayout_2">
                  <item>
-                  <spacer name="horizontalSpacer_9">
+                  <spacer name="horizontalSpacer_7">
                    <property name="orientation">
                     <enum>Qt::Horizontal</enum>
                    </property>
@@ -252,16 +252,16 @@
                   </spacer>
                  </item>
                  <item>
-                  <layout class="QHBoxLayout" name="horizontalLayout_9">
+                  <layout class="QHBoxLayout" name="horizontalLayout_3">
                    <item>
-                    <widget class="QLabel" name="bounding_boxes_info_label">
+                    <widget class="QLabel" name="tracking_info_label">
                      <property name="text">
-                      <string>Bounding Boxes</string>
+                      <string>Object Tracking</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <spacer name="horizontalSpacer_10">
+                    <spacer name="horizontalSpacer_3">
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
                      </property>
@@ -274,7 +274,7 @@
                     </spacer>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="bounding_boxes_run_button">
+                    <widget class="QPushButton" name="tracking_run_button">
                      <property name="minimumSize">
                       <size>
                        <width>0</width>
@@ -289,7 +289,7 @@
                   </layout>
                  </item>
                  <item>
-                  <spacer name="horizontalSpacer_11">
+                  <spacer name="horizontalSpacer_8">
                    <property name="orientation">
                     <enum>Qt::Horizontal</enum>
                    </property>
@@ -307,9 +307,9 @@
                 </layout>
                </item>
                <item row="3" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_7">
+                <layout class="QHBoxLayout" name="horizontalLayout_16">
                  <item>
-                  <spacer name="horizontalSpacer_12">
+                  <spacer name="horizontalSpacer_21">
                    <property name="orientation">
                     <enum>Qt::Horizontal</enum>
                    </property>
@@ -325,9 +325,9 @@
                   </spacer>
                  </item>
                  <item>
-                  <layout class="QHBoxLayout" name="horizontalLayout_2">
+                  <layout class="QHBoxLayout" name="horizontalLayout_17">
                    <item>
-                    <spacer name="horizontalSpacer_7">
+                    <spacer name="horizontalSpacer_22">
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
                      </property>
@@ -343,16 +343,16 @@
                     </spacer>
                    </item>
                    <item>
-                    <layout class="QHBoxLayout" name="horizontalLayout_3">
+                    <layout class="QHBoxLayout" name="horizontalLayout_18">
                      <item>
-                      <widget class="QLabel" name="tracking_info_label">
+                      <widget class="QLabel" name="middle_point_info_label">
                        <property name="text">
-                        <string>Object Tracking</string>
+                        <string>Middle Point</string>
                        </property>
                       </widget>
                      </item>
                      <item>
-                      <spacer name="horizontalSpacer_3">
+                      <spacer name="horizontalSpacer_5">
                        <property name="orientation">
                         <enum>Qt::Horizontal</enum>
                        </property>
@@ -365,7 +365,7 @@
                       </spacer>
                      </item>
                      <item>
-                      <widget class="QPushButton" name="tracking_run_button">
+                      <widget class="QPushButton" name="middle_point_run_button">
                        <property name="minimumSize">
                         <size>
                          <width>0</width>
@@ -380,7 +380,7 @@
                     </layout>
                    </item>
                    <item>
-                    <spacer name="horizontalSpacer_8">
+                    <spacer name="horizontalSpacer_23">
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
                      </property>
@@ -398,7 +398,7 @@
                   </layout>
                  </item>
                  <item>
-                  <spacer name="horizontalSpacer_13">
+                  <spacer name="horizontalSpacer_24">
                    <property name="orientation">
                     <enum>Qt::Horizontal</enum>
                    </property>
@@ -416,6 +416,115 @@
                 </layout>
                </item>
                <item row="4" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_19">
+                 <item>
+                  <spacer name="horizontalSpacer_25">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Minimum</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_20">
+                   <item>
+                    <spacer name="horizontalSpacer_26">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeType">
+                      <enum>QSizePolicy::Minimum</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <layout class="QHBoxLayout" name="horizontalLayout_21">
+                     <item>
+                      <widget class="QLabel" name="bounding_boxes_info_label">
+                       <property name="text">
+                        <string>Bounding Boxes</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <spacer name="horizontalSpacer_6">
+                       <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>40</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="bounding_boxes_run_button">
+                       <property name="minimumSize">
+                        <size>
+                         <width>0</width>
+                         <height>64</height>
+                        </size>
+                       </property>
+                       <property name="text">
+                        <string>&gt;</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_27">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeType">
+                      <enum>QSizePolicy::Minimum</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_28">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Minimum</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+               <item row="5" column="0">
                 <layout class="QHBoxLayout" name="horizontalLayout_5">
                  <item>
                   <widget class="QLabel" name="camera_stats_info_label">
@@ -452,7 +561,7 @@
                  </item>
                 </layout>
                </item>
-               <item row="5" column="0">
+               <item row="6" column="0">
                 <spacer name="verticalSpacer">
                  <property name="orientation">
                   <enum>Qt::Vertical</enum>
@@ -464,36 +573,6 @@
                   </size>
                  </property>
                 </spacer>
-               </item>
-               <item row="6" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout">
-                 <item>
-                  <spacer name="horizontalSpacer_6">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_5">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
                </item>
               </layout>
              </widget>

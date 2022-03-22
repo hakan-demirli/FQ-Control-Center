@@ -38,14 +38,11 @@ private slots:
     void on_tracking_run_button_clicked();
     void on_bounding_boxes_run_button_clicked();
     void on_camera_stats_run_button_clicked();
-
     void on_gas_sensor_0_run_button_clicked();
-
     void on_gas_sensor_1_run_button_clicked();
-
     void on_gas_sensor_2_run_button_clicked();
-
     void on_gas_sensor_3_run_button_clicked();
+    void on_middle_point_run_button_clicked();
 
 private:
     void increase_tab_width(void);
