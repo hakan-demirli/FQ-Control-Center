@@ -18,7 +18,7 @@
 #include "json.hpp"
 #include "hps.h"
 
-//#define FPGA 1
+//#define FPGA
 #define LWH2F_RANGE 0x07FFFF
 #define SIMPLE_MEMORY_OFFSET 0x07FFFF
 

@@ -84,9 +84,12 @@ void GasSensors::initialize_fpga_bridge(){
 void GasSensors::read_gas_sensors()
 {
     for (int i = 0; i<constants::NUMBER_OF_GAS_SENSORS; ++i){
-        int rint = rand() % 10 + 1;
-        //*simple_memory_0 = *simple_memory_0 + 1;
-        //int rint = *simple_memory_0;
+        #ifdef  FPGA
+            *simple_memory_0 = *simple_memory_0 + 1;
+            int rint = *simple_memory_0;
+        #else
+            int rint = rand() % 10 + 1;
+        #endif
         gas_plot[i].push_back(rint);
         gas_sensor_data[i].push_back(rint);
     }
