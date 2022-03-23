@@ -28,7 +28,7 @@ using json = nlohmann::json;
 class GasSensors: public QObject {
     Q_OBJECT
 public:
-    json cfg;
+    const json cfg;
 public:
     explicit GasSensors(json cfg, QObject *parent = nullptr);
     ~GasSensors();

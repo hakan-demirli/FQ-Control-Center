@@ -51,7 +51,6 @@ public:
     ~ObjectDetector();
     void run();
 
-
     bool keep_running;
     bool toggle_object_detection;
 

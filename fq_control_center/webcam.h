@@ -20,7 +20,7 @@ using json = nlohmann::json;
 class Webcam: public QObject {
     Q_OBJECT
 private:
-    json cfg;
+    const json cfg;
     explicit Webcam(json cfg,
                     QWaitCondition& webcam_done_cv,
                     QWaitCondition& all_done_cv,

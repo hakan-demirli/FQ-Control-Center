@@ -34,7 +34,7 @@ using json = nlohmann::json;
 class CameraLoop: public QObject {
     Q_OBJECT
 private:
-    json cfg;
+    const json cfg;
 public:
     bool keep_running;
 private:
@@ -43,7 +43,6 @@ private:
     void create_bounding_boxes_confidences_and_trackers(void);
     void remove_duplicate_bounding_boxes_confidences_and_trackers(void);
     void tracking_loop();
-
 
     QThread m_thread;
     bool object_detector_done_bool;
