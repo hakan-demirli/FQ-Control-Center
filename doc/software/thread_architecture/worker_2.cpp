@@ -3,13 +3,13 @@
 
 Worker_2::Worker_2(QWaitCondition& w2_done_cv,
                    QWaitCondition& all_done_cv,
-                   QMutex& w2_done_mutex,
+                   QMutex& flag_mutex,
                    bool& w1_done_bool,
                    QObject *parent) :
     QObject(parent),
     w2_done_cv(w2_done_cv),
     all_done_cv(all_done_cv),
-    w2_done_mutex(w2_done_mutex),
+    flag_mutex(flag_mutex),
     w1_done_bool(w1_done_bool)
 {
     qDebug() << "Creating Worker_2 Object";
@@ -32,11 +32,11 @@ Worker_2::~Worker_2(){
 
 Worker_2& Worker_2::getInstance(QWaitCondition& w2_done_cv,
                                 QWaitCondition& all_done_cv,
-                                QMutex& w2_done_mutex,
+                                QMutex& flag_mutex,
                                 bool& w1_done_bool,
                                 QObject *parent)
 {
-    static Worker_2 instance(w2_done_cv,all_done_cv,w2_done_mutex,w1_done_bool,parent);
+    static Worker_2 instance(w2_done_cv,all_done_cv,flag_mutex,w1_done_bool,parent);
     return instance;
 }
 
@@ -50,10 +50,10 @@ void Worker_2::main_loop(){
         }
         tracking_frames->clear();
         //upside is the real work
-        w2_done_mutex.lock();
+        flag_mutex.lock();
         w2_done_cv.wakeAll();
-        all_done_cv.wait(&w2_done_mutex);
-        w2_done_mutex.unlock();
+        all_done_cv.wait(&flag_mutex);
+        flag_mutex.unlock();
     }
 }
 

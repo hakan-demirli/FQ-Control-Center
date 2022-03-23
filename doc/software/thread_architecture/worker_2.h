@@ -17,14 +17,14 @@ class Worker_2: public QObject {
 private:
     explicit Worker_2(QWaitCondition& w2_done_cv,
                       QWaitCondition& all_done_cv,
-                      QMutex& w2_done_mutex,
+                      QMutex& flag_mutex,
                       bool& w1_done_bool,
                       QObject *parent = nullptr);
 
 public:
     static Worker_2& getInstance(QWaitCondition& w2_done_cv,
                                  QWaitCondition& all_done_cv,
-                                 QMutex& w2_done_mutex,
+                                 QMutex& flag_mutex,
                                  bool& w1_done_bool,
                                  QObject *parent = nullptr);
     void operator=(Worker_2 const&) = delete;
@@ -41,7 +41,7 @@ private:
     QThread m_thread;
     QWaitCondition& w2_done_cv;
     QWaitCondition& all_done_cv;
-    QMutex& w2_done_mutex;
+    QMutex& flag_mutex;
     bool& w1_done_bool;
     int* dbg_int;
 

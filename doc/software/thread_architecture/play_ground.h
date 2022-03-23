@@ -27,9 +27,6 @@ private:
     QWaitCondition w2_done_cv;
     QWaitCondition all_done_cv;
     QMutex flag_mutex;
-    QMutex w0_done_mutex;
-    QMutex w1_done_mutex;
-    QMutex w2_done_mutex;
 
     std::vector<int> frames_0;
     std::vector<int> frames_1;
