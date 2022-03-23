@@ -26,6 +26,7 @@ private:
                     QWaitCondition& all_done_cv,
                     QMutex& flag_mutex,
                     bool& object_detector_done_bool,
+                    bool& object_tracker_done_bool,
                     QObject *parent = nullptr);
 
 public:
@@ -34,6 +35,7 @@ public:
                                QWaitCondition& all_done_cv,
                                QMutex& flag_mutex,
                                bool& object_detector_done_bool,
+                               bool& object_tracker_done_bool,
                                QObject *parent = nullptr);
     void operator=(Webcam const&) = delete;
     Webcam(Webcam const&) = delete;
@@ -50,6 +52,7 @@ private:
     QWaitCondition& all_done_cv;
     QMutex& flag_mutex;
     bool& object_detector_done_bool;
+    bool& object_tracker_done_bool;
 
     cv::VideoCapture cap;
     cv::Mat frame;

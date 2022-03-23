@@ -6,6 +6,7 @@ Webcam::Webcam(json cfg,
                QWaitCondition& all_done_cv,
                QMutex& flag_mutex,
                bool& object_detector_done_bool,
+               bool& object_tracker_done_bool,
                QObject *parent) :
     QObject(parent),
     cfg(cfg),
@@ -13,7 +14,8 @@ Webcam::Webcam(json cfg,
     webcam_done_cv(webcam_done_cv),
     all_done_cv(all_done_cv),
     flag_mutex(flag_mutex),
-    object_detector_done_bool(object_detector_done_bool)
+    object_detector_done_bool(object_detector_done_bool),
+    object_tracker_done_bool(object_tracker_done_bool)
 {
     cap = cv::VideoCapture((int)cfg["Source"]);
     cap.set(cv::CAP_PROP_BUFFERSIZE, int(cfg["Camera Buffer Size"]));
@@ -43,9 +45,10 @@ Webcam& Webcam::getInstance(json cfg,
                             QWaitCondition& all_done_cv,
                             QMutex& flag_mutex,
                             bool& object_detector_done_bool,
+                            bool& object_tracker_done_bool,
                             QObject *parent)
 {
-    static Webcam instance(cfg,webcam_done_cv,all_done_cv,flag_mutex,object_detector_done_bool,parent);
+    static Webcam instance(cfg,webcam_done_cv,all_done_cv,flag_mutex,object_detector_done_bool,object_tracker_done_bool,parent);
     return instance;
 }
 
@@ -58,8 +61,9 @@ void Webcam::main_loop(){
         cap.read(frame);
         new_frames->push_back(frame);
         flag_mutex.lock();
-        if (object_detector_done_bool){
+        if (object_detector_done_bool && object_tracker_done_bool){
             object_detector_done_bool = false;
+            object_tracker_done_bool = false;
             webcam_done_cv.wakeAll();
             all_done_cv.wait(&flag_mutex);
         }

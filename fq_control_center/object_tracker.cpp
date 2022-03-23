@@ -3,7 +3,8 @@
 
 ObjectTracker::ObjectTracker(json cfg,
                              QWaitCondition& all_done_cv,
-                             QMutex& object_tracker_done_mutex,
+                             QMutex& flag_mutex,
+                             bool& object_tracker_done_bool,
                              QObject *parent) :
     QObject(parent),
     cfg(cfg),
@@ -16,7 +17,8 @@ ObjectTracker::ObjectTracker(json cfg,
     toggle_stats(cfg["Stats"]=="||"),
     object_tracker_done(true),
     all_done_cv(all_done_cv),
-    object_tracker_done_mutex(object_tracker_done_mutex)
+    flag_mutex(flag_mutex),
+    object_tracker_done_bool(object_tracker_done_bool)
 {
     moveToThread(&m_thread);
     m_thread.start();
@@ -24,10 +26,11 @@ ObjectTracker::ObjectTracker(json cfg,
 
 ObjectTracker& ObjectTracker::getInstance(json cfg,
                                           QWaitCondition& all_done_cv,
-                                          QMutex& object_tracker_done_mutex,
+                                          QMutex& flag_mutex,
+                                          bool& object_tracker_done_bool,
                                           QObject *parent)
 {
-    static ObjectTracker instance(cfg,all_done_cv,object_tracker_done_mutex,parent);
+    static ObjectTracker instance(cfg,all_done_cv,flag_mutex,object_tracker_done_bool,parent);
     return instance;
 }
 
@@ -163,9 +166,10 @@ void ObjectTracker::main_loop(void) {
         track_and_emit();
         tracking_frames->clear();
 
-        object_tracker_done_mutex.lock();
-        all_done_cv.wait(&object_tracker_done_mutex);
-        object_tracker_done_mutex.unlock();
+        flag_mutex.lock();
+        object_tracker_done_bool = true;
+        all_done_cv.wait(&flag_mutex);
+        flag_mutex.unlock();
     }
 }
 

@@ -6,13 +6,14 @@ CameraLoop::CameraLoop(json cfg, QObject *parent) :
     cfg(cfg),
     keep_running(true),
     object_detector_done_bool(true),
+    object_tracker_done_bool(true),
     new_frames(&frames_0),
     detecting_frames(&frames_1),
     tracking_frames(&frames_2),
     tracking_results(&results_0),
     detecting_results(&results_1),
-    webcam(Webcam::getInstance(cfg,webcam_done_cv,all_done_cv,flag_mutex,object_detector_done_bool,parent)),
-    object_tracker(ObjectTracker::getInstance(cfg,all_done_cv,object_tracker_done_mutex,parent)),
+    webcam(Webcam::getInstance(cfg,webcam_done_cv,all_done_cv,flag_mutex,object_detector_done_bool,object_tracker_done_bool,parent)),
+    object_tracker(ObjectTracker::getInstance(cfg,all_done_cv,flag_mutex,object_tracker_done_bool,parent)),
     object_detector(ObjectDetector::getInstance(cfg,object_detector_done_cv,all_done_cv,flag_mutex,object_detector_done_bool,parent))
 {
     qDebug() << "Creating CameraLoop Object";
@@ -23,8 +24,8 @@ CameraLoop::CameraLoop(json cfg, QObject *parent) :
     webcam.run();
 
     // wait until the first frame is available
-    webcam_done_mutex.lock();
-    webcam_done_cv.wait(&webcam_done_mutex);
+    flag_mutex.lock();
+    webcam_done_cv.wait(&flag_mutex);
 
     // swap frame packets so object detection can start with a frame
     std::swap(tracking_frames,detecting_frames);
@@ -41,7 +42,7 @@ CameraLoop::CameraLoop(json cfg, QObject *parent) :
 
     // wake webcam
     all_done_cv.wakeAll();
-    webcam_done_mutex.unlock();
+    flag_mutex.unlock();
 
     object_detector.run();
 
@@ -87,8 +88,8 @@ void CameraLoop::main_loop(void) {
     //    No need to wait for tracking
     //    In worst case jumping couple of frames ahead won't cause serious problems
     while (keep_running) {
-        webcam_done_mutex.lock();
-        webcam_done_cv.wait(&webcam_done_mutex);
+        flag_mutex.lock();
+        webcam_done_cv.wait(&flag_mutex);
 
         std::swap(tracking_frames,detecting_frames);
         std::swap(new_frames,detecting_frames);
@@ -104,6 +105,6 @@ void CameraLoop::main_loop(void) {
         object_tracker.tracking_results = tracking_results;
 
         all_done_cv.wakeAll();
-        webcam_done_mutex.unlock();
+        flag_mutex.unlock();
     }
 }

@@ -34,12 +34,14 @@ private:
     const json cfg;
     explicit ObjectTracker(json cfg,
                            QWaitCondition& all_done_cv,
-                           QMutex& object_tracker_done_mutex,
+                           QMutex& flag_mutex,
+                           bool& object_tracker_done_bool,
                            QObject *parent = nullptr);
 public:
     static ObjectTracker& getInstance(json cfg,
                                       QWaitCondition& all_done_cv,
-                                      QMutex& object_tracker_done_mutex,
+                                      QMutex& flag_mutex,
+                                      bool& object_tracker_done_bool,
                                       QObject *parent = nullptr);
     void operator=(ObjectTracker const&) = delete;
     ObjectTracker(ObjectTracker const&) = delete;
@@ -58,6 +60,7 @@ public:
     std::vector<cv::Mat>* tracking_frames;
     cv::Mat* tracking_results;
 
+
 private:
     void create_bounding_boxes_confidences_and_trackers();
     void remove_duplicate_bounding_boxes_confidences_and_trackers();
@@ -65,7 +68,8 @@ private:
 
     QThread m_thread;
     QWaitCondition& all_done_cv;
-    QMutex& object_tracker_done_mutex;
+    QMutex& flag_mutex;
+    bool& object_tracker_done_bool;
 
     QVector<cv::Ptr<cv::Tracker>> bunch_of_trackers;
     std::vector<unsigned int> tracker_total_missed_frames;
