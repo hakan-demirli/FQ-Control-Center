@@ -10,6 +10,12 @@ MainWindow::MainWindow(QWidget *parent):
     gas_plot_data(constants::NUMBER_OF_GAS_SENSORS, std::vector<double>(1000,1))
 {
     qDebug() << "MainWindow::MainWindow thread id:" << QThread::currentThreadId();
+
+    cpu_set_t my_set;        /* Define your cpu_set bit mask. */
+    CPU_ZERO(&my_set);       /* Initialize it all to 0, i.e. no CPUs selected. */
+    CPU_SET(0, &my_set);     /* set the bit that represents core 0. */
+    sched_setaffinity(0, sizeof(cpu_set_t), &my_set); /* Set affinity of tihs process to */
+                                                      /* the defined mask, i.e. only 0. */
     ui->setupUi(this);
     increase_tab_width();
     initialize_camera();

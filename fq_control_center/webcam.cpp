@@ -52,6 +52,11 @@ Webcam& Webcam::getInstance(json cfg,
 void Webcam::main_loop(){
 
     qDebug() << "Webcam::main_loop thread id:" << QThread::currentThreadId();
+    cpu_set_t my_set;        /* Define your cpu_set bit mask. */
+    CPU_ZERO(&my_set);       /* Initialize it all to 0, i.e. no CPUs selected. */
+    CPU_SET(0, &my_set);     /* set the bit that represents core 0. */
+    sched_setaffinity(0, sizeof(cpu_set_t), &my_set); /* Set affinity of tihs process to */
+                                                      /* the defined mask, i.e. only 0. */
     // read and store frames until object detection is done
     // then wait for the all_done signal
     while(keep_running){

@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <functional>
 
+#include <sched.h>
+
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/utility.hpp>
 #include <opencv2/dnn.hpp>

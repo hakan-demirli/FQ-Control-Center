@@ -78,8 +78,13 @@ void CameraLoop::run(){
 void CameraLoop::main_loop(void) {
 
     qDebug() << "CameraLoop::main_loop thread id:" << QThread::currentThreadId();
+    cpu_set_t my_set;        /* Define your cpu_set bit mask. */
+    CPU_ZERO(&my_set);       /* Initialize it all to 0, i.e. no CPUs selected. */
+    CPU_SET(0, &my_set);     /* set the bit that represents core 0. */
+    sched_setaffinity(0, sizeof(cpu_set_t), &my_set); /* Set affinity of tihs process to */
+                                                      /* the defined mask, i.e. only 0. */
     // This thread controls the all other threads. Give highpriority.
-    QThread::currentThread()->setPriority(QThread::HighPriority);
+    //QThread::currentThread()->setPriority(QThread::HighPriority);
     // wait until webcam is done
     // if it is done object detection is also done
     // swap all containers
