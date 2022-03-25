@@ -2,7 +2,6 @@
 
 
 ObjectDetector::ObjectDetector(json cfg,
-                               QWaitCondition& object_detector_done_cv,
                                QWaitCondition& all_done_cv,
                                QMutex& flag_mutex,
                                bool& object_detector_done_bool,
@@ -11,7 +10,6 @@ ObjectDetector::ObjectDetector(json cfg,
     cfg(cfg),
     keep_running(true),
     toggle_object_detection(cfg["Object Detection"]=="||"),
-    object_detector_done_cv(object_detector_done_cv),
     all_done_cv(all_done_cv),
     flag_mutex(flag_mutex),
     object_detector_done_bool(object_detector_done_bool),
@@ -26,13 +24,12 @@ ObjectDetector::ObjectDetector(json cfg,
 }
 
 ObjectDetector& ObjectDetector::getInstance(json cfg,
-                                            QWaitCondition& object_detector_done_cv,
                                             QWaitCondition& all_done_cv,
                                             QMutex& flag_mutex,
                                             bool& object_detector_done_bool,
                                             QObject *parent)
 {
-    static ObjectDetector instance(cfg,object_detector_done_cv,all_done_cv,flag_mutex,object_detector_done_bool,parent);
+    static ObjectDetector instance(cfg,all_done_cv,flag_mutex,object_detector_done_bool,parent);
     return instance;
 }
 
@@ -41,7 +38,6 @@ ObjectDetector::~ObjectDetector(){
     qDebug() << "Destroying ObjectDetector Object";
     if( m_thread.isRunning() )
     {
-        try {object_detector_done_cv.wakeAll();} catch(int t){}
         try {all_done_cv.wakeAll();} catch(int t){}
         m_thread.quit();
     }
@@ -68,11 +64,10 @@ void ObjectDetector::main_loop(){
             output = net.forward();
             *detecting_results = cv::Mat(output.size[2], output.size[3], CV_32F, output.ptr<float>());
         }else{
-            QThread::msleep(100);
+            //QThread::msleep(20);
         }
         flag_mutex.lock();
         object_detector_done_bool = true;
-        object_detector_done_cv.wakeAll();
         all_done_cv.wait(&flag_mutex);
         flag_mutex.unlock();
     }

@@ -33,7 +33,6 @@ class ObjectDetector: public QObject {
 private:
     const json cfg;
     explicit ObjectDetector(json cfg,
-                            QWaitCondition& object_detector_done_cv,
                             QWaitCondition& all_done_cv,
                             QMutex& flag_mutex,
                             bool& object_detector_done_bool,
@@ -41,7 +40,6 @@ private:
 
 public:
     static ObjectDetector& getInstance(json cfg,
-                                       QWaitCondition& object_detector_done_cv,
                                        QWaitCondition& all_done_cv,
                                        QMutex& flag_mutex,
                                        bool& object_detector_done_bool,
@@ -59,7 +57,6 @@ public:
 
 private:
     QThread m_thread;
-    QWaitCondition& object_detector_done_cv;
     QWaitCondition& all_done_cv;
     QMutex& flag_mutex;
     bool& object_detector_done_bool;

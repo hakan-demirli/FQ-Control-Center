@@ -46,6 +46,8 @@ FORMS += \
 # message($$QMAKESPEC)
 
 QMAKE_CXXFLAGS += -Wno-deprecated-copy
+QMAKE_CXXFLAGS += -Wdouble-promotion
+QMAKE_CXXFLAGS += -Wfloat-conversion
 
 # [TODO] Remove unused opencv libraries
 

@@ -8,8 +8,6 @@ In 5.5, they were still a commercial add-on. So you need to get in touch with Qt
     - ```export LD_LIBRARY_PATH=/root/nn/plugins``` 
 - Select display.
     - ```export DISPLAY=:0```
-- Run script. [TODO](Probably unnecessary but I did run it.)
-    - ```sudo ./run.sh```
 - Run the app.
     - ```./fq_control_center```
 

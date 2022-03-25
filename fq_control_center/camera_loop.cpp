@@ -14,7 +14,7 @@ CameraLoop::CameraLoop(json cfg, QObject *parent) :
     detecting_results(&results_1),
     webcam(Webcam::getInstance(cfg,webcam_done_cv,flag_mutex,object_detector_done_bool,object_tracker_done_bool,parent)),
     object_tracker(ObjectTracker::getInstance(cfg,all_done_cv,flag_mutex,object_tracker_done_bool,parent)),
-    object_detector(ObjectDetector::getInstance(cfg,object_detector_done_cv,all_done_cv,flag_mutex,object_detector_done_bool,parent))
+    object_detector(ObjectDetector::getInstance(cfg,all_done_cv,flag_mutex,object_detector_done_bool,parent))
 {
     qDebug() << "Creating CameraLoop Object";
     moveToThread(&m_thread);
@@ -60,7 +60,6 @@ CameraLoop::~CameraLoop(){
     if( m_thread.isRunning() )
     {
         try {webcam_done_cv.wakeAll();} catch(int t){}
-        try {object_detector_done_cv.wakeAll();} catch(int t){}
         try {all_done_cv.wakeAll();} catch(int t){}
         m_thread.quit();
     }
