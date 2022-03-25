@@ -3,7 +3,6 @@ bin/*
 *.log
 *.debug
 *.pizza
-**/opencv_dnn_model/*
 **/build-**/*
 **/**-Debug/*
 **/**-Release/*
