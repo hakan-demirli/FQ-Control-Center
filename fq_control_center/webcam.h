@@ -23,7 +23,6 @@ private:
     const json cfg;
     explicit Webcam(json cfg,
                     QWaitCondition& webcam_done_cv,
-                    QWaitCondition& all_done_cv,
                     QMutex& flag_mutex,
                     bool& object_detector_done_bool,
                     bool& object_tracker_done_bool,
@@ -32,7 +31,6 @@ private:
 public:
     static Webcam& getInstance(json cfg,
                                QWaitCondition& webcam_done_cv,
-                               QWaitCondition& all_done_cv,
                                QMutex& flag_mutex,
                                bool& object_detector_done_bool,
                                bool& object_tracker_done_bool,
@@ -49,7 +47,6 @@ private:
     QThread m_thread;
 
     QWaitCondition& webcam_done_cv;
-    QWaitCondition& all_done_cv;
     QMutex& flag_mutex;
     bool& object_detector_done_bool;
     bool& object_tracker_done_bool;

@@ -12,7 +12,7 @@ CameraLoop::CameraLoop(json cfg, QObject *parent) :
     tracking_frames(&frames_2),
     tracking_results(&results_0),
     detecting_results(&results_1),
-    webcam(Webcam::getInstance(cfg,webcam_done_cv,all_done_cv,flag_mutex,object_detector_done_bool,object_tracker_done_bool,parent)),
+    webcam(Webcam::getInstance(cfg,webcam_done_cv,flag_mutex,object_detector_done_bool,object_tracker_done_bool,parent)),
     object_tracker(ObjectTracker::getInstance(cfg,all_done_cv,flag_mutex,object_tracker_done_bool,parent)),
     object_detector(ObjectDetector::getInstance(cfg,object_detector_done_cv,all_done_cv,flag_mutex,object_detector_done_bool,parent))
 {
@@ -79,7 +79,8 @@ void CameraLoop::run(){
 void CameraLoop::main_loop(void) {
 
     qDebug() << "CameraLoop::main_loop thread id:" << QThread::currentThreadId();
-
+    // This thread controls the all other threads. Give highpriority.
+    QThread::currentThread()->setPriority(QThread::HighPriority);
     // wait until webcam is done
     // if it is done object detection is also done
     // swap all containers

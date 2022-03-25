@@ -50,8 +50,7 @@ ObjectDetector::~ObjectDetector(){
 void ObjectDetector::main_loop(){
 
     qDebug() << "ObjectDetector::main_loop thread id:" << QThread::currentThreadId();
-    // Increase thread priority for extra performance.
-    //QThread::currentThread()->setPriority(QThread::HighPriority);
+
 
     cv::Mat blob;
     cv::Mat output;

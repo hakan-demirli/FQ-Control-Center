@@ -3,7 +3,6 @@
 
 Webcam::Webcam(json cfg,
                QWaitCondition& webcam_done_cv,
-               QWaitCondition& all_done_cv,
                QMutex& flag_mutex,
                bool& object_detector_done_bool,
                bool& object_tracker_done_bool,
@@ -12,7 +11,6 @@ Webcam::Webcam(json cfg,
     cfg(cfg),
     keep_running(true),
     webcam_done_cv(webcam_done_cv),
-    all_done_cv(all_done_cv),
     flag_mutex(flag_mutex),
     object_detector_done_bool(object_detector_done_bool),
     object_tracker_done_bool(object_tracker_done_bool)
@@ -42,13 +40,12 @@ Webcam::~Webcam(){
 
 Webcam& Webcam::getInstance(json cfg,
                             QWaitCondition& webcam_done_cv,
-                            QWaitCondition& all_done_cv,
                             QMutex& flag_mutex,
                             bool& object_detector_done_bool,
                             bool& object_tracker_done_bool,
                             QObject *parent)
 {
-    static Webcam instance(cfg,webcam_done_cv,all_done_cv,flag_mutex,object_detector_done_bool,object_tracker_done_bool,parent);
+    static Webcam instance(cfg,webcam_done_cv,flag_mutex,object_detector_done_bool,object_tracker_done_bool,parent);
     return instance;
 }
 
