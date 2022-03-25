@@ -65,12 +65,13 @@ void Webcam::main_loop(){
             object_detector_done_bool = false;
             object_tracker_done_bool = false;
             webcam_done_cv.wakeAll();
-            all_done_cv.wait(&flag_mutex);
         }
         flag_mutex.unlock();
     }
 }
 
 void Webcam::run(){
+    cap.read(frame);
+    new_frames->push_back(frame);
     QMetaObject::invokeMethod( this, "main_loop");
 }

@@ -15,7 +15,6 @@ ObjectTracker::ObjectTracker(json cfg,
     toggle_bounding_boxes(cfg["Bounding Boxes"]=="||"),
     toggle_middle_point(cfg["Middle Point"]=="||"),
     toggle_stats(cfg["Stats"]=="||"),
-    object_tracker_done(true),
     all_done_cv(all_done_cv),
     flag_mutex(flag_mutex),
     object_tracker_done_bool(object_tracker_done_bool)

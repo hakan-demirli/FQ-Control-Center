@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent):
     camera(CameraLoop::getInstance(settings->camera_cfg, nullptr)),
     gas_plot_data(constants::NUMBER_OF_GAS_SENSORS, std::vector<double>(1000,1))
 {
+    qDebug() << "MainWindow::MainWindow thread id:" << QThread::currentThreadId();
     ui->setupUi(this);
     increase_tab_width();
     initialize_camera();
@@ -107,7 +108,7 @@ void MainWindow::updateGasPlots(std::vector<std::vector<float>> g_data)
             // I don't know why and I don't have time to investigate further
             unsigned int plot_width = gas_sensor_plot_label[i]->width();
             plot_width = plot_width - plot_width%4;
-            plot->setPlotSize(plot_width,gas_sensor_plot_label[i]->height()); // disorts the image
+            plot->setPlotSize(plot_width,gas_sensor_plot_label[i]->height());
             //qDebug() << ui->gas_sensor_1_label->width() << " " << ui->gas_sensor_1_label->height();
             plot->setShowText(true);
             plot->setInvertOrientation(true);

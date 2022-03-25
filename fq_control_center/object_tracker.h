@@ -55,7 +55,6 @@ public:
     bool toggle_bounding_boxes;
     bool toggle_middle_point;
     bool toggle_stats;
-    bool object_tracker_done;
 
     std::vector<cv::Mat>* tracking_frames;
     cv::Mat* tracking_results;

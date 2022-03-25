@@ -53,7 +53,7 @@ linux-arm-gnueabihf-g++: {
     message( "found arm g++" )
     QMAKE_CXXFLAGS_RELEASE += -Wno-expansion-to-defined
     QMAKE_CXXFLAGS_RELEASE += -Wno-unused-parameter
-    QMAKE_CXXFLAGS_RELEASE += -isystem /home/emre/cross_compile/OpenCV/install/include/opencv4
+    QMAKE_CXXFLAGS_RELEASE += -isystem $$PWD/opencv/include/opencv4
     QMAKE_CXXFLAGS_RELEASE += -isystem /usr/arm-linux-gnueabihf/include
 
     INCLUDEPATH += $$PWD/opencv/include/opencv4
