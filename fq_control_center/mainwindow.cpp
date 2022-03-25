@@ -278,3 +278,17 @@ void MainWindow::on_gas_sensor_3_run_button_clicked()
         gas_sensor_run_button[3]->setText("||");
     }
 }
+
+void MainWindow::on_pushButton_clicked()
+{
+    static int a = 1;
+    if(a == 1){
+        QMainWindow::showFullScreen();
+        a = 0;
+    }else{
+        QMainWindow::showMaximized();
+        a=1;
+    }
+
+}
+
