@@ -34,4 +34,7 @@ CAMERA [TODO]
     - Tracker algorithm
     - Video file as a source
 # -------------------------------------------------
-
+Requirements:
+Ubuntu == 18.04
+OpenCV == 4.2.0
+QT >= 5.5.0
