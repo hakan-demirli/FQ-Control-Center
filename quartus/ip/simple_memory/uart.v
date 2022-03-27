@@ -47,7 +47,7 @@ begin
     if (i_rst == 1) begin
         counter <= 0;
         uart_clk <= 0;
-    end else if(counter == i_prescalar+1) begin
+    end else if(counter == i_prescalar-1) begin
         counter <= 0;
     end else begin
         counter <= counter + 1;
@@ -66,7 +66,7 @@ begin
     /*
     Wait for the start bit. 
     sample the specified amount of bits
-    save if stop bit(s) exist discard if doesn't
+    save if stop bit(s) exist and parity is right discard if doesn't
     */
     if (i_rst == 1) begin
         top_state <= WAIT_STATE;
