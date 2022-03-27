@@ -83,13 +83,15 @@ begin
             DATA_BITS: begin
                 if(data_counter != (data_size-1))begin
                     o_tx <= i_data[data_counter];
-                    data_counter = data_counter + 1;
-                    parity_bit = parity_bit ^ i_data[data_counter];
+                    data_counter <= data_counter + 1;
+                    parity_bit <= parity_bit ^ i_data[data_counter];
+                    $display("parity_change %b, %b",i_data[data_counter],parity_bit);
                     top_state <= DATA_BITS;
                 end else begin
                     o_tx <= i_data[data_counter];
                     data_counter <= 0;  
-                    parity_bit = parity_bit ^ i_data[data_counter];
+                    parity_bit <= parity_bit ^ i_data[data_counter];
+                    $display("final_parity_change %b, %b",i_data[data_counter],parity_bit);
                     if(parity_enable)
                         top_state <= PARITY_BITS;
                     else begin
@@ -105,9 +107,9 @@ begin
             PARITY_BITS: begin
                 case(parity_type)
                     EVEN_PARITY:
-                        o_tx <= (~parity_bit);
-                    ODD_PARITY:
                         o_tx <= (parity_bit);
+                    ODD_PARITY:
+                        o_tx <= (~(parity_bit));
                 endcase
                 case(stop_bit_state)
                     TWO_STOP:

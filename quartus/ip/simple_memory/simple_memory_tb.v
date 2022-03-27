@@ -46,12 +46,14 @@ always  #10 clk <= !clk;
 
 integer i;
 initial begin
+
+
     $display("Initializing inputs");
     clk = 0;
     reset_n = 0;
 
     cfg = 5'b11_11_1;
-    prescalar = 121;
+    prescalar = 677;
     data_send = 0;
 
     // wait for couple of cycles
@@ -59,7 +61,7 @@ initial begin
     reset_n = 1;
 
     $display("Writing to memory");
-    random_data = 10'b01_0101_0101;
+    random_data = 10'b01_0101_1000;
     data_send = 1;
     @(posedge busy); // wait until tx starts
     data_send = 0;
@@ -67,10 +69,12 @@ initial begin
     @(posedge o_data_ready); // wait until tx stops
     $display("random_data: %b",random_data);
     $display("o_data: %b",o_data);
-    if(o_data[4:0] == random_data[4:0])
+    if(o_data[7:0] == random_data[7:0])
         $display("SUCCESS");
     else
         $display("FAILED");
+
+
     $stop;
 end
 

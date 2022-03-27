@@ -112,20 +112,27 @@ begin
         if(1)begin
             case(data_state)
                 FIVE_DATA: begin
+                    //$display("FIVE_DATA");
                     case(stop_bit_state)
                         TWO_STOP: begin
+                            //$display("TWO_STOP");
                             if(parity_enable) begin
                                 case(parity_type)
-                                    EVEN_PARITY: // 5+1+2
+                                    EVEN_PARITY: begin// 5+1+2
                                         data_get <= (~^(data_buffer[5:0])) & data_buffer[7] & data_buffer[6];
-                                    ODD_PARITY: // 5+1+2
+                                        //$display("EVEN_PARITY");
+                                    end
+                                    ODD_PARITY: begin// 5+1+2
                                         data_get <= (^(data_buffer[5:0])) & data_buffer[7] & data_buffer[6];
+                                        //$display("ODD_PARITY");
+                                    end
                                 endcase
                             end else begin // 5+2
                                 data_get <= data_buffer[6] & data_buffer[5];
                             end 
                         end
                         ONE_STOP: begin
+                            //$display("ONE_STOP");
                             if(parity_enable) begin
                                 case(parity_type)
                                     EVEN_PARITY: // 5+1+1
@@ -140,6 +147,7 @@ begin
                     endcase
                 end
                 SIX_DATA: begin
+                    $display("SIX_DATA");
                     case(stop_bit_state)
                         TWO_STOP: begin
                             if(parity_enable) begin
@@ -168,6 +176,7 @@ begin
                     endcase
                 end
                 SEVEN_DATA: begin
+                    $display("SEVEN_DATA");
                     case(stop_bit_state)
                         TWO_STOP: begin
                             if(parity_enable) begin
@@ -196,6 +205,7 @@ begin
                     endcase
                 end
                 EIGHT_DATA: begin
+                    $display("EIGHT_DATA");
                     case(stop_bit_state)
                         TWO_STOP: begin
                             if(parity_enable) begin
