@@ -5,11 +5,11 @@
 module uart_rx (
     input wire         i_clk,
     input wire         i_rst,
-    input wire [16: 0] i_prescalar,
-    input wire         i_rx,
+    input wire [15: 0] i_prescalar,
+    input wire         i_rx, //incoming physical rx wire
     input wire [ 4: 0] i_cfg, 
-    output reg         o_data_ready, 
-    output reg [ 10: 0] o_data
+    output reg         o_data_ready, // if set data is ready to read
+    output reg [ 10: 0] o_data // data 
 );
 
 reg [ 10: 0] data_buffer;
@@ -23,6 +23,7 @@ localparam READ = 2'b01;
 localparam PAUSE = 2'b10;
 localparam CONTROL = 2'b11;
 
+wire [1:0] data_state;
 assign data_state = i_cfg[4:3];
 assign parity_type = i_cfg[2];
 assign parity_enable = i_cfg[1];
@@ -71,7 +72,7 @@ begin
         case(top_state)
             WAIT: begin
                 data_counter <= 0;
-                data_get <= 0;
+                o_data_ready <= 0;
                 if(i_rx == 0) // detected start bit
                     top_state <= READ;
                 else
@@ -88,9 +89,9 @@ begin
                     top_state <= CONTROL;
             end
             CONTROL: begin // if data is legit announce it
-                if(o_data_ready)begin
+                if(data_get)begin
                     top_state <= WAIT;
-                    data_get <= 1;
+                    o_data_ready <= 1;
                     o_data <= data_buffer;
                 end else
                     top_state <= WAIT;
@@ -98,7 +99,7 @@ begin
         endcase
     end
 end
-
+reg dbg;
 
 always @(posedge i_clk or posedge i_rst)
 begin
@@ -106,9 +107,9 @@ begin
     check if parity and stop bits are correct
     */
     if (i_rst == 1) begin
-        o_data_ready <= 0;
+        data_get <= 0;
     end else begin
-        if(CONTROL == top_state)begin
+        if(1)begin
             case(data_state)
                 FIVE_DATA: begin
                     case(stop_bit_state)
@@ -116,24 +117,24 @@ begin
                             if(parity_enable) begin
                                 case(parity_type)
                                     EVEN_PARITY: // 5+1+2
-                                        o_data_ready <= (~^(data_buffer[5:0])) & data_buffer[7] & data_buffer[6];
+                                        data_get <= (~^(data_buffer[5:0])) & data_buffer[7] & data_buffer[6];
                                     ODD_PARITY: // 5+1+2
-                                        o_data_ready <= (^(data_buffer[5:0])) & data_buffer[7] & data_buffer[6];
+                                        data_get <= (^(data_buffer[5:0])) & data_buffer[7] & data_buffer[6];
                                 endcase
                             end else begin // 5+2
-                                o_data_ready <= data_buffer[6] & data_buffer[5];
+                                data_get <= data_buffer[6] & data_buffer[5];
                             end 
                         end
                         ONE_STOP: begin
                             if(parity_enable) begin
                                 case(parity_type)
                                     EVEN_PARITY: // 5+1+1
-                                        o_data_ready <= (~^(data_buffer[5:0])) & data_buffer[6];
+                                        data_get <= (~^(data_buffer[5:0])) & data_buffer[6];
                                     ODD_PARITY: // 5+1+1
-                                        o_data_ready <= (^(data_buffer[5:0])) & data_buffer[6];
+                                        data_get <= (^(data_buffer[5:0])) & data_buffer[6];
                                 endcase
                             end else begin // 5+1
-                                o_data_ready <= data_buffer[5];
+                                data_get <= data_buffer[5];
                             end 
                         end
                     endcase
@@ -144,24 +145,24 @@ begin
                             if(parity_enable) begin
                                 case(parity_type)
                                     EVEN_PARITY: // 6+1+2
-                                        o_data_ready <= (~^(data_buffer[6:0])) & data_buffer[8] & data_buffer[7];
+                                        data_get <= (~^(data_buffer[6:0])) & data_buffer[8] & data_buffer[7];
                                     ODD_PARITY: // 6+1+2
-                                        o_data_ready <= (^(data_buffer[6:0])) & data_buffer[8] & data_buffer[7];
+                                        data_get <= (^(data_buffer[6:0])) & data_buffer[8] & data_buffer[7];
                                 endcase
                             end else begin // 6+2
-                                o_data_ready <= data_buffer[7] & data_buffer[6];
+                                data_get <= data_buffer[7] & data_buffer[6];
                             end 
                         end
                         ONE_STOP: begin
                             if(parity_enable) begin
                                 case(parity_type)
                                     EVEN_PARITY: // 6+1+1
-                                        o_data_ready <= (~^(data_buffer[6:0])) & data_buffer[7];
+                                        data_get <= (~^(data_buffer[6:0])) & data_buffer[7];
                                     ODD_PARITY: // 6+1+1
-                                        o_data_ready <= (^(data_buffer[6:0])) & data_buffer[7];
+                                        data_get <= (^(data_buffer[6:0])) & data_buffer[7];
                                 endcase
                             end else begin // 6+1
-                                o_data_ready <= data_buffer[6];
+                                data_get <= data_buffer[6];
                             end
                         end
                     endcase
@@ -172,24 +173,24 @@ begin
                             if(parity_enable) begin
                                 case(parity_type)
                                     EVEN_PARITY: // 7+1+2
-                                        o_data_ready <= (~^(data_buffer[7:0])) & data_buffer[9] & data_buffer[8];
+                                        data_get <= (~^(data_buffer[7:0])) & data_buffer[9] & data_buffer[8];
                                     ODD_PARITY: // 7+1+2
-                                        o_data_ready <= (^(data_buffer[7:0])) & data_buffer[9] & data_buffer[8];
+                                        data_get <= (^(data_buffer[7:0])) & data_buffer[9] & data_buffer[8];
                                 endcase
                             end else begin // 7+2
-                                o_data_ready <= data_buffer[8] & data_buffer[7];
+                                data_get <= data_buffer[8] & data_buffer[7];
                             end
                         end
                         ONE_STOP: begin
                             if(parity_enable) begin
                                 case(parity_type)
                                     EVEN_PARITY: // 7+1+1
-                                        o_data_ready <= (~^(data_buffer[7:0])) & data_buffer[8];
+                                        data_get <= (~^(data_buffer[7:0])) & data_buffer[8];
                                     ODD_PARITY: // 7+1+1
-                                        o_data_ready <= (^(data_buffer[7:0])) & data_buffer[8];
+                                        data_get <= (^(data_buffer[7:0])) & data_buffer[8];
                                 endcase
                             end else begin // 7+1
-                                o_data_ready <= data_buffer[7];
+                                data_get <= data_buffer[7];
                             end
                         end
                     endcase
@@ -200,24 +201,26 @@ begin
                             if(parity_enable) begin
                                 case(parity_type)
                                     EVEN_PARITY: // 8+1+2
-                                        o_data_ready <= (~^(data_buffer[8:0])) & data_buffer[10] & data_buffer[9];
-                                    ODD_PARITY: // 8+1+2
-                                        o_data_ready <= (^(data_buffer[8:0])) & data_buffer[10] & data_buffer[9];
+                                        data_get <= (~^(data_buffer[8:0])) & data_buffer[10] & data_buffer[9];
+                                    ODD_PARITY: begin // 8+1+2
+                                        dbg <= (^(data_buffer[8:0]));
+                                        data_get <= (^(data_buffer[8:0])) & data_buffer[10] & data_buffer[9];
+                                    end
                                 endcase
                             end else begin // 8+2
-                                o_data_ready <= data_buffer[9] & data_buffer[8];
+                                data_get <= data_buffer[9] & data_buffer[8];
                             end 
                         end
                         ONE_STOP: begin
                             if(parity_enable) begin
                                 case(parity_type)
                                     EVEN_PARITY: // 8+1+1
-                                        o_data_ready <= (~^(data_buffer[8:0])) & data_buffer[9];
+                                        data_get <= (~^(data_buffer[8:0])) & data_buffer[9];
                                     ODD_PARITY: // 8+1+1
-                                        o_data_ready <= (^(data_buffer[8:0])) & data_buffer[9];
+                                        data_get <= (^(data_buffer[8:0])) & data_buffer[9];
                                 endcase
                             end else begin // 8+1
-                                o_data_ready <= data_buffer[8];
+                                data_get <= data_buffer[8];
                             end 
                         end
                     endcase

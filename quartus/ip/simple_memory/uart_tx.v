@@ -5,7 +5,7 @@
 module uart_tx (
     input wire         i_clk,
     input wire         i_rst,
-    input wire [16: 0] i_prescalar,
+    input wire [15: 0] i_prescalar,
     input wire         i_data_send, //set to initiate transmit
     input wire [ 7: 0] i_data, // data to send
     input wire [ 4: 0] i_cfg,  // uart config
@@ -13,7 +13,6 @@ module uart_tx (
     output reg         o_tx    // physical tx wire
 );
 
-reg [ 10: 0] data_buffer;
 reg [15:0] counter;
 reg [3:0] data_size;
 reg uart_clk;
@@ -26,8 +25,8 @@ localparam DATA_BITS = 3'd2;
 localparam PARITY_BITS = 3'd3;
 localparam STOP_BIT_0 = 3'd4;
 localparam STOP_BIT_1 = 3'd5;
+localparam WAIT_DONE = 3'd6;
 
-assign data_state = i_cfg[4:3];
 assign parity_type = i_cfg[2];
 assign parity_enable = i_cfg[1];
 assign stop_bit_state = i_cfg[0];
@@ -106,9 +105,9 @@ begin
             PARITY_BITS: begin
                 case(parity_type)
                     EVEN_PARITY:
-                        o_tx <= (parity_bit);
-                    ODD_PARITY:
                         o_tx <= (~parity_bit);
+                    ODD_PARITY:
+                        o_tx <= (parity_bit);
                 endcase
                 case(stop_bit_state)
                     TWO_STOP:
@@ -123,7 +122,13 @@ begin
             end
             STOP_BIT_1: begin
                 o_tx <= 1'b1;
-                top_state <= WAIT;
+                top_state <= WAIT_DONE;
+            end
+            WAIT_DONE: begin // Wait until data send is cleared
+                if(i_data_send)
+                    top_state <= WAIT_DONE;
+                else
+                    top_state <= WAIT;
             end
             default:
                 top_state <= WAIT;
