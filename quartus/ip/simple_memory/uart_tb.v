@@ -6,11 +6,8 @@
 
 module simple_memory_tb();
 
-
 reg          clk;
 reg          reset_n;
-
-
 
 reg [15:0]prescalar;
 wire tx;
