@@ -28,7 +28,7 @@ reg          write_n;
 reg [ 31: 0] writedata;
 wire [ 31: 0] readdata;
 
-simple_memory #(.ADDRESS_SIZE(ADDRESS_SIZE)) sm (
+simple_memory #(.ADDRESS_SIZE(ADDRESS_SIZE)) sm_0 (
     .address(address),
     .chipselect(chipselect),
     .clk(clk),
@@ -38,8 +38,31 @@ simple_memory #(.ADDRESS_SIZE(ADDRESS_SIZE)) sm (
     .readdata(readdata)
 );
 
+parameter i_prescalar = 111;
+reg i_rx;
+reg [4:0]cfg = 5'b01_11_1;
+wire o_data_ready;
+wire [10:0]o_data;
+uart uart_0(
+    .i_clk(clk),
+    .i_rst(!reset_n),
+    .i_prescalar(i_prescalar),
+    .i_rx(i_rx),
+    .cfg(cfg), 
+    .o_data_ready(o_data_ready),
+    .o_data(o_data)
+);
 
 always  #10 clk <= !clk;
+
+always @(posedge clk)
+begin
+    i_rx = $urandom();
+end
+
+
+
+
 
 integer i;
 initial begin
@@ -47,12 +70,13 @@ initial begin
     address = 0;
     chipselect = 0;
     clk = 0;
-    reset_n = 1;
+    reset_n = 0;
     write_n = 1;
     writedata = 0;
 
     // wait for couple of cycles
     repeat (10) @(posedge clk);
+    reset_n = 1;
 
     $display("Writing to memory");
     for(i=0;i<ADDRESS_SIZE;i=i+1)begin
