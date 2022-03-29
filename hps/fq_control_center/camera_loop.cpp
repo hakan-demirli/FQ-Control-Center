@@ -12,37 +12,31 @@ CameraLoop::CameraLoop(json cfg, QObject *parent) :
     tracking_frames(&frames_2),
     tracking_results(&results_0),
     detecting_results(&results_1),
-    webcam(Webcam::getInstance(cfg,webcam_done_cv,flag_mutex,object_detector_done_bool,object_tracker_done_bool,parent)),
     object_tracker(ObjectTracker::getInstance(cfg,all_done_cv,flag_mutex,object_tracker_done_bool,parent)),
     object_detector(ObjectDetector::getInstance(cfg,all_done_cv,flag_mutex,object_detector_done_bool,parent))
 {
     qDebug() << "Creating CameraLoop Object";
+
+    cap = cv::VideoCapture((int)cfg["Source"]);
+    cap.set(cv::CAP_PROP_BUFFERSIZE, int(cfg["Camera Buffer Size"]));
+    cap.set(cv::CAP_PROP_FRAME_HEIGHT, (int)cfg["Size"][1]);
+    cap.set(cv::CAP_PROP_FRAME_WIDTH, (int)cfg["Size"][0]);
+
     moveToThread(&m_thread);
     m_thread.start();
 
-    webcam.new_frames = new_frames;
-    webcam.run();
-
-    // wait until the first frame is available
-    flag_mutex.lock();
-    webcam_done_cv.wait(&flag_mutex);
+    cap.read(frame);
+    new_frames->push_back(frame);
 
     // swap frame packets so object detection can start with a frame
     std::swap(tracking_frames,detecting_frames);
     std::swap(new_frames,detecting_frames);
-
-    //update pointers of frame packets and shared variables
-    webcam.new_frames = new_frames;
 
     object_detector.detecting_frame = &detecting_frames->front();
     object_detector.detecting_results = detecting_results;
 
     object_tracker.tracking_frames = tracking_frames;
     object_tracker.tracking_results = tracking_results;
-
-    // wake webcam
-    all_done_cv.wakeAll();
-    flag_mutex.unlock();
 
     object_detector.run();
 
@@ -53,13 +47,11 @@ CameraLoop::~CameraLoop(){
 
 
     qDebug() << "Destroying PlayGround Object";
-    webcam.keep_running = false;
     object_detector.keep_running = false;
     object_tracker.keep_running = false;
 
     if( m_thread.isRunning() )
     {
-        try {webcam_done_cv.wakeAll();} catch(int t){}
         try {all_done_cv.wakeAll();} catch(int t){}
         m_thread.quit();
     }
@@ -93,23 +85,25 @@ void CameraLoop::main_loop(void) {
     //    No need to wait for tracking
     //    In worst case jumping couple of frames ahead won't cause serious problems
     while (keep_running) {
+        cap.read(frame);
+        new_frames->push_back(frame);
         flag_mutex.lock();
-        webcam_done_cv.wait(&flag_mutex);
+        if (object_detector_done_bool && object_tracker_done_bool){
+            object_detector_done_bool = false;
+            object_tracker_done_bool = false;
 
-        std::swap(tracking_frames,detecting_frames);
-        std::swap(new_frames,detecting_frames);
+            std::swap(tracking_frames,detecting_frames);
+            std::swap(new_frames,detecting_frames);
+            std::swap(tracking_results,detecting_results);
 
-        std::swap(tracking_results,detecting_results);
+            object_detector.detecting_frame = &detecting_frames->front();
+            object_detector.detecting_results = detecting_results;
 
-        webcam.new_frames = new_frames;
+            object_tracker.tracking_frames = tracking_frames;
+            object_tracker.tracking_results = tracking_results;
 
-        object_detector.detecting_frame = &detecting_frames->front();
-        object_detector.detecting_results = detecting_results;
-
-        object_tracker.tracking_frames = tracking_frames;
-        object_tracker.tracking_results = tracking_results;
-
-        all_done_cv.wakeAll();
+            all_done_cv.wakeAll();
+        }
         flag_mutex.unlock();
     }
 }

@@ -25,8 +25,7 @@ SOURCES += \
     mainwindow.cpp \
     object_detector.cpp \
     object_tracker.cpp \
-    settings.cpp \
-    webcam.cpp
+    settings.cpp
 
 HEADERS += \
     camera_loop.h \
@@ -38,8 +37,7 @@ HEADERS += \
     mainwindow.h \
     object_detector.h \
     object_tracker.h \
-    settings.h \
-    webcam.h
+    settings.h
 
 FORMS += \
     mainwindow.ui
@@ -47,8 +45,8 @@ FORMS += \
 # message($$QMAKESPEC)
 
 QMAKE_CXXFLAGS += -Wno-deprecated-copy
-QMAKE_CXXFLAGS += -Wdouble-promotion
-QMAKE_CXXFLAGS += -Wfloat-conversion
+#QMAKE_CXXFLAGS += -Wdouble-promotion
+#QMAKE_CXXFLAGS += -Wfloat-conversion
 
 # [TODO] Remove unused opencv libraries
 

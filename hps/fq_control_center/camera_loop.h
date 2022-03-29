@@ -23,7 +23,6 @@
 #include <QMutex>
 
 #include "fps.h"
-#include "webcam.h"
 #include "json.hpp"
 #include "object_tracker.h"
 #include "object_detector.h"
@@ -47,7 +46,6 @@ private:
     QThread m_thread;
     bool object_detector_done_bool;
     bool object_tracker_done_bool;
-    QWaitCondition webcam_done_cv;
     QWaitCondition all_done_cv;
     QMutex flag_mutex;
 
@@ -69,7 +67,10 @@ public:
     ~CameraLoop();
     void run(void);
 
-    Webcam& webcam;
+    cv::VideoCapture cap;
+    cv::Mat frame;
+    fps cro;
+
     ObjectTracker& object_tracker;
     ObjectDetector& object_detector;
 
