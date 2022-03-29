@@ -50,10 +50,13 @@ The new algorithm intorduces couple of new challenges; Consumer-Producer problem
 - There can't be a large number of duplicate frames.
 
 **Solution:**    
+<p align="center">
+  <img src="./doc/swap.drawio.svg" />
+</p>
 Conditional variables solves the waiting problem. They also mitigate the CPU usage problem when idling. Pointers solve the duplication problem. Preallocate three frame packets and swap the pointers in each thread starting from tracker to webcam. But, they introduce another problem. Who will swap them?    
 Swapping requires coordination among all threads. Swaping while one of them is operating on it will generate a core dump. So, swapper thread either has to be dedicated to its job and wait for three different conditional variables from each thread. Or it has to be the fastest one among tracker, detector and webcam. I choose the second option since there are 2 physical cores on DE10-Nano and adding more threads will not translate to more performance, at least not directly. So, the fastest thread and the one that will swap frames is webcam thread. In worst case tracker and object detector will be ready just before webcam starts to read a frame. In this case wasted compute time will be equal to the frame time.
 
-Application code is cluttered by OpenCV and other libraries. So, the reference design of the barebone threading architecture can be found here.
+Application code is cluttered by OpenCV and other libraries. So, the reference design of the barebone threading architecture can be found [here](/doc/thread_architecture/thread_architecture.pro).
 
 # Sensor Aggregator Unit [Under Construction]
 Sensor Aggregator Unit communicates with the FPGA and acquires desired data.
