@@ -1,3 +1,21 @@
+FQ-Control-Center is a utility software that combines ARM and FPGA controls together. It provides a simple GUI interface for use and highly customizable config files for development.
+
+FQ-Control-Center consists of 3 main parts:
+Camera Unit
+Sensor Aggregation Unit
+Webserver Unit
+
+Camera Unit:
+Camera unit detects people by using deep neural networks and tracks them. It records the statistics of human traffic.
+
+Software architecture:
+[insert diagram]
+Neural networks are computationaly expensive. DE10-Nano ARM HPS can only process 1 frame every 1.2 seconds. Hence, to obtain a worthwile FPS, detection, tracking ,and acquisition parts has to operate concurrently.
+
+
+
+
+
 QTCharts can't be cross compiled for qt5.5.1.
 Charts were added in Qt 5.7 to open source version, and QtCharts from 5.12 definitely won't compile on Qt 5.5.
 In 5.5, they were still a commercial add-on. So you need to get in touch with Qt Company to get the 5.5 source code for QtCharts.
