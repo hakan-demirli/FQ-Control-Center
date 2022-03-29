@@ -8,3 +8,5 @@ bin/*
 **/**-Release/*
 quartus/db/*
 quartus/.qsys_edit/*
+**/**x86/*
+*.79be610

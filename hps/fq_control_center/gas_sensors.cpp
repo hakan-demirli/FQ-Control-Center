@@ -65,13 +65,13 @@ void GasSensors::initialize_fpga_bridge(){
 
     // Check that the opening was sucsessful
     if (fpga_bridge_map == MAP_FAILED){
-        qDebug() << "\nERROR: Failed to open the memory Map!" << endl;
+        qDebug() << "\nERROR: Failed to open the memory Map!";
         std::abort();
     }
     // Allocate a pointer to the maped address space
     uint32_t* fpga_bridge_base = (uint32_t*)fpga_bridge_map;
 
-    qDebug() << "Read the simple memory over the FPGA Bridge" << endl;
+    qDebug() << "Read the simple memory over the FPGA Bridge";
 
     simple_memory_0 = (fpga_bridge_base + (SIMPLE_MEMORY_OFFSET / 4));
     *simple_memory_0 = 0;

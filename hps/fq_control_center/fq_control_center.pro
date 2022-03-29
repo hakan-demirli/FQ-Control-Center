@@ -104,8 +104,8 @@ linux-arm-gnueabihf-g++: {
 
 linux-g++: {
     message( "found x86 g++" )
-    INCLUDEPATH += /usr/include/opencv4
-    LIBS += -L/usr/lib \
+    INCLUDEPATH += opencv_x86/
+    LIBS += -Lopencv_x86/ \
     -ltbb\
     -lopencv_stitching\
     -lopencv_superres\
