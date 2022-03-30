@@ -12,10 +12,13 @@ module uart_rx (
     output reg [ 10: 0] o_data // data 
 );
 
+wire [14: 0] h_prescalar;
+assign h_prescalar = i_prescalar[15: 1];
+
 reg [ 10: 0] data_buffer;
 reg [15:0] counter;
 reg [3:0] packet_size;
-reg uart_clk;
+reg [1:0] uart_clk;
 
 reg [1:0]top_state;
 localparam WAIT = 2'b00;
@@ -40,6 +43,8 @@ localparam ODD_PARITY = 1'b1;
 localparam ONE_STOP = 1'b0;
 localparam TWO_STOP = 1'b1;
 
+reg [3:0]start_pattern;
+reg letsgooo;
 always @(posedge i_clk or posedge i_rst)
 begin
     /*
@@ -48,9 +53,18 @@ begin
     if (i_rst == 1) begin
         counter <= 0;
         uart_clk <= 0;
-    end else if(counter == i_prescalar-1) begin
+    end else if(counter == h_prescalar-1) begin
         counter <= 0;
-        uart_clk = !uart_clk;
+        uart_clk <= uart_clk + 1;
+        start_pattern[0] <= i_rx;
+        start_pattern[1] <= start_pattern[0];
+        start_pattern[2] <= start_pattern[1];
+        start_pattern[3] <= start_pattern[2];
+        if(start_pattern == 4'b1100)  // detected start bit
+            letsgooo = 1;
+        else
+            if(uart_clk[1]) // keep signal up for one uart period
+                letsgooo = 0;
     end else begin
         counter <= counter + 1;
     end
@@ -59,7 +73,7 @@ end
 
 reg [3:0] data_counter;
 reg data_get;
-always @(posedge uart_clk or posedge i_rst)
+always @(posedge uart_clk[1] or posedge i_rst)
 begin
     /*
     Wait for the start bit. 
@@ -68,12 +82,13 @@ begin
     */
     if (i_rst == 1) begin
         top_state <= WAIT;
+        o_data_ready <= 0;
     end else begin
         case(top_state)
             WAIT: begin
                 data_counter <= 0;
                 o_data_ready <= 0;
-                if(i_rx == 0) // detected start bit
+                if(letsgooo == 1) // detected start bit
                     top_state <= READ;
                 else
                     top_state <= WAIT;
@@ -112,19 +127,15 @@ begin
         if(1)begin
             case(data_state)
                 FIVE_DATA: begin
-                    //$display("FIVE_DATA");
                     case(stop_bit_state)
                         TWO_STOP: begin
-                            //$display("TWO_STOP");
                             if(parity_enable) begin
                                 case(parity_type)
                                     EVEN_PARITY: begin// 5+1+2
                                         data_get <= (~^(data_buffer[5:0])) & data_buffer[7] & data_buffer[6];
-                                        //$display("EVEN_PARITY");
                                     end
                                     ODD_PARITY: begin// 5+1+2
                                         data_get <= (^(data_buffer[5:0])) & data_buffer[7] & data_buffer[6];
-                                        //$display("ODD_PARITY");
                                     end
                                 endcase
                             end else begin // 5+2
@@ -132,7 +143,6 @@ begin
                             end 
                         end
                         ONE_STOP: begin
-                            //$display("ONE_STOP");
                             if(parity_enable) begin
                                 case(parity_type)
                                     EVEN_PARITY: // 5+1+1
@@ -147,7 +157,6 @@ begin
                     endcase
                 end
                 SIX_DATA: begin
-                    $display("SIX_DATA");
                     case(stop_bit_state)
                         TWO_STOP: begin
                             if(parity_enable) begin
@@ -176,7 +185,6 @@ begin
                     endcase
                 end
                 SEVEN_DATA: begin
-                    $display("SEVEN_DATA");
                     case(stop_bit_state)
                         TWO_STOP: begin
                             if(parity_enable) begin
@@ -205,7 +213,6 @@ begin
                     endcase
                 end
                 EIGHT_DATA: begin
-                    $display("EIGHT_DATA");
                     case(stop_bit_state)
                         TWO_STOP: begin
                             if(parity_enable) begin
@@ -248,7 +255,7 @@ begin
     Calculate the package size:
         i_cfg = |xx|xx|x| = |DATABITS_COUNT|PARITY|STOPBITS|
 
-        00->5 bits of data|00->no parity   0|1->1 stop bits  1
+        00->5 bits of data|00->no parity   0|0->1 stop bits  1
         01->6 bits of data|01->even parity 1|1->2 stop bits  2
         10->7 bits of data|10->no parity   0|
         11->8 bits of data|11->odd parity  1|

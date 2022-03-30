@@ -58,30 +58,30 @@ memory map
             o_wb_ack <= 1'b0;
         end else begin
             o_wb_ack <= i_wb_stb & !o_wb_ack;
-            case(i_wb_adr[2:0])
-                3'd0: begin
+            case(i_wb_adr[4:2])
+                3'b000: begin
                     if(i_wb_stb & i_wb_we)
                         prescalar <= i_wb_dat;
                 end
-                3'd1: begin
+                3'b001: begin
                     if(i_wb_stb & i_wb_we)
                         cfg <= i_wb_dat;
                 end
-                3'd2: begin
+                3'b010: begin
                     o_wb_rdt <= {31'd0,busy};
                 end
-                3'd3: begin
+                3'b011: begin
                     if(i_wb_stb & i_wb_we)
                         data_send <= i_wb_dat;
                 end
-                3'd4: begin
+                3'b100: begin
                     if(i_wb_stb & i_wb_we)
                         tx_data <= i_wb_dat;
                 end
-                3'd5: begin
+                3'b101: begin
                     o_wb_rdt <= o_data_ready;
                 end
-                3'd6: begin
+                3'b110: begin
                     o_wb_rdt <= {31'd0,o_data};
                 end
                 default: begin

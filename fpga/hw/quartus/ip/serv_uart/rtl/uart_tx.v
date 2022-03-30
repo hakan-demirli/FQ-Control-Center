@@ -85,13 +85,11 @@ begin
                     o_tx <= i_data[data_counter];
                     data_counter <= data_counter + 1;
                     parity_bit <= parity_bit ^ i_data[data_counter];
-                    $display("parity_change %b, %b",i_data[data_counter],parity_bit);
                     top_state <= DATA_BITS;
                 end else begin
                     o_tx <= i_data[data_counter];
                     data_counter <= 0;  
                     parity_bit <= parity_bit ^ i_data[data_counter];
-                    $display("final_parity_change %b, %b",i_data[data_counter],parity_bit);
                     if(parity_enable)
                         top_state <= PARITY_BITS;
                     else begin
@@ -144,7 +142,7 @@ begin
     Calculate the package data section size:
         i_cfg = |xx|xx|x| = |DATABITS_COUNT|PARITY|STOPBITS|
 
-        00->5 bits of data|00->no parity   0|1->1 stop bits  1
+        00->5 bits of data|00->no parity   0|0->1 stop bits  1
         01->6 bits of data|01->even parity 1|1->2 stop bits  2
         10->7 bits of data|10->no parity   0|
         11->8 bits of data|11->odd parity  1|

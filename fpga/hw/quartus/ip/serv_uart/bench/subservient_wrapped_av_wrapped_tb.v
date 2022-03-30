@@ -113,7 +113,10 @@ module subservient_wrapped_av_wrapped_tb();
         //$dumpvars(0, subservient_alone_tb);
     end
 
+
     wire uart_echo;
+    uart_decoder uad (uart_echo);
+    
     subservient_wrapped_av_wrapped ppppp (
      .wb_dbg_ack(wb_dbg_ack),
     .debug_mode_i(debug_mode),
@@ -129,4 +132,23 @@ module subservient_wrapped_av_wrapped_tb();
     .i_rx(uart_echo)
 );
 
+endmodule
+
+module uart_decoder
+  #(parameter BAUD_RATE = 115200)
+   (input wire rx);
+
+   localparam T = 1000000000/BAUD_RATE;
+
+   integer i;
+   reg [7:0] ch;
+
+   initial forever begin
+      @(negedge rx);
+      #(T/2) ch = 0;
+      for (i=0;i<8;i=i+1)
+	#T ch[i] = rx;
+      $write("%c",ch);
+      $fflush;
+   end
 endmodule
