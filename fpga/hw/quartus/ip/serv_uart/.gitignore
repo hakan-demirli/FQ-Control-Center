@@ -1,3 +1,5 @@
 *.hex
 *.bin
 modelsim*/*
+*/*db/*
+*/.qsys_edit/
