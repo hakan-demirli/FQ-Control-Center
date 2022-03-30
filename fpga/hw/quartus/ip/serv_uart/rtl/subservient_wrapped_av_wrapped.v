@@ -5,7 +5,7 @@
 module subservient_wrapped_av_wrapped (
     input wire debug_mode_i,
     output wire wb_dbg_ack,
-    input wire  [ 31: 0] address,
+    input wire  [ 12: 0] address,
     input wire           chipselect,
     input wire           clk,
     input wire           reset_n,
@@ -25,7 +25,7 @@ module subservient_wrapped_av_wrapped (
 
     //Debug interface
     .debug_mode_i (debug_mode_i),
-    .wbs_adr_i (address),
+    .wbs_adr_i ({20'b0,address}),
     .wbs_dat_i (writedata),
     .wbs_sel_i (4'b1111),
     .wbs_we_i  (~write_n),

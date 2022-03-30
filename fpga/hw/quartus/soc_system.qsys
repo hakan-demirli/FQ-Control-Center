@@ -301,7 +301,7 @@
          type = "boolean";
       }
    }
-   element simple_memory_0
+   element subservient_coprocessor_0
    {
       datum _sortIndex
       {
@@ -309,16 +309,11 @@
          type = "int";
       }
    }
-   element simple_memory_0.avalon_slave_0
+   element subservient_coprocessor_0.ss0
    {
-      datum _lockedAddress
-      {
-         value = "1";
-         type = "boolean";
-      }
       datum baseAddress
       {
-         value = "24576";
+         value = "32768";
          type = "String";
       }
    }
@@ -424,6 +419,11 @@
    dir="end" />
  <interface name="memory" internal="hps_0.memory" type="conduit" dir="end" />
  <interface name="reset" internal="clk_0.clk_in_reset" type="reset" dir="end" />
+ <interface
+   name="subservient_coprocessor_0_exported"
+   internal="subservient_coprocessor_0.exported"
+   type="conduit"
+   dir="end" />
  <module
    name="ILC"
    kind="interrupt_latency_counter"
@@ -1149,9 +1149,11 @@
   <parameter name="USE_AUTO_ADDRESS_WIDTH" value="1" />
   <parameter name="USE_RESPONSE" value="0" />
  </module>
- <module name="simple_memory_0" kind="simple_memory" version="1.0" enabled="1">
-  <parameter name="ADDRESS_SIZE" value="4" />
- </module>
+ <module
+   name="subservient_coprocessor_0"
+   kind="subservient_coprocessor"
+   version="1.0"
+   enabled="1" />
  <module
    name="sysid_qsys"
    kind="altera_avalon_sysid_qsys"
@@ -1208,15 +1210,6 @@
    kind="avalon"
    version="17.0"
    start="mm_bridge_0.m0"
-   end="simple_memory_0.avalon_slave_0">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x6000" />
-  <parameter name="defaultConnection" value="false" />
- </connection>
- <connection
-   kind="avalon"
-   version="17.0"
-   start="mm_bridge_0.m0"
    end="sysid_qsys.control_slave">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x1000" />
@@ -1243,6 +1236,15 @@
    end="button_pio.s1">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x5000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="17.0"
+   start="mm_bridge_0.m0"
+   end="subservient_coprocessor_0.ss0">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x8000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1348,7 +1350,7 @@
    kind="clock"
    version="17.0"
    start="clk_0.clk"
-   end="simple_memory_0.clock" />
+   end="subservient_coprocessor_0.clock" />
  <connection
    kind="clock"
    version="17.0"
@@ -1485,7 +1487,7 @@
    kind="reset"
    version="17.0"
    start="clk_0.clk_reset"
-   end="simple_memory_0.reset" />
+   end="subservient_coprocessor_0.reset" />
  <connection kind="reset" version="17.0" start="clk_0.clk_reset" end="ILC.reset_n" />
  <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
  <interconnectRequirement for="$system" name="qsys_mm.maxAdditionalLatency" value="1" />
