@@ -16,12 +16,12 @@ module subservient_wrapped_av_wrapped_tb();
     reg clk = 1'b0;
     reg reset_n = 1'b0;
 
-    reg         debug_mode;
     wire        wb_dbg_ack ;
 
     reg [3:0]   wb_dbg_sel;
     reg  [ 31: 0] address;
     reg           chipselect = 0;
+    reg           chipselect_sc = 0;
     reg           write_n = 1;
     reg  [ 31: 0] writedata;
     wire [ 31: 0] readdata;
@@ -57,7 +57,12 @@ module subservient_wrapped_av_wrapped_tb();
 
     initial begin
         $display("Setting debug mode");
-        debug_mode <= 1'b1;
+        chipselect_sc = 1;
+        write_n = 0;
+        writedata <= 1; // debug mode 1
+        repeat (40) @(posedge clk);
+        chipselect_sc = 0;
+        write_n = 1;
 
         $display("Writing %0s to SRAM", firmware_file);
         $readmemh(firmware_file, mem);
@@ -86,7 +91,12 @@ module subservient_wrapped_av_wrapped_tb();
         repeat (10) @(posedge clk);
 
         $display("Done writing %0d bytes to SRAM. Turning off debug mode", idx);
-        debug_mode <= 1'b0;
+        chipselect_sc = 1;
+        write_n = 0;
+        writedata <= 0; // debug mode 0
+        repeat (2) @(posedge clk);
+        chipselect_sc = 0;
+        write_n = 1;
    end
 
     initial begin
@@ -117,22 +127,34 @@ module subservient_wrapped_av_wrapped_tb();
     wire uart_echo;
     uart_decoder uad (uart_echo);
     
+    wire debug_mode;
     subservient_wrapped_av_wrapped ppppp (
-     .wb_dbg_ack(wb_dbg_ack),
-    .debug_mode_i(debug_mode),
-    .address(address),
-    .chipselect(chipselect),
-    .clk(clk),
-    .reset_n(reset_n),
-    .write_n(write_n),
-    .writedata(writedata),
-    .readdata(readdata),
-    .q(q),
-    .o_tx(uart_echo),
-    .i_rx(uart_echo)
-);
+        .wb_dbg_ack(wb_dbg_ack),
+        .debug_mode_i(debug_mode),
+        .address(address),
+        .chipselect(chipselect),
+        .clk(clk),
+        .reset_n(reset_n),
+        .write_n(write_n),
+        .writedata(writedata),
+        .readdata(readdata),
+        .q(q),
+        .o_tx(uart_echo),
+        .i_rx(uart_echo)
+    );
+
+    serv_con scw (
+        .chipselect(chipselect_sc),
+        .clk(clk),
+        .reset_n(reset_n),
+        .write_n(write_n),
+        .writedata(writedata),
+        .readdata(readdata),
+        .serv_con(debug_mode)
+    );
 
 endmodule
+
 
 module uart_decoder
   #(parameter BAUD_RATE = 115200)
