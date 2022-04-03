@@ -77,14 +77,26 @@ void GasSensors::initialize_fpga_bridge(){
 }
 
 void GasSensors::update_serv_sw(){
-    static const uint8_t serv_hex[SERV_HEX_BYTE_SIZE] = {};
+
+    std::vector<unsigned int> serv_hex;
+    int byte_0,byte_1,byte_2,byte_3;
+    std::fstream serv_hex_stream;
+    const std::string SERV_HEX_FILE = "./config/entry_point.hex";
+
+    serv_hex_stream.open(SERV_HEX_FILE, std::ios::in | std::ios::out);
+
+    while (serv_hex_stream >> std::hex >> byte_0 >> byte_1 >> byte_2 >> byte_3)
+      {
+        unsigned int cc = (byte_3<<24) | (byte_2<<16) | (byte_1<<8) | byte_0;
+        serv_hex.push_back(cc);
+        //qDebug() << hex << cc << "\n";
+      }
 
     qDebug() << "Enable Debug mode";
     *serv_uart_dbg_adr = 0xff; // enable debug mode
     for (int i = 0; i < SERV_HEX_BYTE_SIZE; i+=4) {
-         uint32_t word = serv_hex[i] | ((serv_hex[i+1]) << 8) | ((serv_hex[i+2]) << 16) | ((serv_hex[i+3]) << 24);
          volatile uint32_t* wr_addr = serv_uart_adr + i;
-         *wr_addr = word;
+         *wr_addr = serv_hex[i];
      }
     qDebug() << "Disable Debug mode";
     *serv_uart_dbg_adr = 0x00; // disable debug mode
