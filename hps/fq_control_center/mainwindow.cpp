@@ -20,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent):
     increase_tab_width();
     initialize_camera();
     initialize_gas_sensors();
+
+    this->setWindowTitle("FQ-Control-Center");
 }
 
 MainWindow::~MainWindow()
