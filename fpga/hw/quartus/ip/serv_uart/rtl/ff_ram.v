@@ -3,10 +3,6 @@
 module ff_ram #(parameter memsize = 1024,
                 parameter aw = $clog2(memsize))
               (
-            `ifdef USE_POWER_PINS
-                inout vccd1,	// User area 1 1.8V supply
-                inout vssd1,	// User area 1 digital ground
-            `endif
             input wire reset,
             input wire clk0,
             input wire clk1,
@@ -31,8 +27,6 @@ module ff_ram #(parameter memsize = 1024,
     
     // Memory
     reg [DATA_WIDTH-1:0] mem[0:memsize-1];
-    
-    integer i;
     
     always @(posedge clk0) begin
         csb0_reg  = csb0;

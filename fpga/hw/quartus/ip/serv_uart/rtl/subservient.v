@@ -25,7 +25,6 @@ module subservient
     output wire          o_sram_ren,
 
     //Debug interface
-    input wire           i_debug_mode,
     input wire [31:0]    i_wb_dbg_adr,
     input wire [31:0]    i_wb_dbg_dat,
     input wire [3:0]     i_wb_dbg_sel,
@@ -34,8 +33,16 @@ module subservient
     output wire [31:0]   o_wb_dbg_rdt,
     output wire          o_wb_dbg_ack,
 
+    //AVALON INTERFACE
+    input wire [ 3: 0]  address,
+    input wire          chipselect,
+    input wire          reset_n,
+    input wire          write_n,
+    input wire [ 31: 0] writedata,
+    output wire [ 31: 0] readdata,
+
     //External I/O
-    output wire  [37:0]   o_gpio,
+    output wire  [7:0]   serv_con,
     output wire o_tx,
     input wire i_rx
 );
@@ -67,7 +74,7 @@ module subservient
       .o_sram_ren   (o_sram_ren),
 
       //Debug interface
-      .i_debug_mode (i_debug_mode),
+      .i_debug_mode (serv_con[0]),
       .i_wb_dbg_adr (i_wb_dbg_adr),
       .i_wb_dbg_dat (i_wb_dbg_dat),
       .i_wb_dbg_sel (i_wb_dbg_sel),
@@ -118,17 +125,26 @@ module subservient
                         uart_en    ? uart_ack :
                         1'b0;
 
-   subservient_gpio gpio
+   serv_con serv_control_registers
      (.i_wb_clk (i_clk),
       .i_wb_rst (i_rst),
-      .i_wb_adr (wb_core_adr[2]),
+      .i_wb_adr (wb_core_adr[5:2]),
       .i_wb_dat (wb_core_dat),
       .i_wb_we  (wb_core_we),
       .i_wb_stb (wb_gpio_stb),
       .o_wb_rdt (wb_gpio_rdt),
       .o_wb_ack (wb_gpio_ack),
-      .o_gpio   (o_gpio));
 
+      //AVALON INTERFACE
+      .address(address),
+      .chipselect(chipselect),
+      .reset_n(reset_n),
+      .write_n(write_n),
+      .writedata(writedata),
+      .readdata(readdata),
+
+      .serv_con (serv_con)
+      );
 
     servant_timer timer
     (  .i_clk(i_clk),

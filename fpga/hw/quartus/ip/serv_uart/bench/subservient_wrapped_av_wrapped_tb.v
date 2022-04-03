@@ -1,15 +1,9 @@
-/*
- * subservient_tb.v : Verilog testbench for the subservient SoC
- *
- * SPDX-FileCopyrightText: 2021 Olof Kindgren <olof.kindgren@gmail.com>
- * SPDX-License-Identifier: Apache-2.0
- */
 `timescale 1ns/1ps
 `default_nettype none
 module subservient_wrapped_av_wrapped_tb();
 
     parameter memfile = "entry_point.hex";
-    parameter memsize = 1024;
+    parameter memsize = 2048;
     parameter with_csr = 0;
     parameter aw       = $clog2(memsize);
 
@@ -38,16 +32,16 @@ module subservient_wrapped_av_wrapped_tb();
 
     task wb_dbg_write32(input [31:0] adr, input [31:0] dat);
     begin
-     @ (posedge clk) begin
-        address <= adr;
-        writedata <= dat;
-        wb_dbg_sel <= 4'b1111;
-        write_n  <= 1'b0;
-        chipselect <= 1'b1;
-     end
-     while (!wb_dbg_ack)
-       @ (posedge clk);
-     chipselect <= 1'b0;
+        @ (posedge clk) begin
+            address <= adr;
+            writedata <= dat;
+            wb_dbg_sel <= 4'b1111;
+            write_n  <= 1'b0;
+            chipselect <= 1'b1;
+        end
+        while (!wb_dbg_ack)
+        @ (posedge clk);
+        chipselect <= 1'b0;
     end
     endtask
 
@@ -57,12 +51,13 @@ module subservient_wrapped_av_wrapped_tb();
 
     initial begin
         $display("Setting debug mode");
-        chipselect_sc = 1;
-        write_n = 0;
-        writedata <= 1; // debug mode 1
-        repeat (40) @(posedge clk);
-        chipselect_sc = 0;
-        write_n = 1;
+        address <= 12'b1000_0000_0000;
+        writedata <= {24'b0,8'hFF};
+        wb_dbg_sel <= 4'b1111;
+        write_n  <= 1'b0;
+        chipselect <= 1'b1;
+
+        repeat (10) @(posedge clk);
 
         $display("Writing %0s to SRAM", firmware_file);
         $readmemh(firmware_file, mem);
@@ -91,13 +86,59 @@ module subservient_wrapped_av_wrapped_tb();
         repeat (10) @(posedge clk);
 
         $display("Done writing %0d bytes to SRAM. Turning off debug mode", idx);
+        address <= 12'b1000_0000_0000;
+        writedata <= {24'b0,8'h00};
+        wb_dbg_sel <= 4'b1111;
+        write_n  <= 1'b0;
+        chipselect <= 1'b1;
+        repeat (10) @(posedge clk);
+        chipselect <= 1'b0;
+    end
+
+    initial begin
+        // access SRAM directly while serv is in the middle of something
+        #1000000;
+        $display("Setting debug mode for DMA");
+        chipselect_sc = 1;
+        write_n = 0;
+        writedata <= 1; // debug mode 1
+        repeat (40) @(posedge clk);
+        chipselect_sc = 0;
+        write_n = 1;
+
+        // read dma mem
+        address <= 32'h0000_07C0;
+        repeat (64) @(posedge clk);
+        $display("current dma_mem: %h",readdata);
+
+        address <= 32'h0000_07C0;
+        writedata <= 32'hAAAA_FFFF;
+        wb_dbg_sel <= 4'b1111;
+        chipselect <= 1'b1;
+        repeat (5) @(posedge clk);
+        write_n  <= 1'b0;
+        while (!wb_dbg_ack)
+        @ (posedge clk);
+        chipselect <= 1'b0;
+        write_n  <= 1'b1;
+        repeat (64) @(posedge clk);
+        $display("edited dma_mem");
+
+        // read dma mem
+        address <= 32'h0000_07C0;
+        repeat (64) @(posedge clk);
+        $display("current dma_mem: %h",readdata);
+
+        repeat (1000) @(posedge clk); // do a long lasting job
+
         chipselect_sc = 1;
         write_n = 0;
         writedata <= 0; // debug mode 0
-        repeat (2) @(posedge clk);
+        repeat (64) @(posedge clk);
         chipselect_sc = 0;
         write_n = 1;
-   end
+        $display("debug mode sabotage off");
+    end
 
     initial begin
         forever begin
@@ -128,7 +169,7 @@ module subservient_wrapped_av_wrapped_tb();
     uart_decoder uad (uart_echo);
     
     wire debug_mode;
-    subservient_wrapped_av_wrapped ppppp (
+    subservient_wrapped_av_wrapped swaw (
         .wb_dbg_ack(wb_dbg_ack),
         .debug_mode_i(debug_mode),
         .address(address),
@@ -143,15 +184,6 @@ module subservient_wrapped_av_wrapped_tb();
         .i_rx(uart_echo)
     );
 
-    serv_con scw (
-        .chipselect(chipselect_sc),
-        .clk(clk),
-        .reset_n(reset_n),
-        .write_n(write_n),
-        .writedata(writedata),
-        .readdata(readdata),
-        .serv_con(debug_mode)
-    );
 
 endmodule
 

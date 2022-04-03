@@ -27,12 +27,20 @@ module subservient_wrapped (
                             input  wire [ 31: 0] wbs_adr_i,
                             output wire          wbs_ack_o,
                             output wire [ 31: 0] wbs_dat_o,
-                            input  wire          debug_mode_i,
-                            output wire [ 37: 0] o_gpio,
+
+                            //AVALON INTERFACE
+                            input wire [ 3: 0]  address,
+                            input wire          chipselect,
+                            input wire          reset_n,
+                            input wire          write_n,
+                            input wire [ 31: 0] writedata,
+                            output wire [ 31: 0] readdata,
+                            
+                            output wire [ 7: 0] serv_con,
                             output wire          o_tx,
                             input wire           i_rx);
 
-    localparam memsize = 1024;
+    localparam memsize = 2048;
     localparam aw      = $clog2(memsize);
 
     wire [aw-1:0] sram_waddr;
@@ -68,9 +76,7 @@ module subservient_wrapped (
     .i_sram_rdata (sram_rdata),
     .o_sram_ren   (sram_ren),
 
-
     //Debug interface
-    .i_debug_mode (debug_mode_i),
     .i_wb_dbg_adr (wbs_adr_i),
     .i_wb_dbg_dat (wbs_dat_i),
     .i_wb_dbg_sel (wbs_sel_i),
@@ -79,8 +85,16 @@ module subservient_wrapped (
     .o_wb_dbg_rdt (wbs_dat_o),
     .o_wb_dbg_ack (wbs_ack_o),
 
+    //AVALON INTERFACE
+    .address(address),
+    .chipselect(chipselect),
+    .reset_n(reset_n),
+    .write_n(write_n),
+    .writedata(writedata),
+    .readdata(readdata),
+
     // External I/O
-    .o_gpio (o_gpio),
+    .serv_con (serv_con),
     .o_tx(o_tx),
     .i_rx(i_rx)
     );
