@@ -187,6 +187,7 @@ Subservient peripherals and absolute addresses:
 | RX_DATA | 0xC0000018|r|
 
 **Application notes and information:**    
+Sample program for Subservient can be found [here.](fpga/sw/serv/project/entry_point.cpp)    
 UART TX sends data upon write operation. TX_BUSY is high if UART TX is in the middle of the sending operation. Before sending any data you have to wait for it to be cleared. Writing when TX_BUSY is high is undefined.
 
 RX_READY is set if there is a new data ready to read at RX_DATA. Upon read user has to write to RX_DHBR register to indicate data has been read. Otherwise RX_READY will not be cleared.

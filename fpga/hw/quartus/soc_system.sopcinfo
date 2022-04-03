@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <EnsembleReport name="soc_system" kind="soc_system" version="1.0" fabric="QSYS">
  <!-- Format version 17.0 595 (Future versions may contain additional information.) -->
- <!-- 2022.04.03.11:42:26 -->
+ <!-- 2022.04.03.13:33:54 -->
  <!-- A collection of modules and connections -->
  <parameter name="AUTO_GENERATION_ID">
   <type>java.lang.Integer</type>
-  <value>1648975096</value>
+  <value>1648981681</value>
   <derived>false</derived>
   <enabled>true</enabled>
   <visible>false</visible>
@@ -6367,6 +6367,14 @@ parameters are a RESULT of the module parameters. -->
     <name>ILC.avalon_slave</name>
     <baseAddress>196608</baseAddress>
     <span>256</span>
+   </memoryBlock>
+   <memoryBlock>
+    <isBridge>false</isBridge>
+    <moduleName>serv_uart_0</moduleName>
+    <slaveName>avalon_slave_0</slaveName>
+    <name>serv_uart_0.avalon_slave_0</name>
+    <baseAddress>32768</baseAddress>
+    <span>16384</span>
    </memoryBlock>
    <memoryBlock>
     <isBridge>false</isBridge>
@@ -84664,9 +84672,9 @@ parameters are a RESULT of the module parameters. -->
    </parameter>
    <parameter name="maximumPendingReadTransactions">
     <type>int</type>
-    <value>0</value>
+    <value>1</value>
     <derived>false</derived>
-    <enabled>false</enabled>
+    <enabled>true</enabled>
     <visible>true</visible>
     <valid>true</valid>
    </parameter>
@@ -84698,7 +84706,7 @@ parameters are a RESULT of the module parameters. -->
     <type>int</type>
     <value>0</value>
     <derived>false</derived>
-    <enabled>true</enabled>
+    <enabled>false</enabled>
     <visible>true</visible>
     <valid>true</valid>
    </parameter>
@@ -84808,6 +84816,12 @@ parameters are a RESULT of the module parameters. -->
    </parameter>
    <type>avalon</type>
    <isStart>false</isStart>
+   <port>
+    <name>readdatavalid</name>
+    <direction>Output</direction>
+    <width>1</width>
+    <role>readdatavalid</role>
+   </port>
    <port>
     <name>address</name>
     <direction>Input</direction>
@@ -85000,7 +85014,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>embeddedsw.CMacro.TIMESTAMP</name>
-   <value>1648975096</value>
+   <value>1648981681</value>
   </assignment>
   <assignment>
    <name>embeddedsw.dts.compatible</name>
@@ -85020,7 +85034,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>embeddedsw.dts.params.timestamp</name>
-   <value>1648975096</value>
+   <value>1648981681</value>
   </assignment>
   <assignment>
    <name>embeddedsw.dts.vendor</name>
@@ -85036,7 +85050,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="timestamp">
    <type>int</type>
-   <value>1648975096</value>
+   <value>1648981681</value>
    <derived>true</derived>
    <enabled>false</enabled>
    <visible>false</visible>
@@ -96232,6 +96246,57 @@ parameters are a RESULT of the module parameters. -->
   <endConnectionPoint>avalon_slave</endConnectionPoint>
  </connection>
  <connection
+   name="fpga_only_master.master/serv_uart_0.avalon_slave_0"
+   kind="avalon"
+   version="17.0"
+   start="fpga_only_master.master"
+   end="serv_uart_0.avalon_slave_0">
+  <parameter name="arbitrationPriority">
+   <type>int</type>
+   <value>1</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <parameter name="baseAddress">
+   <type>java.math.BigInteger</type>
+   <value>0x8000</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <parameter name="defaultConnection">
+   <type>boolean</type>
+   <value>false</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <parameter name="deviceFamily">
+   <type>java.lang.String</type>
+   <value>UNKNOWN</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <parameter name="generateLegacySim">
+   <type>boolean</type>
+   <value>false</value>
+   <derived>false</derived>
+   <enabled>true</enabled>
+   <visible>true</visible>
+   <valid>true</valid>
+  </parameter>
+  <startModule>fpga_only_master</startModule>
+  <startConnectionPoint>master</startConnectionPoint>
+  <endModule>serv_uart_0</endModule>
+  <endConnectionPoint>avalon_slave_0</endConnectionPoint>
+ </connection>
+ <connection
    name="fpga_only_master.master/sysid_qsys.control_slave"
    kind="avalon"
    version="17.0"
@@ -98178,7 +98243,7 @@ parameters are a RESULT of the module parameters. -->
   <version>17.0</version>
  </plugin>
  <plugin>
-  <instanceCount>148</instanceCount>
+  <instanceCount>149</instanceCount>
   <name>avalon</name>
   <type>com.altera.entityinterfaces.IElementClass</type>
   <subtype>com.altera.entityinterfaces.IConnection</subtype>

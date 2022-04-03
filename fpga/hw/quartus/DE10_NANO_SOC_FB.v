@@ -81,7 +81,10 @@ module DE10_NANO_SOC_FB(
 	output		     [7:0]		LED,
 
 	//////////// SW //////////
-	input 		     [3:0]		SW
+	input 		     [3:0]		SW,
+	input rx,
+	output tx,
+	output [7:0]q
 );
 
 
@@ -89,7 +92,7 @@ module DE10_NANO_SOC_FB(
 //=======================================================
 //  REG/WIRE declarations
 //=======================================================
- wire  hps_fpga_reset_n;
+  wire  hps_fpga_reset_n;
   wire [1:0] fpga_debounced_buttons;
   wire [7:0]  fpga_led_internal;
   wire [2:0]  hps_reset_req;
@@ -225,7 +228,10 @@ soc_system u0 (
      .hps_0_f2h_debug_reset_req_reset_n     (~hps_debug_reset ),     //      hps_0_f2h_debug_reset_req.reset_n
      .hps_0_f2h_stm_hw_events_stm_hwevents  (stm_hw_events ),  //        hps_0_f2h_stm_hw_events.stm_hwevents
      .hps_0_f2h_warm_reset_req_reset_n      (~hps_warm_reset ),      //       hps_0_f2h_warm_reset_req.reset_n
-
+	  
+	  .serv_uart_0_conduit_end_q(q),
+	  .serv_uart_0_conduit_end_tx(tx),
+	  .serv_uart_0_conduit_end_rx(rx)
  );
 
 // Debounce logic to clean out glitches within 1ms
