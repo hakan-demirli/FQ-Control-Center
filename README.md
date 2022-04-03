@@ -36,6 +36,9 @@ FQ-Control-Center HPS software consists of 3 main parts:
 
 ## **Camera Unit**
 Camera unit detects people by using deep neural networks and tracks them. It records the statistics of human traffic.
+<p align="center">
+  <img src="./doc/images/object_detection.gif" />
+</p>
 
 Object detection part of the software use Mobilenet Single Shot Multibox detector. MobileNet SSDs are small and have a low-latency. In this project I have chosen ssd_mobilenet_v1_0.75_depth_300x300_coco14_sync_2018_07_03 model. It has a decent mAP and more importantly it is fast.
 
@@ -151,6 +154,9 @@ Requirements:
 - **Why did not you use Tensorflow or Pytorch for DNN inference. Why OpenCV?**    
     I haven't tried pytorch. Tensorflow was slower than OpenCV.
 
+- **I have another question/problem?**    
+    First check doc folder. If you still have a problem open an issue.
+
 # FPGA
 ## System Overview
 
@@ -209,6 +215,8 @@ Testbench of the design is located in the bench folder. You can directly run it 
 
 - **Why don't you directly read obtained data from Subservient via debug interface?**    
     There is a read problem in the debug interface. wb_rdt signal is stuck at the some value that is referenced by Subservient right before debug enable is set. I am sure the reason is something trivial but I neither have time nor motivation to debug and solve it. Hence, as a dirty workaround I have added shared memory section and redirected read operations to there.
+- **I have another question/problem?**    
+    First check doc folder. If you still have a problem open an issue.
 
 # Credits and Resources
 * https://github.com/zangman/de10-nano
