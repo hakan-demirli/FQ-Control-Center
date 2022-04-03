@@ -1,21 +1,24 @@
 FQ-Control-Center is a utility software that combines ARM and FPGA controls together. It provides a simple GUI interface for use and highly customizable config files for development.
 
-* Table of Contents
-    * Overview
-        * Camera Unit
-        * Sensor Aggregation unit
-        * Webserver Unit
-    * Development
+## Table of Contents
+- [Overview](#overview)
+    - [Camera Unit](#camera-unit)  
+    - [Sensor Aggregator Unit](#sensor-aggregator-unit)  
+    - [Webserver Unit](#webserver-unit)  
+- [Development](#suggested-tweaks)  
+- [Credits](#credits)  
+
+# **Overview**
 
 FQ-Control-Center consists of 3 main parts:
 * Camera Unit
 * Sensor Aggregation Unit
 * Webserver Unit
 
-# Camera Unit:
+## **Camera Unit**
 Camera unit detects people by using deep neural networks and tracks them. It records the statistics of human traffic.
 
-## Software architecture:
+### **Software architecture**
 Object detection and tracking is a sequential operation by nature. First it has to be continious in time. Webcam thread acquires frames. Object detection thread detects people from frames. Tracker thread tracks the detected people. One part of the operation can't be started without the previous one is finished. So, the simplest algorithm for object tracking is:
 ```
 forever:
@@ -56,24 +59,26 @@ The new algorithm intorduces couple of new challenges; Consumer-Producer problem
 Conditional variables solves the waiting problem. They also mitigate the CPU usage problem when idling. Pointers solve the duplication problem. Preallocate three frame packets and swap the pointers in each thread starting from tracker to webcam. But, they introduce another problem. Who will swap them?    
 Swapping requires coordination among all threads. Swaping while one of them is operating on it will generate a core dump. So, swapper thread either has to be dedicated to its job and wait for three different conditional variables from each thread. Or it has to be the fastest one among tracker, detector and webcam. I choose the second option since there are 2 physical cores on DE10-Nano and adding more threads will not translate to more performance, at least not directly. So, the fastest thread and the one that will swap frames is webcam thread. In worst case tracker and object detector will be ready just before webcam starts to read a frame. In this case wasted compute time will be equal to the frame time.
 
-Application code is cluttered by OpenCV and other libraries. So, the reference design of the barebone threading architecture can be found [here](/doc/thread_architecture/thread_architecture.pro).
+Application code is cluttered by OpenCV and other libraries. So, the reference design of the barebone threading architecture can be found [here](/doc/thread_architecture/thread_architecture.pro). It may not be up to date with the latest software version.
 
-# Sensor Aggregator Unit [Under Construction]
+## **Sensor Aggregator Unit**
+[Under Construction]
 Sensor Aggregator Unit communicates with the FPGA and acquires desired data.
-# Webserver Unit [Under Construction]
-Webserver unit communicates with Asure Cloud
+## **Webserver Unit**
+[Under Construction]
+Webserver unit communicates with Asure Cloud.
 
-# Development
+# **Development**
 Requirements:
 - glibc == 2.27
 - OpenCV == 4.2.0
 - 5.12.12 >= QT >= 5.5.0
-- QT Cretor == 5.0.2
+- QT Creator == 5.0.2
 
 - **glibc?**    
-    Google it.
+    DE10-Nano default image is Ubuntu 18.04 which has glibc  2.27. This prevents any program that is compiled higher glibc version from running.
 - **Can I use a new version of OpenCV?**    
-    No, Tracker contrib modules are deprecated.
+    No, Tracker contrib modules are deprecated. If you do you have to edit the code to accomodate legacy libraries.
 - **Why did you use OpenCV plot library rather than QTCharts?**    
     QT version of precompiled libraries from Terasic is 5.5.1 and QTCharts introduced in QT 5.7. And no, I didn't bother to rebuild QT.
 - **QT Creator? Why can't I use CLI qmake?**    
@@ -82,22 +87,23 @@ Requirements:
     For some reason both accuracy and performance of HOG was worse than DNN.
 - **Why not use Tensorflow or Pytorch for DNN inference. Why OpenCV?**    
     I haven't tried pytorch. Tensorflow was slower than OpenCV.
-- **How did you decide on tracker algorithm and DNN model**    
-    Performance >= all
+- **How did you decide on DNN model**    
+    It was the fastest one that is also compatible with OpenCV DNN inference.
+- **How did you decide on Tracker Algorithm?**    
+    Trial and error.
+    - TrackerMIL -> Slow and inaccurate. A lot of false positives.
+    - TrackerMOSSE -> Really fast. But, it takes time to lock on to a target.
+    - TrackerKCF -> Kinda slow but accurate.
+    - TrackerBoosting -> Buggy and slow.
+    - TrackerTLD -> Like KCF but a bit buggy?
+    - TrackerGOTURN -> Deep learning based tracker. Buggy as hell.
+    - TrackerMedianFlow -> Fastish but there are some false positives.
+    - TrackerCSRT -> Accurate but slow.
 
 ## How to Deploy the app
 - Copy OpenCV shared libraries into a folder. In this case its the plugins folder. And export it.
-    - ```export LD_LIBRARY_PATH=/root/nn/plugins``` 
+    - ```export LD_LIBRARY_PATH=/root/fq_control_center/plugins``` 
 - Select display.
     - ```export DISPLAY=:0```
 - Run the app.
     - ```./fq_control_center```
-
-TrackerMIL -> slow and inaccurate. A lot of false positives
-TrackerMOSSE -> really fast. But it takes time to lock on to a box
-TrackerKCF -> kinda slow but accurate
-TrackerBoosting -> buggy and slow
-TrackerTLD -> like KCF but a bit buggy?
-TrackerGOTURN -> Deep learning based tracker. Buggy as hell.
-TrackerMedianFlow -> Fast but there are some false positives
-TrackerCSRT -> Accurate but slow
