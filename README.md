@@ -19,9 +19,9 @@ This is the software part of the FQ-Control-Center that runs on the HPS.
         - [Software Development FAQ](#software-development-faq)
 - [FPGA](#fpga)
     - [System Overview](#system-overview)
-        - [Testbench](#testbench)
         - [Memory Map from HPS side](##memory-map-from-hps-side)
         - [Memory Map from Subservient side](#memory-map-from-subservient-side)
+        - [Testbench](#testbench)
         - [FPGA Development FAQ](#fpga-development-faq)
     - [Software](#software)
 - [Credits](#credits)
@@ -97,11 +97,15 @@ Swapping requires coordination among all threads. Swaping while one of them is o
 Application code is cluttered by OpenCV and other libraries. So, the reference design of the barebone threading architecture can be found [here](/doc/thread_architecture/thread_architecture.pro). It may not be up to date with the latest software version.
 
 ## **Sensor Aggregator Unit**
-[Under Construction]
-Sensor Aggregator Unit communicates with the FPGA and acquires desired data.
+Sensor Aggregator unit is responsible of the initialization of the Subservient module and FPGA bridge. After the setup it periodically reads from the memory mapped shared memory. This section can be disabled to make FQ-Control-Center run on different platforms without an FPGA.
+<p align="center">
+  <img src="./doc/images/sensor_data.gif" />
+</p>
+
 ## **Webserver Unit**
 [Under Construction]
-Webserver unit communicates with Asure Cloud.
+Webserver unit will send data with Asure Cloud.
+[Under Construction]
 
 # **Development**
 Requirements:
@@ -131,14 +135,19 @@ Requirements:
 ## Software Development FAQ
 - **glibc?**    
     DE10-Nano default image is Ubuntu 18.04 which is shipped with glibc 2.27. This prevents any program that is compiled higher glibc version from running. You can upgrade to 20.04 which also upgrades the glibc version.
+
 - **Can I use a new version of OpenCV?**    
     No, Tracker contrib modules are deprecated. If you do you have to edit the code to accomodate legacy libraries.
+
 - **Why did you choose OpenCV plot library rather than QTCharts?**    
     QT version of precompiled libraries from Terasic is 5.5.1 and QTCharts introduced in QT 5.7. And no, I didn't bother to rebuild QT.
+
 - **QT Creator? Why can't I use CLI qmake?**    
     You can but I haven't tried so I don't suggest it. Also, new versions of QT were a bit wonky.
+
 - **Why did you choose DNN for object detection? Why not HOG?**    
     For some reason both accuracy and performance of HOG was worse than DNN.
+
 - **Why did not you use Tensorflow or Pytorch for DNN inference. Why OpenCV?**    
     I haven't tried pytorch. Tensorflow was slower than OpenCV.
 
@@ -184,8 +193,6 @@ RX_READY is set if there is a new data ready to read at RX_DATA. Upon read user 
 
 Setting debug mode does not kill the Subservient. As soon as debub mode is cleared it can continue its operations. But, it obviously will miss any new UART packages.
 
-There was a read problem at debug interface. So, as a dirty workaround I have added shared memory section and redirected read operations to there.
-
 ### **Testbench**
 
 Testbench of the design is located in the bench folder. You can directly run it with either GTK Wave or Modelsim.
@@ -195,15 +202,11 @@ Testbench of the design is located in the bench folder. You can directly run it 
 
 
 ### **FPGA Development FAQ**
-- **[There](https://github.com/intel-iot-devkit/terasic-de10-nano-kit/tree/master/azure-de10nano-document/sensor-aggregation-reference-design-for-azure) is an exactly similar sensor design with NIOS II. Why did you use subservient?**    
-    
-- **Can I use a new version of OpenCV?**    
-    No, Tracker contrib modules are deprecated. If you do you have to edit the code to accomodate legacy libraries.
-- **Why did you choose OpenCV plot library rather than QTCharts?**    
-    QT version of precompiled libraries from Terasic is 5.5.1 and QTCharts introduced in QT 5.7. And no, I didn't bother to rebuild QT.
-- **QT Creator? Why can't I use CLI qmake?**    
-    You can but I haven't tried so I don't suggest it. Also, new versions of QT were a bit wonky.
-- **Why did you choose DNN for object detection? Why not HOG?**    
-    For some reason both accuracy and performance of HOG was worse than DNN.
-- **Why did not you use Tensorflow or Pytorch for DNN inference. Why OpenCV?**    
-    I haven't tried pytorch. Tensorflow was slower than OpenCV.
+
+- **[There](https://github.com/intel-iot-devkit/terasic-de10-nano-kit/tree/master/azure-de10nano-document/sensor-aggregation-reference-design-for-azure) is an exactly similar coprocessor design with NIOS II. Why did you use subservient?**    
+    I was planning to use 10-20 different subservients with their own dedicated sensor reading and preprocessing routines. Which is not possible with NIOS II since it is huge. But, I run out of time.
+
+- **Why don't you directly read obtained data from Subservient via debug interface?**    
+    There is a read problem in the debug interface. wb_rdt signal is stuck at the some value that is referenced by Subservient right before debug enable is set. I am sure the reason is something trivial but I neither have time nor motivation to debug and solve it. Hence, as a dirty workaround I have added shared memory section and redirected read operations to there.
+
+# Credits
