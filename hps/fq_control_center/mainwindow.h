@@ -10,7 +10,7 @@
 
 #include "camera_loop.h"
 #include "settings.h"
-#include "gas_sensors.h"
+#include "gas_sensors.h" //fpga classes
 #include "constants.h"
 
 #include <opencv2/plot.hpp>

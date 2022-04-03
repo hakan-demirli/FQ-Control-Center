@@ -18,6 +18,7 @@ GasSensors::GasSensors(json cfg, QObject *parent) :
 
     #ifdef  FPGA
         initialize_fpga_bridge();
+        update_serv_sw();
     #endif
 }
 
@@ -71,40 +72,62 @@ void GasSensors::initialize_fpga_bridge(){
     // Allocate a pointer to the maped address space
     uint32_t* fpga_bridge_base = (uint32_t*)fpga_bridge_map;
 
-    qDebug() << "Read the simple memory over the FPGA Bridge";
-
-    simple_memory_0 = (fpga_bridge_base + (SIMPLE_MEMORY_OFFSET / 4));
-    *simple_memory_0 = 0;
-
-    qDebug() << "Simple Memory:" << *simple_memory_0;
-
-    qDebug() << "Finished fpga bridge initialization";
+    serv_uart_adr = (fpga_bridge_base + (FPGA_SERV_UART_BASE / 4));
+    serv_uart_dbg_adr = serv_uart_adr + (SERV_DEBUG_MODE_ADR_OFFSET/4);
 }
 
-void GasSensors::read_gas_sensors()
+void GasSensors::update_serv_sw(){
+    static const uint8_t serv_hex[SERV_HEX_BYTE_SIZE] = {};
+
+    qDebug() << "Enable Debug mode";
+    *serv_uart_dbg_adr = 0xff; // enable debug mode
+    for (int i = 0; i < SERV_HEX_BYTE_SIZE; i+=4) {
+         uint32_t word = serv_hex[i] | ((serv_hex[i+1]) << 8) | ((serv_hex[i+2]) << 16) | ((serv_hex[i+3]) << 24);
+         volatile uint32_t* wr_addr = serv_uart_adr + i;
+         *wr_addr = word;
+     }
+    qDebug() << "Disable Debug mode";
+    *serv_uart_dbg_adr = 0x00; // disable debug mode
+
+    qDebug() << "First Instruction:" << *serv_uart_adr;
+    qDebug() << "Finished serv software update";
+}
+
+void GasSensors::read_from_serv()
 {
     for (int i = 0; i<constants::NUMBER_OF_GAS_SENSORS; ++i){
         #ifdef  FPGA
-            *simple_memory_0 = *simple_memory_0 + 1;
-            int rint = *simple_memory_0;
+            int rint[4] = {serv_uart_adr[0],serv_uart_adr[1],serv_uart_adr[2],serv_uart_adr[3]};
         #else
-            int rint = rand() % 10 + 1;
+            int rint[4] = {rand() % 10 + 1,rand() % 10 + 1,rand() % 10 + 1,rand() % 10 + 1};
         #endif
-        gas_plot[i].push_back(rint);
-        gas_sensor_data[i].push_back(rint);
+        gas_plot[i].push_back(rint[0]);
+        gas_plot[i].push_back(rint[1]);
+        gas_plot[i].push_back(rint[2]);
+        gas_plot[i].push_back(rint[3]);
+        gas_sensor_data[i].push_back(rint[0]);
+        gas_sensor_data[i].push_back(rint[1]);
+        gas_sensor_data[i].push_back(rint[2]);
+        gas_sensor_data[i].push_back(rint[3]);
     }
 }
 
 void GasSensors::main_loop()
 {
-    srand (time(NULL));
+
+    #ifdef  FPGA
+    #else
+        srand (time(NULL));
+    #endif
+
     unsigned int sleep_counter = 0;
     unsigned int send_counter = 0;
+
     while(toggle_sensors){
         QThread::msleep(cfg["read period"]);
         sleep_counter += 1;
         send_counter += 1;
-        read_gas_sensors();
+        read_from_serv();
 
         if(sleep_counter == cfg["save period"]){
             sleep_counter = 0;

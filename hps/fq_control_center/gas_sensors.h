@@ -20,8 +20,9 @@
 
 //#define FPGA
 #define LWH2F_RANGE 0x07FFFF
-#define SIMPLE_MEMORY_OFFSET 0x07FFFF
-
+#define FPGA_SERV_UART_BASE   0x8000
+#define SERV_HEX_BYTE_SIZE   2048
+#define SERV_DEBUG_MODE_ADR_OFFSET 0x4000
 
 using json = nlohmann::json;
 
@@ -39,8 +40,9 @@ public:
 
 private:
     void save_data(void);
-    void initialize_fpga_bridge();
-    void read_gas_sensors(void);
+    void initialize_fpga_bridge(void);
+    void read_from_serv(void);
+    void update_serv_sw(void);
 
     QThread m_thread;
 
@@ -50,7 +52,8 @@ private:
 
     void* fpga_bridge_map;
     uint32_t* fpga_bridge_base;
-    volatile uint32_t* simple_memory_0;
+    volatile uint32_t* serv_uart_adr;
+    volatile uint32_t* serv_uart_dbg_adr;
 
 public slots:
     void main_loop(void);
