@@ -78,7 +78,7 @@ void MainWindow::initialize_camera()
     }
 
     connect(&camera.object_tracker, SIGNAL(sendFrame(cv::Mat)), this, SLOT(receiveFrame(cv::Mat)));
-    connect(&camera.object_tracker, SIGNAL(sendStats(std::vector<unsigned int>)), this, SLOT(receiveCameraStats(std::vector<unsigned int>)));
+    connect(&camera.object_tracker, SIGNAL(sendStats(std::vector<int>)), this, SLOT(receiveCameraStats(std::vector<int>)));
     camera.run();
 }
 
@@ -129,9 +129,11 @@ void MainWindow::updateGasPlots(std::vector<std::vector<float>> g_data)
     }
 }
 
-void MainWindow::receiveCameraStats(std::vector<unsigned int> stats)
+void MainWindow::receiveCameraStats(std::vector<int> stats)
 {
+    ui->people_total_label->setText(QString::number(stats[0]));
     ui->compute_time_label->setText("us: " + QString::number(stats[1]));
+    ui->people_inside_label->setText(QString::number(stats[2]));
 }
 
 void MainWindow::on_camera_run_button_clicked()

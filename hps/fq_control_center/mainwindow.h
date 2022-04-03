@@ -31,7 +31,7 @@ public:
 
 private slots:
     void receiveFrame(cv::Mat frame);
-    void receiveCameraStats(std::vector<unsigned int> stats);
+    void receiveCameraStats(std::vector<int> stats);
     void updateGasPlots(std::vector<std::vector<float>> g_data);
 
     void on_camera_run_button_clicked();

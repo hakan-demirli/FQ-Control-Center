@@ -74,15 +74,17 @@ private:
     std::vector<cv::Rect2d> rois;
     std::vector<float> confidences;
     std::vector<int> indices;
-    std::vector<unsigned int> stats;
+    std::vector<int> stats;
     fps cro_tracking;
+
+    int inside;
 
 public slots:
     void main_loop();
 
 signals:
     void sendFrame(cv::Mat frame);
-    void sendStats(std::vector<unsigned int>);
+    void sendStats(std::vector<int>);
 };
 
 #endif // OBJECT_TRACKER_H

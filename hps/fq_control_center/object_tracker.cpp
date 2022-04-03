@@ -17,7 +17,8 @@ ObjectTracker::ObjectTracker(json cfg,
     toggle_stats(cfg["Stats"]=="||"),
     all_done_cv(all_done_cv),
     flag_mutex(flag_mutex),
-    object_tracker_done_bool(object_tracker_done_bool)
+    object_tracker_done_bool(object_tracker_done_bool),
+    inside(0)
 {
     moveToThread(&m_thread);
     m_thread.start();
@@ -94,6 +95,10 @@ inline void ObjectTracker::remove_duplicate_bounding_boxes_confidences_and_track
 
 inline void ObjectTracker::track_and_emit(void) {
 
+    //const int ydif = (int(cfg["Boundary End Point"][1])-int(cfg["Boundary Start Point"][1]));
+    //const int xdif = (int(cfg["Boundary End Point"][0])-int(cfg["Boundary Start Point"][0]));
+    //const float boundary_slope = ((float)(ydif))/xdif;
+
     if(toggle_object_tracking){
         create_bounding_boxes_confidences_and_trackers();
 
@@ -110,15 +115,26 @@ inline void ObjectTracker::track_and_emit(void) {
         if(toggle_object_tracking && !rois.empty()){
             for(int i = rois.size()-1; i >= 0; --i) {
                 // check if the object is still on frame
+                auto middle_point_old = (rois[i].br() + rois[i].tl())*0.5;
                 bool alive = bunch_of_trackers[i]->update(fr,rois[i]);
                 if(alive){
+                    auto middle_point = (rois[i].br() + rois[i].tl())*0.5;
+                    qDebug() << "oldxy: " << middle_point_old.x << " " << middle_point_old.y ;
+                    qDebug() << "newxy: " << middle_point.x << " " << middle_point.y ;
+                    if((middle_point_old.x > int(cfg["Boundary Start Point"][0])) && (middle_point.x < int(cfg["Boundary Start Point"][0]))){
+                        inside += 1;
+                    }
+
+                    if((middle_point_old.x < int(cfg["Boundary Start Point"][0])) && (middle_point.x > int(cfg["Boundary Start Point"][0]))){
+                        inside -= 1;
+                    }
+
                     if(toggle_bounding_boxes)
                         cv::rectangle(fr,
                                       rois[i],
                                       cv::Scalar(cfg["Color"][0],cfg["Color"][1],cfg["Color"][2]),
                                       cfg["Rectangle Thickness"]);
                     if(toggle_middle_point){
-                        auto middle_point = (rois[i].br() + rois[i].tl())*0.5;
                         cv::circle(fr,
                                    middle_point,
                                    cfg["Circle Radius"],
@@ -134,6 +150,7 @@ inline void ObjectTracker::track_and_emit(void) {
                 }else{
                     tracker_total_missed_frames[i] += 1;
                 }
+
                 //sleep for the remaining time for consistent frame rate
                 //QThread::usleep(1);
             }
@@ -151,6 +168,7 @@ inline void ObjectTracker::track_and_emit(void) {
         if (toggle_stats){
             stats.push_back(bunch_of_trackers.size());
             stats.push_back(cro_tracking.toc());
+            stats.push_back((inside));
             emit sendStats(stats);
             stats.clear();
         }
