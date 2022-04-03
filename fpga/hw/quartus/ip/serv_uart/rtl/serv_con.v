@@ -28,6 +28,7 @@ module serv_con #(
 );  
     reg [31:0] mem_wb[MEM_SIZE-1:0];
 
+    // AVALON
     always @(posedge i_wb_clk or negedge reset_n)
     begin
         if (reset_n == 0)
@@ -39,6 +40,7 @@ module serv_con #(
         end
     end
 
+    // WISHBONE
     always @(posedge i_wb_clk) begin
         if (i_wb_rst) begin
             o_wb_ack <= 1'b0;

@@ -12,7 +12,7 @@ module subservient_wrapped_av_wrapped_tb();
 
     wire        wb_dbg_ack ;
 
-    reg [3:0]   wb_dbg_sel;
+    reg  [  3: 0] wb_dbg_sel;
     reg  [ 31: 0] address;
     reg           chipselect = 0;
     reg           chipselect_sc = 0;
@@ -20,7 +20,7 @@ module subservient_wrapped_av_wrapped_tb();
     reg  [ 31: 0] writedata;
     wire [ 31: 0] readdata;
 
-    wire [37:0] q;
+    wire [7:0] q;
 
     always  #5 clk <= !clk;
     initial #62 reset_n <= 1'b1;
@@ -143,14 +143,14 @@ module subservient_wrapped_av_wrapped_tb();
     initial begin
         forever begin
             @(negedge clk);
-            case (q[37:36])
-                2'b10:begin
+            case (readdata[7:0])
+                8'b1000_0000:begin
                     #100;
                     $display("\nFAIL: Error bit is checked\n");
                     $fflush;
                     $finish;
                 end
-                2'b01:begin
+                8'b0000_1000:begin
                     #100;
                     $display("\PASSED: \\(^o^)/ \n");
                     $fflush;
@@ -183,8 +183,6 @@ module subservient_wrapped_av_wrapped_tb();
         .o_tx(uart_echo),
         .i_rx(uart_echo)
     );
-
-
 endmodule
 
 
