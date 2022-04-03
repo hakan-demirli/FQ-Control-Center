@@ -16,11 +16,6 @@
          value = "10";
          type = "int";
       }
-      datum sopceditor_expanded
-      {
-         value = "1";
-         type = "boolean";
-      }
    }
    element ILC.avalon_slave
    {
@@ -42,11 +37,6 @@
          value = "13";
          type = "int";
       }
-      datum sopceditor_expanded
-      {
-         value = "1";
-         type = "boolean";
-      }
    }
    element alt_vip_vfr_hdmi
    {
@@ -54,11 +44,6 @@
       {
          value = "12";
          type = "int";
-      }
-      datum sopceditor_expanded
-      {
-         value = "1";
-         type = "boolean";
       }
    }
    element alt_vip_vfr_hdmi.avalon_slave
@@ -161,11 +146,6 @@
       {
          value = "4";
          type = "int";
-      }
-      datum sopceditor_expanded
-      {
-         value = "1";
-         type = "boolean";
       }
    }
    element fpga_only_master
@@ -287,11 +267,6 @@
          value = "5";
          type = "int";
       }
-      datum sopceditor_expanded
-      {
-         value = "1";
-         type = "boolean";
-      }
    }
    element mm_bridge_0.s0
    {
@@ -301,7 +276,7 @@
          type = "boolean";
       }
    }
-   element subservient_coprocessor_0
+   element serv_uart_0
    {
       datum _sortIndex
       {
@@ -309,8 +284,13 @@
          type = "int";
       }
    }
-   element subservient_coprocessor_0.ss0
+   element serv_uart_0.avalon_slave_0
    {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
       datum baseAddress
       {
          value = "32768";
@@ -420,8 +400,8 @@
  <interface name="memory" internal="hps_0.memory" type="conduit" dir="end" />
  <interface name="reset" internal="clk_0.clk_in_reset" type="reset" dir="end" />
  <interface
-   name="subservient_coprocessor_0_exported"
-   internal="subservient_coprocessor_0.exported"
+   name="serv_uart_0_conduit_end"
+   internal="serv_uart_0.conduit_end"
    type="conduit"
    dir="end" />
  <module
@@ -1149,11 +1129,7 @@
   <parameter name="USE_AUTO_ADDRESS_WIDTH" value="1" />
   <parameter name="USE_RESPONSE" value="0" />
  </module>
- <module
-   name="subservient_coprocessor_0"
-   kind="subservient_coprocessor"
-   version="1.0"
-   enabled="1" />
+ <module name="serv_uart_0" kind="serv_uart" version="2.0" enabled="1" />
  <module
    name="sysid_qsys"
    kind="altera_avalon_sysid_qsys"
@@ -1210,6 +1186,15 @@
    kind="avalon"
    version="17.0"
    start="mm_bridge_0.m0"
+   end="serv_uart_0.avalon_slave_0">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x8000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="17.0"
+   start="mm_bridge_0.m0"
    end="sysid_qsys.control_slave">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x1000" />
@@ -1236,15 +1221,6 @@
    end="button_pio.s1">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x5000" />
-  <parameter name="defaultConnection" value="false" />
- </connection>
- <connection
-   kind="avalon"
-   version="17.0"
-   start="mm_bridge_0.m0"
-   end="subservient_coprocessor_0.ss0">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x8000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1346,11 +1322,7 @@
    end="f2sdram_only_master.clk" />
  <connection kind="clock" version="17.0" start="clk_0.clk" end="mm_bridge_0.clk" />
  <connection kind="clock" version="17.0" start="clk_0.clk" end="ILC.clk" />
- <connection
-   kind="clock"
-   version="17.0"
-   start="clk_0.clk"
-   end="subservient_coprocessor_0.clock" />
+ <connection kind="clock" version="17.0" start="clk_0.clk" end="serv_uart_0.clock" />
  <connection
    kind="clock"
    version="17.0"
@@ -1487,7 +1459,7 @@
    kind="reset"
    version="17.0"
    start="clk_0.clk_reset"
-   end="subservient_coprocessor_0.reset" />
+   end="serv_uart_0.reset" />
  <connection kind="reset" version="17.0" start="clk_0.clk_reset" end="ILC.reset_n" />
  <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
  <interconnectRequirement for="$system" name="qsys_mm.maxAdditionalLatency" value="1" />

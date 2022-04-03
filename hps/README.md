@@ -1,16 +1,18 @@
-FQ-Control-Center is a utility software that combines ARM and FPGA controls together. It provides a simple GUI interface for use and highly customizable config files for development.
+This is the software part of the FQ-Control-Center that runs on the HPS.
 
 ## Table of Contents
 - [Overview](#overview)
-    - [Camera Unit](#camera-unit)  
-    - [Sensor Aggregator Unit](#sensor-aggregator-unit)  
-    - [Webserver Unit](#webserver-unit)  
-- [Development](#suggested-tweaks)  
-- [Credits](#credits)  
+    - [Camera Unit](#camera-unit)
+    - [Sensor Aggregator Unit](#sensor-aggregator-unit)
+    - [Webserver Unit](#webserver-unit)
+- [Development](#suggested-tweaks)
+    - [How to Deploy](#how-to-deploy)
+    - [FAQ](#faq)
+- [Credits](#credits)
 
 # **Overview**
 
-FQ-Control-Center consists of 3 main parts:
+FQ-Control-Center HPS software consists of 3 main parts:
 * Camera Unit
 * Sensor Aggregation Unit
 * Webserver Unit
@@ -18,7 +20,7 @@ FQ-Control-Center consists of 3 main parts:
 ## **Camera Unit**
 Camera unit detects people by using deep neural networks and tracks them. It records the statistics of human traffic.
 
-### **Software architecture**
+### **Architecture**
 Object detection and tracking is a sequential operation by nature. First it has to be continious in time. Webcam thread acquires frames. Object detection thread detects people from frames. Tracker thread tracks the detected people. One part of the operation can't be started without the previous one is finished. So, the simplest algorithm for object tracking is:
 ```
 forever:
@@ -75,17 +77,26 @@ Requirements:
 - 5.12.12 >= QT >= 5.5.0
 - QT Creator == 5.0.2
 
+## How to Deploy
+- Copy OpenCV shared libraries into a folder. In this case its the plugins folder. And export it.
+    - ```export LD_LIBRARY_PATH=/root/fq_control_center/plugins``` 
+- Select display.
+    - ```export DISPLAY=:0```
+- Run the app.
+    - ```./fq_control_center```
+
+## FAQ
 - **glibc?**    
-    DE10-Nano default image is Ubuntu 18.04 which has glibc  2.27. This prevents any program that is compiled higher glibc version from running.
+    DE10-Nano default image is Ubuntu 18.04 which is shipped with glibc 2.27. This prevents any program that is compiled higher glibc version from running.
 - **Can I use a new version of OpenCV?**    
     No, Tracker contrib modules are deprecated. If you do you have to edit the code to accomodate legacy libraries.
-- **Why did you use OpenCV plot library rather than QTCharts?**    
+- **Why did you choose OpenCV plot library rather than QTCharts?**    
     QT version of precompiled libraries from Terasic is 5.5.1 and QTCharts introduced in QT 5.7. And no, I didn't bother to rebuild QT.
 - **QT Creator? Why can't I use CLI qmake?**    
-    You can but I haven't tried so I don't suggest.
-- **Why did you use DNN for object detection? Why not HOG?**    
+    You can but I haven't tried so I don't suggest it. Also, new versions of QT was a bit wonky.
+- **Why did you choose DNN for object detection? Why not HOG?**    
     For some reason both accuracy and performance of HOG was worse than DNN.
-- **Why not use Tensorflow or Pytorch for DNN inference. Why OpenCV?**    
+- **Why did not you use Tensorflow or Pytorch for DNN inference. Why OpenCV?**    
     I haven't tried pytorch. Tensorflow was slower than OpenCV.
 - **How did you decide on DNN model**    
     It was the fastest one that is also compatible with OpenCV DNN inference.
@@ -99,11 +110,3 @@ Requirements:
     - TrackerGOTURN -> Deep learning based tracker. Buggy as hell.
     - TrackerMedianFlow -> Fastish but there are some false positives.
     - TrackerCSRT -> Accurate but slow.
-
-## How to Deploy the app
-- Copy OpenCV shared libraries into a folder. In this case its the plugins folder. And export it.
-    - ```export LD_LIBRARY_PATH=/root/fq_control_center/plugins``` 
-- Select display.
-    - ```export DISPLAY=:0```
-- Run the app.
-    - ```./fq_control_center```

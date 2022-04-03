@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <EnsembleReport name="soc_system" kind="soc_system" version="1.0" fabric="QSYS">
  <!-- Format version 17.0 595 (Future versions may contain additional information.) -->
- <!-- 2022.03.18.18:10:49 -->
+ <!-- 2022.04.03.11:42:26 -->
  <!-- A collection of modules and connections -->
  <parameter name="AUTO_GENERATION_ID">
   <type>java.lang.Integer</type>
-  <value>1647619596</value>
+  <value>1648975096</value>
   <derived>false</derived>
   <enabled>true</enabled>
   <visible>false</visible>
@@ -4107,9 +4107,9 @@ parameters are a RESULT of the module parameters. -->
    </clockDomainMember>
    <clockDomainMember>
     <isBridge>false</isBridge>
-    <moduleName>simple_memory_0</moduleName>
+    <moduleName>serv_uart_0</moduleName>
     <slaveName>clock</slaveName>
-    <name>simple_memory_0.clock</name>
+    <name>serv_uart_0.clock</name>
    </clockDomainMember>
    <clockDomainMember>
     <isBridge>false</isBridge>
@@ -23491,11 +23491,11 @@ parameters are a RESULT of the module parameters. -->
    </memoryBlock>
    <memoryBlock>
     <isBridge>false</isBridge>
-    <moduleName>simple_memory_0</moduleName>
+    <moduleName>serv_uart_0</moduleName>
     <slaveName>avalon_slave_0</slaveName>
-    <name>simple_memory_0.avalon_slave_0</name>
-    <baseAddress>24576</baseAddress>
-    <span>64</span>
+    <name>serv_uart_0.avalon_slave_0</name>
+    <baseAddress>32768</baseAddress>
+    <span>16384</span>
    </memoryBlock>
    <memoryBlock>
     <isBridge>false</isBridge>
@@ -50427,11 +50427,11 @@ parameters are a RESULT of the module parameters. -->
    </memoryBlock>
    <memoryBlock>
     <isBridge>false</isBridge>
-    <moduleName>simple_memory_0</moduleName>
+    <moduleName>serv_uart_0</moduleName>
     <slaveName>avalon_slave_0</slaveName>
-    <name>simple_memory_0.avalon_slave_0</name>
-    <baseAddress>24576</baseAddress>
-    <span>64</span>
+    <name>serv_uart_0.avalon_slave_0</name>
+    <baseAddress>32768</baseAddress>
+    <span>16384</span>
    </memoryBlock>
    <memoryBlock>
     <isBridge>false</isBridge>
@@ -52468,11 +52468,11 @@ parameters are a RESULT of the module parameters. -->
    </memoryBlock>
    <memoryBlock>
     <isBridge>false</isBridge>
-    <moduleName>simple_memory_0</moduleName>
+    <moduleName>serv_uart_0</moduleName>
     <slaveName>avalon_slave_0</slaveName>
-    <name>simple_memory_0.avalon_slave_0</name>
-    <baseAddress>4280311808</baseAddress>
-    <span>64</span>
+    <name>serv_uart_0.avalon_slave_0</name>
+    <baseAddress>4280320000</baseAddress>
+    <span>16384</span>
    </memoryBlock>
    <memoryBlock>
     <isBridge>false</isBridge>
@@ -53363,11 +53363,11 @@ parameters are a RESULT of the module parameters. -->
    </memoryBlock>
    <memoryBlock>
     <isBridge>false</isBridge>
-    <moduleName>simple_memory_0</moduleName>
+    <moduleName>serv_uart_0</moduleName>
     <slaveName>avalon_slave_0</slaveName>
-    <name>simple_memory_0.avalon_slave_0</name>
-    <baseAddress>4280311808</baseAddress>
-    <span>64</span>
+    <name>serv_uart_0.avalon_slave_0</name>
+    <baseAddress>4280320000</baseAddress>
+    <span>16384</span>
    </memoryBlock>
    <memoryBlock>
     <isBridge>false</isBridge>
@@ -84415,11 +84415,11 @@ parameters are a RESULT of the module parameters. -->
    </memoryBlock>
    <memoryBlock>
     <isBridge>false</isBridge>
-    <moduleName>simple_memory_0</moduleName>
+    <moduleName>serv_uart_0</moduleName>
     <slaveName>avalon_slave_0</slaveName>
-    <name>simple_memory_0.avalon_slave_0</name>
-    <baseAddress>24576</baseAddress>
-    <span>64</span>
+    <name>serv_uart_0.avalon_slave_0</name>
+    <baseAddress>32768</baseAddress>
+    <span>16384</span>
    </memoryBlock>
    <memoryBlock>
     <isBridge>false</isBridge>
@@ -84455,21 +84455,9 @@ parameters are a RESULT of the module parameters. -->
    </memoryBlock>
   </interface>
  </module>
- <module
-   name="simple_memory_0"
-   kind="simple_memory"
-   version="1.0"
-   path="simple_memory_0">
+ <module name="serv_uart_0" kind="serv_uart" version="2.0" path="serv_uart_0">
   <!-- Describes a single module. Module parameters are
 the requested settings for a module instance. -->
-  <parameter name="ADDRESS_SIZE">
-   <type>int</type>
-   <value>4</value>
-   <derived>false</derived>
-   <enabled>true</enabled>
-   <visible>true</visible>
-   <valid>true</valid>
-  </parameter>
   <parameter name="deviceFamily">
    <type>java.lang.String</type>
    <value>UNKNOWN</value>
@@ -84524,7 +84512,7 @@ parameters are a RESULT of the module parameters. -->
    </parameter>
    <parameter name="addressSpan">
     <type>java.math.BigInteger</type>
-    <value>64</value>
+    <value>16384</value>
     <derived>true</derived>
     <enabled>true</enabled>
     <visible>false</visible>
@@ -84823,7 +84811,7 @@ parameters are a RESULT of the module parameters. -->
    <port>
     <name>address</name>
     <direction>Input</direction>
-    <width>4</width>
+    <width>12</width>
     <role>address</role>
    </port>
    <port>
@@ -84941,6 +84929,63 @@ parameters are a RESULT of the module parameters. -->
     <role>reset_n</role>
    </port>
   </interface>
+  <interface name="conduit_end" kind="conduit_end" version="17.0">
+   <!-- The connection points exposed by a module instance for the
+particular module parameters. Connection points and their
+parameters are a RESULT of the module parameters. -->
+   <parameter name="associatedClock">
+    <type>java.lang.String</type>
+    <value></value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>true</visible>
+    <valid>true</valid>
+   </parameter>
+   <parameter name="associatedReset">
+    <type>java.lang.String</type>
+    <value></value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>true</visible>
+    <valid>true</valid>
+   </parameter>
+   <parameter name="deviceFamily">
+    <type>java.lang.String</type>
+    <value>UNKNOWN</value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>true</visible>
+    <valid>true</valid>
+   </parameter>
+   <parameter name="generateLegacySim">
+    <type>boolean</type>
+    <value>false</value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>true</visible>
+    <valid>true</valid>
+   </parameter>
+   <type>conduit</type>
+   <isStart>false</isStart>
+   <port>
+    <name>i_rx</name>
+    <direction>Input</direction>
+    <width>1</width>
+    <role>rx</role>
+   </port>
+   <port>
+    <name>o_tx</name>
+    <direction>Output</direction>
+    <width>1</width>
+    <role>tx</role>
+   </port>
+   <port>
+    <name>q</name>
+    <direction>Output</direction>
+    <width>8</width>
+    <role>q</role>
+   </port>
+  </interface>
  </module>
  <module
    name="sysid_qsys"
@@ -84955,7 +85000,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>embeddedsw.CMacro.TIMESTAMP</name>
-   <value>1647619596</value>
+   <value>1648975096</value>
   </assignment>
   <assignment>
    <name>embeddedsw.dts.compatible</name>
@@ -84975,7 +85020,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>embeddedsw.dts.params.timestamp</name>
-   <value>1647619596</value>
+   <value>1648975096</value>
   </assignment>
   <assignment>
    <name>embeddedsw.dts.vendor</name>
@@ -84991,7 +85036,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="timestamp">
    <type>int</type>
-   <value>1647619596</value>
+   <value>1648975096</value>
    <derived>true</derived>
    <enabled>false</enabled>
    <visible>false</visible>
@@ -95830,11 +95875,11 @@ parameters are a RESULT of the module parameters. -->
   <endConnectionPoint>avalon_slave</endConnectionPoint>
  </connection>
  <connection
-   name="mm_bridge_0.m0/simple_memory_0.avalon_slave_0"
+   name="mm_bridge_0.m0/serv_uart_0.avalon_slave_0"
    kind="avalon"
    version="17.0"
    start="mm_bridge_0.m0"
-   end="simple_memory_0.avalon_slave_0">
+   end="serv_uart_0.avalon_slave_0">
   <parameter name="arbitrationPriority">
    <type>int</type>
    <value>1</value>
@@ -95845,7 +95890,7 @@ parameters are a RESULT of the module parameters. -->
   </parameter>
   <parameter name="baseAddress">
    <type>java.math.BigInteger</type>
-   <value>0x6000</value>
+   <value>0x8000</value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>true</visible>
@@ -95877,7 +95922,7 @@ parameters are a RESULT of the module parameters. -->
   </parameter>
   <startModule>mm_bridge_0</startModule>
   <startConnectionPoint>m0</startConnectionPoint>
-  <endModule>simple_memory_0</endModule>
+  <endModule>serv_uart_0</endModule>
   <endConnectionPoint>avalon_slave_0</endConnectionPoint>
  </connection>
  <connection
@@ -96790,11 +96835,11 @@ parameters are a RESULT of the module parameters. -->
   <endConnectionPoint>clk</endConnectionPoint>
  </connection>
  <connection
-   name="clk_0.clk/simple_memory_0.clock"
+   name="clk_0.clk/serv_uart_0.clock"
    kind="clock"
    version="17.0"
    start="clk_0.clk"
-   end="simple_memory_0.clock">
+   end="serv_uart_0.clock">
   <parameter name="deviceFamily">
    <type>java.lang.String</type>
    <value>UNKNOWN</value>
@@ -96813,7 +96858,7 @@ parameters are a RESULT of the module parameters. -->
   </parameter>
   <startModule>clk_0</startModule>
   <startConnectionPoint>clk</startConnectionPoint>
-  <endModule>simple_memory_0</endModule>
+  <endModule>serv_uart_0</endModule>
   <endConnectionPoint>clock</endConnectionPoint>
  </connection>
  <connection
@@ -97575,11 +97620,11 @@ parameters are a RESULT of the module parameters. -->
   <endConnectionPoint>reset</endConnectionPoint>
  </connection>
  <connection
-   name="clk_0.clk_reset/simple_memory_0.reset"
+   name="clk_0.clk_reset/serv_uart_0.reset"
    kind="reset"
    version="17.0"
    start="clk_0.clk_reset"
-   end="simple_memory_0.reset">
+   end="serv_uart_0.reset">
   <parameter name="deviceFamily">
    <type>java.lang.String</type>
    <value>UNKNOWN</value>
@@ -97598,7 +97643,7 @@ parameters are a RESULT of the module parameters. -->
   </parameter>
   <startModule>clk_0</startModule>
   <startConnectionPoint>clk_reset</startConnectionPoint>
-  <endModule>simple_memory_0</endModule>
+  <endModule>serv_uart_0</endModule>
   <endConnectionPoint>reset</endConnectionPoint>
  </connection>
  <connection
@@ -97685,7 +97730,7 @@ parameters are a RESULT of the module parameters. -->
   <version>17.0</version>
  </plugin>
  <plugin>
-  <instanceCount>10</instanceCount>
+  <instanceCount>11</instanceCount>
   <name>conduit_end</name>
   <type>com.altera.entityinterfaces.IElementClass</type>
   <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
@@ -98102,11 +98147,11 @@ parameters are a RESULT of the module parameters. -->
  </plugin>
  <plugin>
   <instanceCount>1</instanceCount>
-  <name>simple_memory</name>
+  <name>serv_uart</name>
   <type>com.altera.entityinterfaces.IElementClass</type>
   <subtype>com.altera.entityinterfaces.IModule</subtype>
-  <displayName>simple_memory</displayName>
-  <version>1.0</version>
+  <displayName>serv_uart</displayName>
+  <version>2.0</version>
  </plugin>
  <plugin>
   <instanceCount>1</instanceCount>
