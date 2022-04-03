@@ -3,8 +3,7 @@
 // synthesis translate_on
 
 module subservient_wrapped_av_wrapped (
-    input wire debug_mode_i,
-    output wire wb_dbg_ack,
+    output wire readdatavalid,
     input wire  [ 11: 0] address,
     input wire           chipselect,
     input wire           clk,
@@ -35,7 +34,7 @@ module subservient_wrapped_av_wrapped (
     .wbs_we_i  (~write_n),
     .wbs_stb_i (chipselect_serv && ~write_n),
     .wbs_dat_o (),
-    .wbs_ack_o (wb_dbg_ack),
+    .wbs_ack_o (readdatavalid),
 
     //AVALON INTERFACE
     .address(address),

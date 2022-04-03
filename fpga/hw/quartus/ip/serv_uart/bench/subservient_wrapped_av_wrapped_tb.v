@@ -10,7 +10,7 @@ module subservient_wrapped_av_wrapped_tb();
     reg clk = 1'b0;
     reg reset_n = 1'b0;
 
-    wire        wb_dbg_ack ;
+    wire        readdatavalid ;
 
     reg  [  3: 0] wb_dbg_sel;
     reg  [ 31: 0] address;
@@ -39,7 +39,7 @@ module subservient_wrapped_av_wrapped_tb();
             write_n  <= 1'b0;
             chipselect <= 1'b1;
         end
-        while (!wb_dbg_ack)
+        while (!readdatavalid)
         @ (posedge clk);
         chipselect <= 1'b0;
     end
@@ -117,7 +117,7 @@ module subservient_wrapped_av_wrapped_tb();
         chipselect <= 1'b1;
         repeat (5) @(posedge clk);
         write_n  <= 1'b0;
-        while (!wb_dbg_ack)
+        while (!readdatavalid)
         @ (posedge clk);
         chipselect <= 1'b0;
         write_n  <= 1'b1;
@@ -168,10 +168,8 @@ module subservient_wrapped_av_wrapped_tb();
     wire uart_echo;
     uart_decoder uad (uart_echo);
     
-    wire debug_mode;
     subservient_wrapped_av_wrapped swaw (
-        .wb_dbg_ack(wb_dbg_ack),
-        .debug_mode_i(debug_mode),
+        .readdatavalid(readdatavalid),
         .address(address),
         .chipselect(chipselect),
         .clk(clk),
