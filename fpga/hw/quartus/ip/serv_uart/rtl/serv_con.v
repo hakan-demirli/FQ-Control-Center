@@ -6,7 +6,7 @@ module serv_con #(
     parameter MEM_SIZE = 16
 )(
     //AVALON INTERFACE
-    input wire [ 3: 0] address,
+    input wire [  3: 0] address,
     input wire          chipselect,
     input wire          reset_n,
     input wire          write_n,
