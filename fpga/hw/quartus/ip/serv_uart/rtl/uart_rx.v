@@ -65,9 +65,9 @@ always @(posedge i_clk or posedge i_rst) begin
                 o_data_ready <= 1'b1;
             end
         end
-    end
-    if((~data_corrupted) && ({i_data_read_p,i_data_read}==2'b10)) begin//negedge of i_data_read
-        o_data_ready <= 1'b0; // Host have seen the data. No more new data
+        if((~data_corrupted) && ({i_data_read_p,i_data_read}==2'b10)) begin//negedge of i_data_read
+            o_data_ready <= 1'b0; // Host have seen the data. No more new data
+        end
     end
 end
 
