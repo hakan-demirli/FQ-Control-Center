@@ -119,27 +119,34 @@ inline void ObjectTracker::track_and_emit(void) {
                 bool alive = bunch_of_trackers[i]->update(fr,rois[i]);
                 if(alive){
                     auto middle_point = (rois[i].br() + rois[i].tl())*0.5;
-                    qDebug() << "oldxy: " << middle_point_old.x << " " << middle_point_old.y ;
-                    qDebug() << "newxy: " << middle_point.x << " " << middle_point.y ;
-                    if((middle_point_old.x > int(cfg["Boundary Start Point"][0])) && (middle_point.x < int(cfg["Boundary Start Point"][0]))){
-                        inside += 1;
-                    }
+                    if((middle_point.x<0 || middle_point.y<0) || (middle_point.x>cfg["Size"][0] || middle_point.y>(cfg["Size"][1]))){
+                        bunch_of_trackers.erase(bunch_of_trackers.begin() + i);
+                        confidences.erase(confidences.begin() + i);
+                        tracker_total_missed_frames.erase(tracker_total_missed_frames.begin() + i);
+                        rois.erase(rois.begin() + i);
+                    }else{
+                        qDebug() << "oldxy: " << middle_point_old.x << " " << middle_point_old.y ;
+                        qDebug() << "newxy: " << middle_point.x << " " << middle_point.y ;
+                        if((middle_point_old.x > int(cfg["Boundary Start Point"][0])) && (middle_point.x < int(cfg["Boundary Start Point"][0]))){
+                            inside += 1;
+                        }
 
-                    if((middle_point_old.x < int(cfg["Boundary Start Point"][0])) && (middle_point.x > int(cfg["Boundary Start Point"][0]))){
-                        inside -= 1;
-                    }
+                        if((middle_point_old.x < int(cfg["Boundary Start Point"][0])) && (middle_point.x > int(cfg["Boundary Start Point"][0]))){
+                            inside -= 1;
+                        }
 
-                    if(toggle_bounding_boxes)
-                        cv::rectangle(fr,
-                                      rois[i],
-                                      cv::Scalar(cfg["Color"][0],cfg["Color"][1],cfg["Color"][2]),
-                                      cfg["Rectangle Thickness"]);
-                    if(toggle_middle_point){
-                        cv::circle(fr,
-                                   middle_point,
-                                   cfg["Circle Radius"],
-                                   cv::Scalar(cfg["Color"][0],cfg["Color"][1],cfg["Color"][2]),
-                                   cfg["Circle Thickness"]);
+                        if(toggle_bounding_boxes)
+                            cv::rectangle(fr,
+                                          rois[i],
+                                          cv::Scalar(cfg["Color"][0],cfg["Color"][1],cfg["Color"][2]),
+                                          cfg["Rectangle Thickness"]);
+                        if(toggle_middle_point){
+                            cv::circle(fr,
+                                       middle_point,
+                                       cfg["Circle Radius"],
+                                       cv::Scalar(cfg["Color"][0],cfg["Color"][1],cfg["Color"][2]),
+                                       cfg["Circle Thickness"]);
+                        }
                     }
                 }
                 else if(tracker_total_missed_frames[i] > cfg["Tracker Max Missed Frames"]){

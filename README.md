@@ -210,4 +210,16 @@ Testbench of the design is located in the bench folder. You can directly run it 
 - **Why don't you directly read obtained data from Subservient via debug interface?**    
     There is a read problem in the debug interface. wb_rdt signal is stuck at the some value that is referenced by Subservient right before debug enable is set. I am sure the reason is something trivial but I neither have time nor motivation to debug and solve it. Hence, as a dirty workaround I have added shared memory section and redirected read operations to there.
 
-# Credits
+# Credits and Resources
+* https://github.com/zangman/de10-nano
+* https://github.com/robseb/rsyocto
+* https://github.com/yongatek/caravel_yonga-serv-accelerator
+* https://opencores.org/projects/avalon-wishbone-bridge
+* https://github.com/niconielsen32/ComputerVision
+* https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf1_detection_zoo.md
+* http://neuralnetworksanddeeplearning.com/
+* https://github.com/intel-iot-devkit/terasic-de10-nano-kit
+* https://github.com/robseb/LinuxVSCppFPGA
+* https://github.com/TheThirdOne/rars
+
+
