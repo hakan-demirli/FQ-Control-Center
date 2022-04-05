@@ -22,7 +22,7 @@
 #define LWH2F_RANGE 0x07FFFF
 #define FPGA_SERV_UART_BASE   0x8000
 #define SERV_HEX_BYTE_SIZE   2048
-#define SERV_DEBUG_MODE_ADR_OFFSET 0x4000
+#define SERV_DEBUG_MODE_ADR_OFFSET 0x800
 
 using json = nlohmann::json;
 

@@ -41,7 +41,7 @@ inline void uart_read_buff(){
     }
     buff[0] = RX_DATA;
     RX_DHBR = 1; // has to be accessed right after read operation
-    // data package structure: "message"+'\r'+'\n'
+    // data package structure: "message"+'K'+'O'
     if ((buff[0] == 'O') && (buff[1] == 'K'))
         passed(); //we have a corrrect package
 }

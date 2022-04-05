@@ -2,28 +2,6 @@
 `timescale 1ns / 1ps
 // synthesis translate_on
 
-/*
-Simple UART TX Module with variable data, parity and stopbits
-Usage:
-    - Configure cfg parameters by using the table below:
-        UART_CONFIG = 5'bxx_xx_x = DATABITS_COUNT_PARITY_STOPBITS
-        00->5 bits of data| 00->no parity   | 0->1 stop bits  1
-        01->6 bits of data| 01->even parity | 1->2 stop bits  2
-        10->7 bits of data| 10->no parity   |
-        11->8 bits of data| 11->odd parity  |
-        Example: 5'b11000 -> 8 bits of data and no parity and 1 stop bit
-
-    - Wait if o_busy is high
-    - Clear i_data send
-    - Write data to i_data
-    - Set i_data_send
-    - Wait if o_busy is high
-    - Clear i_data send
-    - Write data to i_data
-    - Set i_data_send
-    ...
-*/
-
 module uart #(
     parameter  [ 4: 0] UART_CONFIG = 5'b11000  // uart config
 )(

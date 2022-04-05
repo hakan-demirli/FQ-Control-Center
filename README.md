@@ -12,17 +12,17 @@ FQ-Control-Center is a utility software that combines ARM and FPGA controls. It 
     - [Camera Unit](#camera-unit)
     - [Sensor Aggregator Unit](#sensor-aggregator-unit)
     - [Webserver Unit](#webserver-unit)
-    - [Development](#suggested-tweaks)
+    - [Development](#development)
         - [How to Deploy](#how-to-deploy)
         - [Software Development FAQ](#software-development-faq)
 - [FPGA](#fpga)
     - [System Overview](#system-overview)
-        - [Memory Map from HPS side](##memory-map-from-hps-side)
+        - [Memory Map from HPS side](#memory-map-from-hps-side)
         - [Memory Map from Subservient side](#memory-map-from-subservient-side)
         - [Testbench](#testbench)
         - [FPGA Development FAQ](#fpga-development-faq)
     - [Software](#software)
-- [Credits](#credits)
+- [Credits and Resources](#credits-and-resources)
 
 # **HPS Software**
 
@@ -45,9 +45,9 @@ The tracker part comes from the OpenCV contrib tracking library. After some tria
 - TrackerMOSSE -> Really fast. But, it takes time to lock on to a target.
 - TrackerKCF -> Kinda slow but accurate.
 - TrackerBoosting -> Buggy and slow.
-- TrackerTLD -> Like KCF but a bit buggy?
+- TrackerTLD -> Like KCF but a bit buggy.
 - TrackerGOTURN -> Deep learning based tracker. Buggy as hell.
-- TrackerMedianFlow -> Fastish but there are some false positives.
+- TrackerMedianFlow -> Fastest but there are some false positives.
 - TrackerCSRT -> Accurate but slow.    
 
 I have decided to go with the MOSSE algorithm.
@@ -110,7 +110,7 @@ The sensor Aggregator unit is responsible for the initialization of the Subservi
 Webserver unit will send data with Asure Cloud.
 [Under Construction]
 
-# **Development**
+## **Development**
 Requirements:
 - glibc == 2.27
 - OpenCV == 4.2.0
@@ -137,7 +137,7 @@ Requirements:
 
 ## Software Development FAQ
 - **glibc?**    
-    DE10-Nano default image is Ubuntu 18.04, which is shipped with glibc 2.27. This prevents any program that is compiled higher glibc version from running. You can upgrade to 20.04, which also upgrades the glibc version.
+    DE10-Nano default image is Ubuntu 18.04, which is shipped with glibc 2.27. This prevents any program that is compiled for higher glibc version from running. You can upgrade to 20.04, which also upgrades the glibc version.
 
 - **Can I use a new version of OpenCV?**    
     No, Tracker contrib modules are deprecated. You have to edit the code to accommodate legacy libraries if you do.
@@ -171,9 +171,9 @@ Subservient software is updated through the debug interface connected to the HPS
 Subservient is connected to the lightweight bridge. Hence, you should add lwbridge offset to the values given below to obtain the absolute addresses.
 | Peripheral| Base Address| Read/Write |
 | --- | ---     | ---|
-| Subservient Base Address | 0x8000|rw|
-| Debug Mode Register| 0x8000-0x87ff| w |
-| Debug Mode Register| 0x8000| w |
+| Subservient Base Address | 0x8000|-|
+| Subservient SRAM| 0x8000-0x87ff| w |
+| Debug Mode Register| 0x8800| w |
 | Shared Memory| 0x8000-0x802f| r |
 
 ### **Memory Map from Subservient side**
@@ -193,10 +193,10 @@ Subservient peripherals and absolute addresses:
 | RX_DATA | 0xC0000018|r|
 
 **Application notes and information:**    
-Sample program for Subservient can be found [here.](fpga/sw/serv/project/entry_point.cpp)    
+
 UART TX sends data upon write operation. TX_BUSY is high if UART TX is in the middle of the sending operation. Before sending any data, you have to wait for it to be cleared. Writing when TX_BUSY is high is undefined.
 
-RX_READY is set if there is a new data ready to read at RX_DATA. Upon reading user has to write to RX_DHBR register to indicate data has been read. Otherwise, RX_READY will not be cleared.
+RX_READY is set if there is a new data ready to read at RX_DATA. Upon reading, user has to write to RX_DHBR register to indicate data has been read. Otherwise, RX_READY will not be cleared.
 
 Setting debug mode does not kill the Subservient. As soon as debug mode is cleared, it can continue its operations. But, it obviously will miss any new UART packages.
 
@@ -219,7 +219,10 @@ Testbench of the design is located in the bench folder. You can directly run it 
 - **I have another question/problem?**    
     First check doc folder. If you still have a problem open an issue.
 
-# Credits and Resources
+## **Software**
+A reference code for the Subservient module can be found [here.](/fpga/sw/serv/project/entry_point.cpp)
+
+# **Credits and Resources**
 * https://github.com/zangman/de10-nano
 * https://github.com/robseb/rsyocto
 * https://github.com/yongatek/caravel_yonga-serv-accelerator
